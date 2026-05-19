@@ -14,7 +14,7 @@ This pack creates and maintains an Agent Harness environment for a project:
 - Support new projects, existing codebases, and existing harnesses
 - Keep ideas, specs, plans, execution records, verification, and evaluation inside the harness workflow
 
-Harness maintenance is agent-assisted: after each run, the agent can propose or apply targeted harness updates from run evidence and user-confirmed decisions. It does not perform background or automatic upgrades.
+Harness maintenance is agent-assisted: after each run, the agent can propose or apply targeted harness updates from run evidence and user-confirmed decisions.
 
 The intended flow is:
 
