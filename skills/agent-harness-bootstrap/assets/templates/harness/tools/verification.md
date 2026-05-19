@@ -8,15 +8,11 @@ Use this file to define the expected verification process.
 - [ ] Relevant tests pass.
 - [ ] Build command passes, if available.
 
-## Browser Verification
+## Project-Specific Verification
 
-For browser projects:
-
-- [ ] Open the relevant page in a real browser.
-- [ ] Check console errors.
-- [ ] Check failed network requests.
-- [ ] Verify the target workflow manually.
-- [ ] Check mobile and desktop layouts when UI changed.
+- [ ] Run any domain-specific checks discovered from the project.
+- [ ] Perform manual workflow verification when command checks are insufficient.
+- [ ] Record skipped checks with the reason they were skipped.
 
 ## Recording Results
 

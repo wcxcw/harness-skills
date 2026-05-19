@@ -1,6 +1,6 @@
 ---
 name: agent-harness-bootstrap
-description: Initialize and operate a project-level Agent Harness for software engineering work. Use when the user wants to create or update AGENTS.md, scaffold a harness/ directory, define spec/context/tools/guardrails/evals templates, create run records, or combine bundled skills such as idea-refine, spec-driven-development, planning-and-task-breakdown, and browser-testing-with-devtools into a repeatable Harness Engineering workflow.
+description: Initialize and operate a project-level Agent Harness for software engineering work. Use when the user wants to create or update AGENTS.md, scaffold a harness/ directory, define spec/context/tools/guardrails/evals templates, create run records, or combine bundled skills such as idea-refine, spec-driven-development, and planning-and-task-breakdown into a repeatable Harness Engineering workflow.
 ---
 
 # Agent Harness Bootstrap
@@ -31,7 +31,6 @@ Inspect the target project before writing harness files:
 - Package manager and runtime
 - Build, test, lint, dev, and verification commands
 - Existing documentation, CI, tests, and conventions
-- Whether the project has browser-facing behavior
 
 For `greenfield`, also capture the project idea, target user, success criteria, constraints, preferred stack if provided, and unknown decisions. If the user only gave a one-sentence idea, use `idea-refine` when needed to clarify user, success, and constraints before writing the executable spec.
 
@@ -109,8 +108,6 @@ Implement against the active run only:
 
 Run commands from `harness/tools/commands.md` and record results in `execution-log.md`.
 
-For browser projects, use `browser-testing-with-devtools` after implementation to inspect the app in a real browser, including console errors, network failures, layout issues, and relevant screenshots.
-
 ### 9. Record
 
 Each task run should use this structure:
@@ -148,7 +145,6 @@ Read `references/related-skills.md` when deciding how this skill composes with e
 - Use bundled `idea-refine` for the Idea layer when a request is still exploratory.
 - Use bundled `spec-driven-development` for the Spec layer.
 - Use bundled `planning-and-task-breakdown` for the Plan and Tasks layer.
-- Use bundled `browser-testing-with-devtools` for browser verification when the runtime tools are available.
 
 ## Boundaries
 

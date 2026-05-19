@@ -9,4 +9,4 @@ Replace placeholders with project-specific commands after discovery. Do not run 
 | Lint | `TBD` | Unknown | Not discovered | Mark `Not applicable` if the project has no lint command. |
 | Test | `TBD` | Unknown | Not discovered | Prefer the narrowest relevant test command for runs. |
 | Build | `TBD` | Unknown | Not discovered | Mark `Not applicable` if the project does not build. |
-| Browser verification | `TBD` | Unknown | Not discovered | Use only for browser-facing projects. |
+| Manual verification | `TBD` | Unknown | Not discovered | Describe project-specific checks when command verification is insufficient. |

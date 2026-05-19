@@ -16,7 +16,7 @@
 - [ ] Lint passed or was not applicable.
 - [ ] Tests passed or skipped checks are explained.
 - [ ] Build passed or was not applicable.
-- [ ] Browser verification passed, if applicable.
+- [ ] Project-specific verification passed or skipped checks are explained.
 
 ## Risk
 

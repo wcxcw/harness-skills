@@ -16,7 +16,6 @@ Use this pack when you want Codex to:
 - Break specs into small, verifiable tasks
 - Run implementation work through explicit guardrails
 - Record each agent run for review and iteration
-- Verify browser-facing behavior when the runtime supports it
 
 The intended flow is:
 
@@ -40,7 +39,6 @@ User request
 | `idea-refine` | Turns raw ideas into focused one-page concepts before specification. |
 | `spec-driven-development` | Turns ambiguous or multi-file work into a reviewed specification. |
 | `planning-and-task-breakdown` | Breaks a validated spec into ordered, verifiable implementation tasks. |
-| `browser-testing-with-devtools` | Guides real browser verification for web projects. |
 
 ## Repository Layout
 
@@ -51,8 +49,7 @@ harness-skills/
     ├── agent-harness-bootstrap/
     ├── idea-refine/
     ├── spec-driven-development/
-    ├── planning-and-task-breakdown/
-    └── browser-testing-with-devtools/
+    └── planning-and-task-breakdown/
 ```
 
 The main entry point is:
