@@ -2,6 +2,25 @@
 
 Use this reference when operating `agent-harness-bootstrap` with other skills.
 
+## idea-refine
+
+Layer: Idea / Discovery
+
+Status: bundled dependency
+
+Use when:
+
+- A request starts as a raw idea, product concept, or vague feature direction.
+- The target user, value proposition, success criteria, or MVP scope is unclear.
+- The team needs to explore multiple directions before committing to a spec.
+
+Expected harness outputs:
+
+- `harness/runs/<run>/idea.md`
+- Clear problem statement, recommended direction, assumptions to validate, MVP scope, not-doing list, and open questions.
+
+Do not use it for narrow bug fixes or already-approved implementation specs.
+
 ## spec-driven-development
 
 Layer: Spec

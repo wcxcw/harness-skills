@@ -9,6 +9,27 @@ description: Creates specs before coding. Use when starting a new project, featu
 
 Write a structured specification before writing any code. The spec is the shared source of truth between you and the human engineer — it defines what we're building, why, and how we'll know it's done. Code without a spec is guessing.
 
+## Harness Output
+
+Save the final spec to the active harness run:
+
+```text
+harness/runs/YYYY-MM-DD-short-task-name/spec.md
+```
+
+If no active run exists, create or ask for the intended run directory under `harness/runs/` before saving. Do not create a separate documentation directory for this skill's output.
+
+## Scope Boundary
+
+This skill creates a run-level executable spec. It may reference or summarize project-level conventions, but it does not own the canonical project rules.
+
+- Put the active task or feature spec in `harness/runs/YYYY-MM-DD-short-task-name/spec.md`.
+- Read canonical commands from `harness/tools/commands.md` when available.
+- Read canonical coding conventions from `harness/context/coding-conventions.md` when available.
+- Read canonical boundaries from `harness/guardrails/` when available.
+- If the spec discovers a missing or changed project-level rule, record it in `Context Updates` or `Open Questions`.
+- Do not modify canonical harness files during spec writing unless the user asked for harness maintenance or the active project workflow explicitly allows it.
+
 ## When to Use
 
 - Starting a new project or feature
@@ -60,14 +81,14 @@ Don't silently fill in ambiguous requirements. The spec's entire purpose is to s
    Dev: npm run dev
    ```
 
-3. **Project Structure** — Where source code lives, where tests go, where docs belong.
+3. **Project Structure** — Where source code lives, where tests go, and where project documentation already belongs.
    ```
    src/           → Application source code
    src/components → React components
    src/lib        → Shared utilities
    tests/         → Unit and integration tests
    e2e/           → End-to-end tests
-   docs/          → Documentation
+   harness/       → Agent harness specs, context, plans, runs, and evaluations
    ```
 
 4. **Code Style** — One real code snippet showing your style beats three paragraphs describing it. Include naming conventions, formatting rules, and examples of good output.
@@ -109,6 +130,9 @@ Don't silently fill in ambiguous requirements. The spec's entire purpose is to s
 
 ## Success Criteria
 [How we'll know this is done — specific, testable conditions]
+
+## Context Updates
+[Project-level conventions, commands, or guardrails that may need to be added or changed.]
 
 ## Open Questions
 [Anything unresolved that needs human input]
@@ -160,7 +184,7 @@ Break the plan into discrete, implementable tasks:
 
 ### Phase 4: Implement
 
-Execute tasks one at a time following `incremental-implementation` and `test-driven-development` skills. Use `context-engineering` to load the right spec sections and source files at each step rather than flooding the agent with the entire spec.
+Execute tasks one at a time from the active `plan.md`. Load only the relevant spec sections, harness context files, and source files needed for the current task instead of flooding the agent with the entire repository.
 
 ## Keeping the Spec Alive
 
@@ -168,7 +192,7 @@ The spec is a living document, not a one-time artifact:
 
 - **Update when decisions change** — If you discover the data model needs to change, update the spec first, then implement.
 - **Update when scope changes** — Features added or cut should be reflected in the spec.
-- **Commit the spec** — The spec belongs in version control alongside the code.
+- **Commit the spec** — The spec belongs in version control under the active `harness/runs/` directory alongside the code.
 - **Reference the spec in PRs** — Link back to the spec section that each PR implements.
 
 ## Common Rationalizations
@@ -197,4 +221,4 @@ Before proceeding to implementation, confirm:
 - [ ] The human has reviewed and approved the spec
 - [ ] Success criteria are specific and testable
 - [ ] Boundaries (Always/Ask First/Never) are defined
-- [ ] The spec is saved to a file in the repository
+- [ ] The spec is saved to the active `harness/runs/.../spec.md`

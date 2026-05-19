@@ -1,5 +1,10 @@
 # Feature Spec Template
 
+## Context Source
+
+- Source: [user input | idea.md | project-brief.md | brownfield audit | existing spec]
+- Initialization mode: [greenfield | brownfield | existing-harness]
+
 ## Goal
 
 [What user-visible or system behavior should exist when this is complete?]
@@ -24,6 +29,10 @@
 
 - [ ] [Command or manual check]
 - [ ] [Command or manual check]
+
+## Context Updates
+
+- [Project-level conventions, commands, guardrails, or context that may need to be added or changed. Use "None" if not needed.]
 
 ## Open Questions
 

@@ -1,6 +1,6 @@
 ---
 name: agent-harness-bootstrap
-description: Initialize and operate a project-level Agent Harness for software engineering work. Use when the user wants to create or update Agents.md, scaffold a harness/ directory, define spec/context/tools/guardrails/evals templates, create run records, or combine bundled skills such as spec-driven-development, planning-and-task-breakdown, and browser-testing-with-devtools into a repeatable Harness Engineering workflow.
+description: Initialize and operate a project-level Agent Harness for software engineering work. Use when the user wants to create or update AGENTS.md, scaffold a harness/ directory, define spec/context/tools/guardrails/evals templates, create run records, or combine bundled skills such as idea-refine, spec-driven-development, planning-and-task-breakdown, and browser-testing-with-devtools into a repeatable Harness Engineering workflow.
 ---
 
 # Agent Harness Bootstrap
@@ -13,7 +13,17 @@ This is an orchestration skill. Do not duplicate the full workflows of related s
 
 ## Workflow
 
-### 1. Discover
+### 1. Choose Initialization Mode
+
+Choose one mode before scaffolding or updating harness files:
+
+- `greenfield`: Use when the project is empty, has no source or manifest files, or the user describes a new project from a short idea.
+- `brownfield`: Use when the project already has source code, manifests, tests, CI, README, or other implementation history.
+- `existing-harness`: Use when `AGENTS.md` or `harness/` already exists.
+
+For `existing-harness`, preserve existing harness content by default. Add missing files, refresh stale placeholders, and propose larger rewrites only when the user asks.
+
+### 2. Discover
 
 Inspect the target project before writing harness files:
 
@@ -23,14 +33,18 @@ Inspect the target project before writing harness files:
 - Existing documentation, CI, tests, and conventions
 - Whether the project has browser-facing behavior
 
-Prefer project-specific facts over generic templates. If a command is unknown, leave a clear placeholder in `harness/tools/commands.md`.
+For `greenfield`, also capture the project idea, target user, success criteria, constraints, preferred stack if provided, and unknown decisions. If the user only gave a one-sentence idea, use `idea-refine` when needed to clarify user, success, and constraints before writing the executable spec.
 
-### 2. Bootstrap
+For `brownfield`, use read-only discovery first. Prefer existing project facts over generic templates, reference existing documentation and configuration, and do not replace established conventions unless the user explicitly asks.
+
+If a command is unknown, mark it as `Unknown` or `Not applicable` in `harness/tools/commands.md`; do not invent commands.
+
+### 3. Bootstrap
 
 Create or update these files from `assets/templates/`:
 
 ```text
-Agents.md
+AGENTS.md
 harness/
 ├── specs/
 ├── context/
@@ -40,9 +54,27 @@ harness/
 └── runs/
 ```
 
-Use `scripts/init_harness.py` for deterministic scaffolding when creating the structure from scratch.
+Use `scripts/init_harness.py` for deterministic scaffolding when creating the structure from scratch. Do not use `--force` for `brownfield` or `existing-harness` unless the user explicitly confirms overwriting harness files.
 
-### 3. Specify
+For `greenfield`, fill `harness/context/project-brief.md` and `harness/context/initialization-notes.md` from the user idea and discovered facts.
+
+For `brownfield`, fill `harness/context/repo-map.md`, `architecture.md`, `coding-conventions.md`, `dependency-notes.md`, `tools/commands.md`, and `initialization-notes.md` from repository evidence.
+
+For `existing-harness`, update only missing or clearly stale harness files. Preserve existing `AGENTS.md`, README, CI, tests, and code conventions unless the user confirms a rewrite.
+
+### 4. Refine
+
+For raw product ideas, vague project concepts, or early feature directions, use `idea-refine` before writing a spec. Save the one-page concept in the active run directory when the user confirms:
+
+```text
+harness/runs/YYYY-MM-DD-short-task-name/idea.md
+```
+
+The refined idea should define the problem statement, recommended direction, key assumptions, MVP scope, not-doing list, and open questions.
+
+For `greenfield`, a one-sentence idea should normally produce both `idea.md` and an executable `spec.md`. Do not silently choose a technology stack; record missing stack decisions in the spec or make choosing the stack the first planned task.
+
+### 5. Specify
 
 For non-trivial tasks, use `spec-driven-development`. Save the resulting task contract in the active run directory:
 
@@ -52,7 +84,7 @@ harness/runs/YYYY-MM-DD-short-task-name/spec.md
 
 The spec must define goal, scope, non-goals, acceptance criteria, verification, and open questions.
 
-### 4. Plan
+### 6. Plan
 
 After the spec is clear, use `planning-and-task-breakdown`. Save the implementation plan in:
 
@@ -62,40 +94,42 @@ harness/runs/YYYY-MM-DD-short-task-name/plan.md
 
 Tasks should be small, ordered by dependency, and include verification steps.
 
-### 5. Execute
+### 7. Execute
 
 Implement against the active run only:
 
-- Read `Agents.md`
+- Read `AGENTS.md`
+- Read the active run's `idea.md` when present
 - Read the active run's `spec.md` and `plan.md`
 - Load only the needed files under `harness/context/`
 - Check `harness/guardrails/` before edits
 - Keep code changes scoped to the current spec
 
-### 6. Verify
+### 8. Verify
 
 Run commands from `harness/tools/commands.md` and record results in `execution-log.md`.
 
 For browser projects, use `browser-testing-with-devtools` after implementation to inspect the app in a real browser, including console errors, network failures, layout issues, and relevant screenshots.
 
-### 7. Record
+### 9. Record
 
 Each task run should use this structure:
 
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/
 ├── input.md
+├── idea.md
 ├── spec.md
 ├── plan.md
 ├── execution-log.md
 └── evaluation.md
 ```
 
-Record changed files, commands run, verification results, unresolved risks, and whether each acceptance criterion passed.
+Use `idea.md` only when `idea-refine` was part of the run. Record changed files, commands run, verification results, unresolved risks, and whether each acceptance criterion passed.
 
-### 8. Improve
+### 10. Improve
 
-After each run, update the harness if the run exposed a gap:
+After each run, review whether the harness itself needs improvement. Treat this as controlled maintenance of canonical harness files:
 
 - Missing or stale context
 - Unclear commands
@@ -103,12 +137,15 @@ After each run, update the harness if the run exposed a gap:
 - Ambiguous evaluation criteria
 - Repeated agent mistakes
 
-Update harness files, not unrelated application code, during this improvement phase.
+For normal feature or bugfix runs, propose harness updates first and apply them only when the user approves or the project workflow explicitly allows harness maintenance. When the user asks to initialize, refine, or improve the harness, update the relevant harness files directly from evidence.
+
+Update harness files, not unrelated application code, during this improvement phase. Keep changes small and traceable to the latest run, repository facts, or user-confirmed decisions.
 
 ## Related Skills
 
 Read `references/related-skills.md` when deciding how this skill composes with existing skills. In short:
 
+- Use bundled `idea-refine` for the Idea layer when a request is still exploratory.
 - Use bundled `spec-driven-development` for the Spec layer.
 - Use bundled `planning-and-task-breakdown` for the Plan and Tasks layer.
 - Use bundled `browser-testing-with-devtools` for browser verification when the runtime tools are available.

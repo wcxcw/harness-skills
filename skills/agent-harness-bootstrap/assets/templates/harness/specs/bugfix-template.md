@@ -1,5 +1,10 @@
 # Bugfix Spec Template
 
+## Context Source
+
+- Source: [user input | bug report | brownfield audit | existing spec]
+- Initialization mode: [greenfield | brownfield | existing-harness]
+
 ## Problem
 
 [What is broken? Include observed behavior and expected behavior.]
@@ -28,6 +33,10 @@
 ## Verification
 
 - [ ] [Command or manual check]
+
+## Context Updates
+
+- [Project-level conventions, commands, guardrails, or context that may need to be added or changed. Use "None" if not needed.]
 
 ## Open Questions
 

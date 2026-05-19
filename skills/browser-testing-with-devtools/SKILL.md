@@ -21,26 +21,13 @@ Use Chrome DevTools MCP to give your agent eyes into the browser. This bridges t
 
 **When NOT to use:** Backend-only changes, CLI tools, or code that doesn't run in a browser.
 
-## Setting Up Chrome DevTools MCP
+## Runtime Availability
 
-### Installation
+Use the browser or Chrome DevTools tools available in the current Codex environment. If no compatible browser automation or DevTools MCP runtime is available, record that browser verification was unavailable and fall back to command-based checks plus manual verification steps.
 
-```bash
-# Add Chrome DevTools MCP server to your Claude Code config
-# In your project's .mcp.json or Claude Code settings:
-{
-  "mcpServers": {
-    "chrome-devtools": {
-      "command": "npx",
-      "args": ["@anthropic/chrome-devtools-mcp@latest"]
-    }
-  }
-}
-```
+### Available Tool Categories
 
-### Available Tools
-
-Chrome DevTools MCP provides these capabilities:
+Browser and DevTools runtimes may provide these capabilities:
 
 | Tool | What It Does | When to Use |
 |------|-------------|-------------|

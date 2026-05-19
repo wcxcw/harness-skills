@@ -9,6 +9,16 @@ description: Breaks work into ordered tasks. Use when you have a spec or clear r
 
 Decompose work into small, verifiable tasks with explicit acceptance criteria. Good task breakdown is the difference between an agent that completes work reliably and one that produces a tangled mess. Every task should be small enough to implement, test, and verify in a single focused session.
 
+## Harness Output
+
+Save the final implementation plan to the active harness run:
+
+```text
+harness/runs/YYYY-MM-DD-short-task-name/plan.md
+```
+
+If no active run exists, create or ask for the intended run directory under `harness/runs/` before saving. Do not create a separate documentation directory for this skill's output.
+
 ## When to Use
 
 - You have a spec and need to break it into implementable units
