@@ -8,16 +8,13 @@ Harness Engineering gives agents a controlled project workspace: clear specs, cu
 
 ## What This Pack Does
 
-Use this pack when you want Codex to:
+This pack creates and maintains an Agent Harness environment for a project:
 
-- Create or update a project-level `AGENTS.md`
-- Scaffold a `harness/` directory
-- Initialize either a new project, an existing codebase, or an existing harness
-- Refine raw ideas into focused one-page concepts
-- Turn requests into specs before coding
-- Break specs into small, verifiable tasks
-- Run implementation work through explicit guardrails
-- Record each agent run for review and iteration
+- Generate a project-level `AGENTS.md` and `harness/` workspace
+- Support new projects, existing codebases, and existing harnesses
+- Keep ideas, specs, plans, execution records, verification, and evaluation inside the harness workflow
+
+Harness maintenance is agent-assisted: after each run, the agent can propose or apply targeted harness updates from run evidence and user-confirmed decisions. It does not perform background or automatic upgrades.
 
 The intended flow is:
 
