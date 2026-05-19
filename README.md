@@ -1,5 +1,7 @@
 # Harness Skills
 
+[中文](README.zh-CN.md)
+
 A Codex skill pack for applying Harness Engineering to real software projects.
 
 Harness Engineering gives agents a controlled project workspace: clear specs, curated context, approved tools, feedback loops, guardrails, evaluations, and persistent run records. This pack bundles the skills needed to initialize and operate that workflow.

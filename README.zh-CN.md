@@ -1,8 +1,14 @@
 # Harness Skills
 
+[English](README.md)
+
 这是一个用于在真实软件项目中实践 Harness Engineering 的 Codex Skill Pack。
 
 Harness Engineering 的目标，是给 Agent 提供一个受控的项目工作环境：明确的规格、经过整理的上下文、可执行的工具、反馈闭环、安全边界、评估标准，以及可复盘的运行记录。这个 Skill Pack 把初始化和运行这套流程所需的 Skill 打包在一起。
+
+## 延伸阅读
+
+- [Harness Engineering 介绍](docs/Harness%20Engineering.zh-CN.md)
 
 ## 这个 Skill Pack 能做什么
 
