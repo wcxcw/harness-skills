@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Harness Bootstrap"
+  short_description: "Initialize and operate project-level Agent Harness workflows."
+  default_prompt: "Initialize an Agent Harness for this project."
