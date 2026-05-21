@@ -11,6 +11,15 @@ Use this skill to bootstrap and operate an Agent Harness: a controlled loop that
 
 This is an orchestration skill. Do not duplicate the full workflows of related skills. Use this skill to create the project harness and route work to the right supporting skill when needed.
 
+## Operating Principles
+
+- Clarify before coding: turn vague requests into explicit goals, constraints, and success criteria.
+- Spec before implementation: non-trivial work needs a run-level spec before code changes.
+- Plan into small verifiable tasks: each task should have scope, likely files, dependencies, and verification.
+- Evidence before completion: do not claim completion without commands, checks, or a documented reason verification was skipped.
+- Keep scope small: prefer the simplest change that satisfies the spec; avoid unrelated refactors or speculative abstractions.
+- Improve the harness from evidence: repeated failures, missing commands, stale context, or weak guardrails should feed back into canonical harness files.
+
 ## Workflow
 
 ### 1. Choose Initialization Mode

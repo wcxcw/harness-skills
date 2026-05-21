@@ -36,7 +36,7 @@ Use when:
 Expected harness outputs:
 
 - `harness/runs/<run>/spec.md`
-- Clear goal, scope, non-goals, success criteria, acceptance criteria, verification commands, and open questions.
+- Clear goal, scope, non-goals, success criteria, acceptance criteria, required evidence, verification commands, and open questions.
 
 ## planning-and-task-breakdown
 
@@ -53,4 +53,4 @@ Use when:
 Expected harness outputs:
 
 - `harness/runs/<run>/plan.md`
-- Ordered tasks with dependencies, acceptance criteria, verification steps, likely files, and checkpoints.
+- Ordered tasks with dependencies, acceptance criteria, required evidence, verification steps, likely files, and checkpoints.

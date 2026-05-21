@@ -30,6 +30,10 @@
 - [ ] [Command or manual check]
 - [ ] [Command or manual check]
 
+## Evidence Required
+
+- [Command output, test result, manual check, or artifact needed before this can be called complete.]
+
 ## Context Updates
 
 - [Project-level conventions, commands, guardrails, or context that may need to be added or changed. Use "None" if not needed.]

@@ -31,6 +31,14 @@ If no active run exists, create or ask for the intended run directory under `har
 
 ## The Planning Process
 
+### Planning Principles
+
+- Plan from the validated spec, not from memory.
+- Keep tasks small enough to implement and verify in one focused session.
+- Include likely files so scope is explicit before editing starts.
+- Include evidence for every task: command, test, manual check, or artifact.
+- Prefer the smallest implementation path that satisfies the spec.
+
 ### Step 1: Enter Plan Mode
 
 Before writing any code, operate in read-only mode:
@@ -103,6 +111,8 @@ Each task follows this structure:
 - [ ] Tests pass: `npm test -- --grep "feature-name"`
 - [ ] Build succeeds: `npm run build`
 - [ ] Manual check: [description of what to verify]
+
+**Evidence required:** [Command output, test result, manual check, or artifact]
 
 **Dependencies:** [Task numbers this depends on, or "None"]
 
@@ -227,6 +237,7 @@ Before starting implementation, confirm:
 
 - [ ] Every task has acceptance criteria
 - [ ] Every task has a verification step
+- [ ] Every task defines required evidence
 - [ ] Task dependencies are identified and ordered correctly
 - [ ] No task touches more than ~5 files
 - [ ] Checkpoints exist between major phases

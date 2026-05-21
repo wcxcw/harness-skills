@@ -34,6 +34,10 @@
 
 - [ ] [Command or manual check]
 
+## Evidence Required
+
+- [Reproduction result, regression test, command output, or manual check needed before this can be called fixed.]
+
 ## Context Updates
 
 - [Project-level conventions, commands, guardrails, or context that may need to be added or changed. Use "None" if not needed.]

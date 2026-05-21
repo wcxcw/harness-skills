@@ -44,6 +44,15 @@ harness/runs/YYYY-MM-DD-short-task-name/
 
 Use `idea.md` only when the task started as a raw idea and used `idea-refine`.
 
+## Operating Principles
+
+- Clarify before coding: convert vague requests into explicit goals, constraints, and success criteria.
+- Spec before implementation: use the active run's `spec.md` for non-trivial work.
+- Plan into small verifiable tasks: each task should include scope, likely files, dependencies, and verification.
+- Evidence before completion: record commands, checks, failures, and skipped verification in the active run.
+- Keep scope small: avoid unrelated refactors, speculative abstractions, and behavior outside the spec.
+- Improve the harness from evidence: feed repeated failures or missing context back into canonical harness files.
+
 ## Agent Workflow
 
 1. Determine the initialization mode from `harness/context/initialization-notes.md`.
@@ -53,7 +62,7 @@ Use `idea.md` only when the task started as a raw idea and used `idea-refine`.
 5. Check guardrails before editing.
 6. Execute one small task at a time.
 7. Run approved verification commands.
-8. Record results in the run directory.
+8. Record evidence in the run directory before claiming completion.
 9. Update evaluation before handoff.
 10. Review `Context Updates`, `execution-log.md`, and `evaluation.md` for harness gaps.
 11. Update canonical harness files only when the user asked for harness maintenance, the active workflow explicitly allows it, or the update is a factual correction from repository evidence. Otherwise, list proposed harness updates for confirmation.

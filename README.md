@@ -16,6 +16,14 @@ This pack creates and maintains an Agent Harness environment for a project:
 
 Harness maintenance is agent-assisted: after each run, the agent can propose or apply targeted harness updates from run evidence and user-confirmed decisions.
 
+Core principles:
+
+- Clarify before coding.
+- Spec before implementation.
+- Plan work into small verifiable tasks.
+- Require evidence before completion.
+- Feed run results back into the harness.
+
 The intended flow is:
 
 ```text

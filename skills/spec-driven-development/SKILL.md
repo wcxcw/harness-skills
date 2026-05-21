@@ -30,6 +30,14 @@ This skill creates a run-level executable spec. It may reference or summarize pr
 - If the spec discovers a missing or changed project-level rule, record it in `Context Updates` or `Open Questions`.
 - Do not modify canonical harness files during spec writing unless the user asked for harness maintenance or the active project workflow explicitly allows it.
 
+## Spec Principles
+
+- Clarify before coding: turn vague intent into explicit objective, scope, constraints, and success criteria.
+- Confirm assumptions early: list material assumptions before locking the spec.
+- Define evidence before implementation: every spec needs verification or manual evidence that can prove completion.
+- Keep scope small: state non-goals clearly and avoid speculative future work.
+- Feed harness gaps forward: missing commands, unclear conventions, or weak guardrails belong in `Context Updates`.
+
 ## When to Use
 
 - Starting a new project or feature
@@ -131,6 +139,9 @@ Don't silently fill in ambiguous requirements. The spec's entire purpose is to s
 ## Success Criteria
 [How we'll know this is done — specific, testable conditions]
 
+## Evidence Required
+[Command output, test result, manual check, or artifact needed before this can be called complete.]
+
 ## Context Updates
 [Project-level conventions, commands, or guardrails that may need to be added or changed.]
 
@@ -220,5 +231,6 @@ Before proceeding to implementation, confirm:
 - [ ] The spec covers all six core areas
 - [ ] The human has reviewed and approved the spec
 - [ ] Success criteria are specific and testable
+- [ ] Required evidence is defined
 - [ ] Boundaries (Always/Ask First/Never) are defined
 - [ ] The spec is saved to the active `harness/runs/.../spec.md`

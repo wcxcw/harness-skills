@@ -8,6 +8,13 @@ Use this file to define the expected verification process.
 - [ ] Relevant tests pass.
 - [ ] Build command passes, if available.
 
+## Evidence Required
+
+- [ ] Record each command or manual check that was run.
+- [ ] Record the result of each check.
+- [ ] Explain any skipped check.
+- [ ] Do not mark work complete when verification is missing or failing unless the risk is explicitly documented.
+
 ## Project-Specific Verification
 
 - [ ] Run any domain-specific checks discovered from the project.
