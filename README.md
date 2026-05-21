@@ -25,10 +25,10 @@ Harness Engineering gives agents a controlled workspace: specs, curated context,
 
 | Skill | Purpose |
 | --- | --- |
-| `agent-harness` | Main orchestration skill for initializing, running, and maintaining the harness. |
-| `idea-refine` | Converts raw ideas into a compact `idea.md` brief. |
-| `spec-driven-development` | Converts unclear work into a run-level `spec.md`. |
-| `task-planning` | Converts an accepted spec into scoped, ordered tasks in `plan.md`. |
+| [`agent-harness`](skills/agent-harness/SKILL.md) | Main orchestration skill for initializing, running, and maintaining the harness. |
+| [`idea-refine`](skills/idea-refine/SKILL.md) | Converts raw ideas into a compact `idea.md` brief. |
+| [`spec-driven-development`](skills/spec-driven-development/SKILL.md) | Converts unclear work into a run-level `spec.md`. |
+| [`task-planning`](skills/task-planning/SKILL.md) | Converts an accepted spec into scoped, ordered tasks in `plan.md`. |
 
 ## Usage
 
@@ -88,32 +88,35 @@ skills/agent-harness/assets/templates/
 
 ## Generated Harness
 
+Default scaffold uses the minimal `core` profile:
+
 ```text
-AGENTS.md
-harness/
-├── specs/
-│   ├── feature-template.md
-│   └── bugfix-template.md
+AGENTS.md                         Project agent entry and harness index
+harness/                          Project-level agent harness workspace
 ├── context/
-│   ├── project-brief.md
-│   ├── initialization-notes.md
-│   ├── repo-map.md
-│   ├── architecture.md
-│   ├── coding-conventions.md
-│   └── dependency-notes.md
+│   ├── project-brief.md          Project idea, users, goals, MVP, assumptions
+│   └── initialization-notes.md    Mode, discovered facts, unknowns, decisions
 ├── tools/
-│   ├── commands.md
-│   └── verification.md
+│   └── commands.md               Approved project commands and their sources
+├── feedback/
+│   └── verification.md           Verification process and evidence rules
 ├── guardrails/
-│   ├── permissions.md
-│   ├── boundaries.md
-│   └── rollback.md
+│   └── boundaries.md             Scope, permission, and safety boundaries
 ├── evals/
-│   ├── acceptance-checklist.md
-│   ├── regression-checklist.md
-│   └── task-scorecard.md
+│   └── task-scorecard.md         Completion, quality, risk, and harness feedback
 └── runs/
+    └──                           Per-task run records
 ```
+
+Optional expansions are created only when needed:
+
+| Profile / Need | Additional Files |
+| --- | --- |
+| `brownfield` | `harness/context/repo-map.md`, `harness/context/architecture.md`, `harness/context/coding-conventions.md`, `harness/context/dependency-notes.md` |
+| Expanded guardrails | `harness/guardrails/permissions.md`, `harness/guardrails/rollback.md` |
+| Expanded evals | `harness/evals/acceptance-checklist.md`, `harness/evals/regression-checklist.md` |
+| Spec templates | `harness/specs/feature-template.md`, `harness/specs/bugfix-template.md` |
+| `full` | All bundled templates |
 
 ## Run Records
 

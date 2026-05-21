@@ -111,9 +111,9 @@ Harness Engineering
 
 - **Spec**：把需求变成可验收规格，内容包括目标、边界、非目标、验收标准、测试方式。
 
-- **Context**：给 Agent 稳定上下文，不要每次把整个代码库塞给 Agent，而是维护Agents.md文件
+- **Context**：给 Agent 稳定上下文，不要每次把整个代码库塞给 Agent，而是维护 AGENTS.md 文件
 
-  通常建议做法是将Agents.md拆分，Agents.md文件只做索引目录，实现**渐进式披露**，按需加载。主要指向以下文件
+  通常建议做法是将 AGENTS.md 拆分，AGENTS.md 文件只做索引目录，实现**渐进式披露**，按需加载。主要指向以下文件
 
   ```markdown
   repo-map.md              代码结构说明
@@ -212,7 +212,8 @@ harness/
 │   ├── coding-conventions.md
 │   └── dependency-notes.md
 ├── tools/
-│   ├── commands.md
+│   └── commands.md
+├── feedback/
 │   └── verification.md
 ├── guardrails/
 │   ├── permissions.md
@@ -236,4 +237,3 @@ harness/runs/YYYY-MM-DD-short-task-name/
 ├── execution-log.md
 └── evaluation.md
 ```
-

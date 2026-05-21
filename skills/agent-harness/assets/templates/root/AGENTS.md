@@ -6,28 +6,27 @@ This file is the index for the project Agent Harness. It points agents and human
 
 | Layer | Purpose | File |
 | --- | --- | --- |
-| Spec | Feature task template | [harness/specs/feature-template.md](harness/specs/feature-template.md) |
-| Spec | Bugfix task template | [harness/specs/bugfix-template.md](harness/specs/bugfix-template.md) |
 | Context | Project brief | [harness/context/project-brief.md](harness/context/project-brief.md) |
 | Context | Initialization notes | [harness/context/initialization-notes.md](harness/context/initialization-notes.md) |
-| Context | Repository map | [harness/context/repo-map.md](harness/context/repo-map.md) |
-| Context | Architecture notes | [harness/context/architecture.md](harness/context/architecture.md) |
-| Context | Coding conventions | [harness/context/coding-conventions.md](harness/context/coding-conventions.md) |
-| Context | Dependency notes | [harness/context/dependency-notes.md](harness/context/dependency-notes.md) |
 | Tools | Approved commands | [harness/tools/commands.md](harness/tools/commands.md) |
-| Tools | Verification process | [harness/tools/verification.md](harness/tools/verification.md) |
+| Feedback | Verification process | [harness/feedback/verification.md](harness/feedback/verification.md) |
 | Feedback | Run records | [harness/runs/](harness/runs/) |
-| Guardrails | Permission rules | [harness/guardrails/permissions.md](harness/guardrails/permissions.md) |
 | Guardrails | Work boundaries | [harness/guardrails/boundaries.md](harness/guardrails/boundaries.md) |
-| Guardrails | Rollback process | [harness/guardrails/rollback.md](harness/guardrails/rollback.md) |
-| Evaluation | Acceptance checklist | [harness/evals/acceptance-checklist.md](harness/evals/acceptance-checklist.md) |
-| Evaluation | Regression checklist | [harness/evals/regression-checklist.md](harness/evals/regression-checklist.md) |
 | Evaluation | Task scorecard | [harness/evals/task-scorecard.md](harness/evals/task-scorecard.md) |
+
+## Optional Harness Files
+
+Create these only when the project needs them:
+
+- Brownfield context: `harness/context/repo-map.md`, `harness/context/architecture.md`, `harness/context/coding-conventions.md`, `harness/context/dependency-notes.md`
+- Extra guardrails: `harness/guardrails/permissions.md`, `harness/guardrails/rollback.md`
+- Extra evals: `harness/evals/acceptance-checklist.md`, `harness/evals/regression-checklist.md`
+- Spec templates: `harness/specs/feature-template.md`, `harness/specs/bugfix-template.md`
 
 ## Initialization Mode
 
 - `greenfield`: New project or one-sentence project idea. Start from `project-brief.md`, `initialization-notes.md`, and the active run's `idea.md` when present.
-- `brownfield`: Existing codebase. Start from `harness/context/*`, existing README/config/CI/package files, then the active run.
+- `brownfield`: Existing codebase. Start from available `harness/context/*`, existing README/config/CI/package files, then the active run.
 - `existing-harness`: Existing `AGENTS.md` or `harness/`. Preserve current harness content unless the user asks for a rewrite.
 
 ## Run Convention

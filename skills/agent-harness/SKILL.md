@@ -49,26 +49,40 @@ If a command is unknown, mark it as `Unknown` or `Not applicable` in `harness/to
 
 ### 3. Bootstrap
 
-Create or update these files from `assets/templates/`:
+Create or update the minimal harness from `assets/templates/`:
 
 ```text
 AGENTS.md
 harness/
-├── specs/
 ├── context/
+│   ├── project-brief.md
+│   └── initialization-notes.md
 ├── tools/
+│   └── commands.md
+├── feedback/
+│   └── verification.md
 ├── guardrails/
+│   └── boundaries.md
 ├── evals/
+│   └── task-scorecard.md
 └── runs/
 ```
 
-Use `scripts/init_harness.py` for deterministic scaffolding when creating the structure from scratch. Do not use `--force` for `brownfield` or `existing-harness` unless the user explicitly confirms overwriting harness files.
+Use `scripts/init_harness.py` for deterministic scaffolding when creating the structure from scratch:
+
+- `--profile core` (default): minimal harness for new projects and general use.
+- `--profile brownfield`: core plus repository context files for existing codebases.
+- `--profile full`: every bundled template; use only when the user wants the expanded harness.
+
+Do not use `--force` for `brownfield` or `existing-harness` unless the user explicitly confirms overwriting harness files.
 
 For `greenfield`, fill `harness/context/project-brief.md` and `harness/context/initialization-notes.md` from the user idea and discovered facts.
 
-For `brownfield`, fill `harness/context/repo-map.md`, `architecture.md`, `coding-conventions.md`, `dependency-notes.md`, `tools/commands.md`, and `initialization-notes.md` from repository evidence.
+For `brownfield`, use `--profile brownfield` when project context files are useful, then fill `harness/context/repo-map.md`, `architecture.md`, `coding-conventions.md`, `dependency-notes.md`, `tools/commands.md`, and `initialization-notes.md` from repository evidence.
 
 For `existing-harness`, update only missing or clearly stale harness files. Preserve existing `AGENTS.md`, README, CI, tests, and code conventions unless the user confirms a rewrite.
+
+Create optional files only when they remove real ambiguity or support a project need. Do not expand the harness just because templates exist.
 
 ### 4. Refine
 
