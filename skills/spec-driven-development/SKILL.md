@@ -9,6 +9,10 @@ Create the task contract before implementation. The spec defines what will chang
 
 This skill only owns `spec.md`. Planning belongs to `task-planning`; execution belongs to the active harness run.
 
+## Output Language
+
+Use the user's main language for `spec.md`. If the user request or active harness context is Chinese, write the spec in Chinese. Keep code identifiers, commands, file paths, package names, framework names, and external service names in their original language.
+
 ## Harness Output
 
 Save the final spec to the active harness run:
@@ -52,6 +56,8 @@ This skill creates a run-level executable spec. It may reference project-level r
 8. Ask the user to confirm the spec before planning or implementation.
 
 Do not generate an implementation plan in this skill. If the spec is accepted, use `task-planning` next.
+
+For greenfield or content-driven work, do not convert unresolved decisions into "assumptions" just to continue. If the target user, product shape, content/data strategy, update model, information architecture, technology stack, or core approach is not confirmed, mark it as `Needs decision` and stop before planning implementation.
 
 ## Spec Template
 

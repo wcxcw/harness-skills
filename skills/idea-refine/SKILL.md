@@ -9,6 +9,10 @@ Turn a raw idea into a concise `idea.md` that can feed `spec-driven-development`
 
 This skill is intentionally lightweight by default. Use the advanced references only when the user explicitly asks for broader ideation, alternatives, or stress-testing.
 
+## Output Language
+
+Use the user's main language for `idea.md`. If the user describes the idea in Chinese, write the brief and clarifying questions in Chinese. Keep code identifiers, product names, API names, file paths, and technology names in their original language.
+
 ## Harness Output
 
 Save the final brief to the active harness run:
@@ -24,7 +28,7 @@ If no active run exists, create or ask for the intended run directory under `har
 Use this path for harness initialization, greenfield projects, and short feature ideas.
 
 1. Restate the idea as a clear problem statement.
-2. Ask clarifying questions when product shape is unclear. For vague product ideas, ask enough to identify target user, content/data scope, core user experience, success criteria, constraints, technology stack, and core approach.
+2. Ask clarifying questions when product shape is unclear. For vague product ideas, ask at most 5 focused questions to identify target user, first-version shape, content/data scope, core user experience, success criteria, constraints, technology stack, and core approach.
 3. Identify the target user, desired outcome, content/data sources, core workflow, constraints, preferred stack, core approach, and key assumptions.
 4. Propose 1 recommended direction and, only if useful, 1-2 alternatives.
 5. Define the smallest MVP that tests the core assumption.
@@ -32,6 +36,18 @@ Use this path for harness initialization, greenfield projects, and short feature
 7. Ask the user to confirm before saving `idea.md` or moving to spec.
 
 Do not run a full brainstorming workshop by default. The goal is a buildable brief, not a large idea catalogue.
+
+For one-sentence greenfield ideas, do not silently fill major product or technical choices. Ask first, or mark the item as `Needs decision` and keep implementation blocked until the decision is resolved.
+
+## Guided Questions
+
+Use these as the default question set for one-sentence greenfield ideas. Adapt wording to the user's language and project type.
+
+1. Who is the target user, and what frequent problem should this solve?
+2. What should the first version be: website, dashboard, tool, API, automation, backend service, or something else?
+3. What content, data sources, inputs, outputs, or update cadence does the first version need?
+4. What technology stack, runtime, deployment target, or "must not use" constraints should be respected?
+5. What counts as success for the first version, and what is explicitly out of scope?
 
 ## Advanced Mode
 

@@ -16,6 +16,7 @@ Harness Engineering gives agents a controlled workspace: specs, curated context,
 ## Core Principles
 
 - Clarify before coding
+- Follow the user's and project's language; Chinese prompts should produce Chinese harness files by default
 - Confirm product shape and content/data scope before implementation
 - Confirm technology stack and core approach before implementation
 - Spec before implementation
@@ -41,6 +42,8 @@ Use one of these prompts. `agent-harness` chooses `greenfield`, `brownfield`, or
 ```text
 Use agent-harness to start a new project from this idea: a lightweight habit tracker for remote teams.
 ```
+
+For a one-sentence idea, `agent-harness` should first ask focused questions about target users, product shape, content/data, technology choices, and success criteria. It should not start coding immediately.
 
 ### Existing Project
 
@@ -87,6 +90,24 @@ skills/agent-harness/assets/templates/
 | `greenfield` | Empty project or one-sentence project idea | Refine the idea when needed, create a project brief, then produce an executable spec and plan. |
 | `brownfield` | Existing source code, manifests, tests, CI, or README | Run read-only discovery, document facts, and add harness files conservatively. |
 | `existing-harness` | `AGENTS.md` or `harness/` already exists | Preserve existing harness content, fill gaps, and avoid overwriting conventions. |
+
+## Output Language
+
+- If the user describes the project in Chinese, generated `AGENTS.md`, `harness/context/*`, `idea.md`, `spec.md`, `plan.md`, and run records should default to Chinese.
+- Commands, paths, package names, framework names, and API names stay in their original language.
+- Existing projects should respect the established documentation language when it is consistent.
+
+The scaffold script can use Chinese templates explicitly:
+
+```text
+python3 skills/agent-harness/scripts/init_harness.py --project /path/to/project --profile core --language zh-CN
+```
+
+## Guided Initialization
+
+One-sentence greenfield ideas should be clarified before implementation. `agent-harness` routes this to [`idea-refine`](skills/idea-refine/SKILL.md), which owns the focused question set.
+
+After the answers, generate or update `project-brief.md`, `idea.md`, `spec.md`, and `plan.md`. If a key decision is still unresolved, make it the first non-coding task in `plan.md`.
 
 ## Generated Harness
 

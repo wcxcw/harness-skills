@@ -14,6 +14,7 @@ This is an orchestration skill. Do not duplicate the full workflows of related s
 ## Operating Principles
 
 - Clarify before coding: turn vague requests into explicit goals, constraints, and success criteria.
+- Follow the user's language: if the user works in Chinese, generate harness files, run records, specs, plans, and explanations in Chinese unless the project already uses another language.
 - Confirm product shape before implementation: target audience, core workflow, information architecture, content/data sources, update model, and MVP quality bar must be explicit for product or content-driven projects.
 - Confirm blocking decisions before implementation: technology stack, runtime, data model, core architecture, external services, deployment target, and major UX/platform choices must be confirmed or explicitly deferred as non-coding decision tasks.
 - Spec before implementation: non-trivial work needs a run-level spec before code changes.
@@ -34,7 +35,27 @@ Choose one mode before scaffolding or updating harness files:
 
 For `existing-harness`, preserve existing harness content by default. Add missing files, refresh stale placeholders, and propose larger rewrites only when the user asks.
 
-### 2. Discover
+### 2. Choose Output Language
+
+Choose the harness language before writing files:
+
+- Use the user's main language for generated harness content.
+- If the user prompt is Chinese, use Chinese for `AGENTS.md`, `harness/context/*`, run records, `idea.md`, `spec.md`, `plan.md`, `execution-log.md`, and `evaluation.md`.
+- Keep code identifiers, commands, file paths, package names, framework names, and API names in their original language.
+- For `brownfield`, prefer the existing project documentation language when it is consistent. If the user language and project language differ, use the user language for new run records and keep references to existing files unchanged.
+- When scaffolding Chinese files with the script, pass `--language zh-CN`. Use `--language en` only when the project or user clearly prefers English.
+
+### 3. Guided Initialization Gate
+
+Use guided initialization before implementation when the project has only a short idea, the product shape is unclear, or blocking decisions are missing.
+
+Use `idea-refine` for the actual clarifying questions and `idea.md` output. Do not duplicate that workflow in this skill.
+
+Do not write application code after asking the `idea-refine` questions. Wait for the user's answers, then update `project-brief.md` and `initialization-notes.md`, create or update `idea.md`, and proceed to spec only when the blocking decisions are answered or explicitly deferred as a non-coding decision task.
+
+For content-driven products such as news, directories, dashboards, or curated feeds, this gate is required unless the user already provided content categories, source strategy, update cadence, ranking/filtering, page structure, and MVP quality bar.
+
+### 4. Discover
 
 Inspect the target project before writing harness files:
 
@@ -51,7 +72,7 @@ For `brownfield`, use read-only discovery first. Prefer existing project facts o
 
 If a command is unknown, mark it as `Unknown` or `Not applicable` in `harness/tools/commands.md`; do not invent commands.
 
-### 3. Bootstrap
+### 5. Bootstrap
 
 Create or update the minimal harness from `assets/templates/`:
 
@@ -77,6 +98,9 @@ Use `scripts/init_harness.py` for deterministic scaffolding when creating the st
 - `--profile core` (default): minimal harness for new projects and general use.
 - `--profile brownfield`: core plus repository context files for existing codebases.
 - `--profile full`: every bundled template; use only when the user wants the expanded harness.
+- `--language zh-CN`: Chinese harness templates.
+- `--language en`: English harness templates.
+- `--language auto` (default): follows process locale; prefer explicit `zh-CN` when the user prompt is Chinese.
 
 Do not use `--force` for `brownfield` or `existing-harness` unless the user explicitly confirms overwriting harness files.
 
@@ -88,7 +112,7 @@ For `existing-harness`, update only missing or clearly stale harness files. Pres
 
 Create optional files only when they remove real ambiguity or support a project need. Do not expand the harness just because templates exist.
 
-### 4. Refine
+### 6. Refine
 
 For raw product ideas, vague project concepts, or early feature directions, use `idea-refine` before writing a spec. Save the one-page concept in the active run directory when the user confirms:
 
@@ -100,7 +124,7 @@ The refined idea should define the problem statement, recommended direction, key
 
 For `greenfield`, a one-sentence idea should normally produce both `idea.md` and an executable `spec.md`. Do not silently choose product shape, content scope, information architecture, technology stack, or core implementation approach. If product, technology, or architecture decisions are missing, ask the user before planning implementation, or make choosing them the first non-coding task.
 
-### 5. Specify
+### 7. Specify
 
 For non-trivial tasks, use `spec-driven-development`. Save the resulting task contract in the active run directory:
 
@@ -124,7 +148,7 @@ Before moving to planning, block on unresolved decisions that would materially a
 
 If the user does not want to decide yet, record the decision in `Open Questions` and make it the first task in `plan.md`. Do not write application code before that decision task is resolved.
 
-### 6. Plan
+### 8. Plan
 
 After the spec is clear, use `task-planning`. Save the implementation plan in:
 
@@ -136,7 +160,7 @@ Tasks should be small, ordered by dependency, and include verification steps.
 
 Do not proceed to execution if `spec.md` or `plan.md` contains unresolved blocking questions. Resolve them with the user or execute only the explicit non-coding decision task.
 
-### 7. Execute
+### 9. Execute
 
 Implement against the active run only:
 
@@ -147,11 +171,11 @@ Implement against the active run only:
 - Check `harness/guardrails/` before edits
 - Keep code changes scoped to the current spec
 
-### 8. Verify
+### 10. Verify
 
 Run commands from `harness/tools/commands.md` and record results in `execution-log.md`.
 
-### 9. Record
+### 11. Record
 
 Each task run should use this structure:
 
@@ -167,7 +191,7 @@ harness/runs/YYYY-MM-DD-short-task-name/
 
 Use `idea.md` only when `idea-refine` was part of the run. Record changed files, commands run, verification results, unresolved risks, and whether each acceptance criterion passed.
 
-### 10. Improve
+### 12. Improve
 
 After each run, review whether the harness itself needs improvement. Treat this as controlled maintenance of canonical harness files:
 

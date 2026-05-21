@@ -6,6 +6,7 @@ Record how the Agent Harness was initialized and what still needs confirmation.
 
 - Initialization mode: [greenfield | brownfield | existing-harness]
 - Date initialized: [YYYY-MM-DD]
+- Output language: [Chinese | English | follow existing project]
 
 ## Evidence Used
 
@@ -34,6 +35,10 @@ Record how the Agent Harness was initialized and what still needs confirmation.
 - Data/storage: [confirmed | inferred | Not applicable | Needs decision]
 - External services: [confirmed | none | Needs decision]
 - Deployment target: [confirmed | inferred | Needs decision]
+
+## Guided Initialization Questions
+
+When the user only provides a one-sentence idea, use `idea-refine` before coding. Record the user's answers, unresolved decisions, and whether `idea.md` was created.
 
 ## Existing Project Constraints
 

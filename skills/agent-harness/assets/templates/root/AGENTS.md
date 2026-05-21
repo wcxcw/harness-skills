@@ -29,6 +29,13 @@ Create these only when the project needs them:
 - `brownfield`: Existing codebase. Start from available `harness/context/*`, existing README/config/CI/package files, then the active run.
 - `existing-harness`: Existing `AGENTS.md` or `harness/`. Preserve current harness content unless the user asks for a rewrite.
 
+## Language Policy
+
+- Use the user's main language for generated harness content.
+- If the user describes the project in Chinese, write `idea.md`, `spec.md`, `plan.md`, run records, and harness context in Chinese.
+- Keep code identifiers, commands, file paths, library names, framework names, and API names in their original language.
+- For existing projects, prefer the project's established documentation language when it is consistent.
+
 ## Run Convention
 
 ```text
@@ -53,6 +60,12 @@ Use `idea.md` only when the task started as a raw idea and used `idea-refine`.
 - Evidence before completion: record commands, checks, failures, and skipped verification in the active run.
 - Keep scope small: avoid unrelated refactors, speculative abstractions, and behavior outside the spec.
 - Improve the harness from evidence: feed repeated failures or missing context back into canonical harness files.
+
+## Guided Initialization
+
+When the project only has a one-sentence idea, product shape is unclear, technology choices are missing, or the user wants to discuss direction first, do not write application code. Use `idea-refine` to ask focused questions and produce `idea.md`.
+
+After the user answers, update `project-brief.md` and `initialization-notes.md`, then create or update `idea.md`, `spec.md`, and `plan.md`. If a blocking decision remains unresolved, make it the first non-coding task in `plan.md`.
 
 ## Implementation Gate
 

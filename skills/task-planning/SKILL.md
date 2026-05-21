@@ -9,6 +9,10 @@ Create `plan.md` from an accepted `spec.md`. The plan defines implementation ord
 
 This skill only owns `plan.md`. Do not rewrite the spec and do not implement code while planning.
 
+## Output Language
+
+Use the user's main language for `plan.md`. If the accepted spec is Chinese, write the plan in Chinese. Keep code identifiers, commands, file paths, package names, and framework names in their original language.
+
 ## Harness Output
 
 Save the final plan to the active harness run:
