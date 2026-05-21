@@ -18,6 +18,14 @@ Use this file for `greenfield` projects or early product work. Keep it short and
 
 - [Specific outcome that proves the project is working]
 
+## Content or Data Scope
+
+- [Content categories, data sources, update cadence, editorial rules, or "Needs decision"]
+
+## Core User Experience
+
+- [Primary pages, workflows, navigation model, and what makes the experience useful]
+
 ## MVP Scope
 
 - [Smallest useful version]

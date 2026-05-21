@@ -14,6 +14,7 @@ This is an orchestration skill. Do not duplicate the full workflows of related s
 ## Operating Principles
 
 - Clarify before coding: turn vague requests into explicit goals, constraints, and success criteria.
+- Confirm product shape before implementation: target audience, core workflow, information architecture, content/data sources, update model, and MVP quality bar must be explicit for product or content-driven projects.
 - Confirm blocking decisions before implementation: technology stack, runtime, data model, core architecture, external services, deployment target, and major UX/platform choices must be confirmed or explicitly deferred as non-coding decision tasks.
 - Spec before implementation: non-trivial work needs a run-level spec before code changes.
 - Plan into small verifiable tasks: each task should have scope, likely files, dependencies, and verification.
@@ -42,7 +43,9 @@ Inspect the target project before writing harness files:
 - Build, test, lint, dev, and verification commands
 - Existing documentation, CI, tests, and conventions
 
-For `greenfield`, also capture the project idea, target user, success criteria, constraints, preferred stack if provided, core implementation direction, and unknown decisions. If the user only gave a one-sentence idea, use `idea-refine` when needed to clarify user, success, constraints, technology stack, and core approach before writing the executable spec.
+For `greenfield`, also capture the project idea, target user, success criteria, constraints, product shape, preferred stack if provided, core implementation direction, and unknown decisions. If the user only gave a one-sentence idea, use `idea-refine` to clarify target audience, content/data scope, core user experience, success criteria, constraints, technology stack, and core approach before writing the executable spec.
+
+For content-driven products such as news, directories, dashboards, or curated feeds, clarify content categories, source strategy, update cadence, ranking/filtering, page structure, and MVP quality bar before implementation. Do not turn a broad content product idea into a generic demo without confirming what the user wants the experience to be.
 
 For `brownfield`, use read-only discovery first. Prefer existing project facts over generic templates, reference existing documentation and configuration, and do not replace established conventions unless the user explicitly asks.
 
@@ -95,7 +98,7 @@ harness/runs/YYYY-MM-DD-short-task-name/idea.md
 
 The refined idea should define the problem statement, recommended direction, key assumptions, MVP scope, not-doing list, and open questions.
 
-For `greenfield`, a one-sentence idea should normally produce both `idea.md` and an executable `spec.md`. Do not silently choose a technology stack or core implementation approach. If technology or architecture decisions are missing, ask the user before planning implementation, or make choosing them the first non-coding task.
+For `greenfield`, a one-sentence idea should normally produce both `idea.md` and an executable `spec.md`. Do not silently choose product shape, content scope, information architecture, technology stack, or core implementation approach. If product, technology, or architecture decisions are missing, ask the user before planning implementation, or make choosing them the first non-coding task.
 
 ### 5. Specify
 
@@ -109,6 +112,9 @@ The spec must define objective, scope, non-goals, assumptions, acceptance criter
 
 Before moving to planning, block on unresolved decisions that would materially affect implementation:
 
+- Target audience, primary use case, and success criteria
+- Content/data scope, sources, update model, and editorial or quality bar
+- Core user experience, information architecture, navigation, and key pages/views
 - Technology stack, framework, runtime, or package manager
 - Data storage, persistence model, or schema direction
 - Authentication, authorization, permissions, or identity model

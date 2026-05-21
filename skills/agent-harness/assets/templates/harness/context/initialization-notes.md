@@ -25,6 +25,10 @@ Record how the Agent Harness was initialized and what still needs confirmation.
 
 ## Blocking Decisions Before Implementation
 
+- Target audience: [confirmed | inferred | Needs decision]
+- Core use case: [confirmed | inferred | Needs decision]
+- Information architecture: [confirmed | inferred | Needs decision]
+- Content/data scope: [confirmed | inferred | Not applicable | Needs decision]
 - Technology stack: [confirmed | inferred | Needs decision]
 - Core approach: [confirmed | inferred | Needs decision]
 - Data/storage: [confirmed | inferred | Not applicable | Needs decision]

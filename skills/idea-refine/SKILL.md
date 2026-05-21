@@ -24,8 +24,8 @@ If no active run exists, create or ask for the intended run directory under `har
 Use this path for harness initialization, greenfield projects, and short feature ideas.
 
 1. Restate the idea as a clear problem statement.
-2. Ask at most 3 clarifying questions if target user, success criteria, constraints, technology stack, or core approach are unclear.
-3. Identify the target user, desired outcome, constraints, preferred stack, core approach, and key assumptions.
+2. Ask clarifying questions when product shape is unclear. For vague product ideas, ask enough to identify target user, content/data scope, core user experience, success criteria, constraints, technology stack, and core approach.
+3. Identify the target user, desired outcome, content/data sources, core workflow, constraints, preferred stack, core approach, and key assumptions.
 4. Propose 1 recommended direction and, only if useful, 1-2 alternatives.
 5. Define the smallest MVP that tests the core assumption.
 6. Make the `Not Doing` list explicit.
@@ -58,6 +58,12 @@ Even in advanced mode, prefer 3-5 strong directions over many shallow ones.
 - [Specific outcome that would make this worth building.]
 - [Specific outcome that would prove the MVP works.]
 
+## Content or Data Scope
+- [Content categories, data sources, update cadence, editorial rules, or "Needs decision".]
+
+## Core User Experience
+- [Primary pages, workflows, navigation model, and what makes the experience useful.]
+
 ## Recommended Direction
 [The chosen direction and why. Keep this to 1-2 short paragraphs.]
 
@@ -89,6 +95,7 @@ Even in advanced mode, prefer 3-5 strong directions over many shallow ones.
 ## Guardrails
 
 - Do not proceed without a target user and success criteria.
+- Do not proceed with content-driven products until content scope, source strategy, update model, and core user experience are explicit or marked `Needs decision`.
 - Do not silently choose a technology stack or core implementation approach; ask the user or record it as `Needs decision`.
 - Do not turn the idea brief into an implementation plan. Planning belongs in `plan.md`.
 - Do not over-expand a simple idea. Prefer the shortest useful path to a spec.
@@ -101,6 +108,7 @@ Before handing off to spec:
 - [ ] Problem statement is clear.
 - [ ] Target user is specific.
 - [ ] Success criteria are testable.
+- [ ] Product shape, content/data scope, and core user experience are clear or marked `Needs decision`.
 - [ ] Preferred stack and core approach are confirmed or marked `Needs decision`.
 - [ ] MVP scope is small enough to build first.
 - [ ] Key assumptions and non-goals are explicit.

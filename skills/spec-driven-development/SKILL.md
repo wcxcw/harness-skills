@@ -33,6 +33,7 @@ This skill creates a run-level executable spec. It may reference project-level r
 
 - Clarify before coding.
 - Confirm material assumptions before locking scope.
+- Block implementation when product shape, content/data scope, or core user experience is unconfirmed.
 - Block implementation when technology stack or core approach is unconfirmed.
 - Define success in testable terms.
 - Define required evidence before implementation.
@@ -43,7 +44,7 @@ This skill creates a run-level executable spec. It may reference project-level r
 
 1. Read `idea.md` when present, then relevant harness context and project facts.
 2. Restate the request as objective, scope, and non-goals.
-3. List material assumptions. Ask the user when an assumption changes product behavior, technology stack, architecture, data, security, cost, deployment, or timeline.
+3. List material assumptions. Ask the user when an assumption changes product behavior, content/data scope, information architecture, core UX, technology stack, architecture, data, security, cost, deployment, or timeline.
 4. Convert vague requirements into success criteria and acceptance criteria.
 5. Mark blocking decisions as confirmed, inferred from repository evidence, or `Needs decision`.
 6. Define verification and evidence required before completion.
@@ -78,6 +79,13 @@ Do not generate an implementation plan in this skill. If the spec is accepted, u
 ## Assumptions
 - [Assumption and whether it is confirmed, inferred, or needs confirmation.]
 
+## Product Decisions
+- Target audience: [Confirmed value, inferred from user input, or "Needs decision"]
+- Core use case: [Confirmed value or "Needs decision"]
+- Information architecture: [Key pages/views/navigation or "Needs decision"]
+- Content/data scope: [Categories, sources, update model, or "Needs decision"]
+- Quality bar: [MVP quality expectations, editorial rules, freshness, performance, or "Needs decision"]
+
 ## Technical Decisions
 - Stack/runtime: [Confirmed value, inferred project default, or "Needs decision"]
 - Core approach: [Confirmed approach, inferred project pattern, or "Needs decision"]
@@ -109,9 +117,9 @@ Do not generate an implementation plan in this skill. If the spec is accepted, u
 
 ## Blocking Questions
 
-Do not hand off to planning or implementation while a `Technical Decisions` item is `Needs decision`, unless the next plan task is explicitly a non-coding decision task.
+Do not hand off to planning or implementation while a `Product Decisions` or `Technical Decisions` item is `Needs decision`, unless the next plan task is explicitly a non-coding decision task.
 
-Blocking decisions include technology stack, runtime, framework, data model, authentication, external services, deployment target, and core user-facing behavior.
+Blocking decisions include target audience, core use case, content/data scope, information architecture, core UX, quality bar, technology stack, runtime, framework, data model, authentication, external services, deployment target, and core user-facing behavior.
 
 ## Quality Bar
 
@@ -120,6 +128,7 @@ Before handing off to planning:
 - [ ] Objective is clear.
 - [ ] Scope and non-goals are explicit.
 - [ ] Assumptions are visible.
+- [ ] Product decisions are confirmed, inferred from user input or repository evidence, or explicitly deferred as a non-coding decision task.
 - [ ] Technical decisions are confirmed, inferred from repository evidence, or explicitly deferred as a non-coding decision task.
 - [ ] Acceptance criteria are testable.
 - [ ] Verification and required evidence are defined.

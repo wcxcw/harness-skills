@@ -23,7 +23,7 @@ If no active run exists, create or ask for the intended run directory under `har
 
 - Plan from the accepted spec, not from memory.
 - Stay read-only while planning.
-- Do not plan coding tasks around unresolved blocking decisions.
+- Do not plan coding tasks around unresolved product or technical blocking decisions.
 - Keep each task small enough for one focused implementation pass.
 - Make dependencies and likely files explicit.
 - Define verification and required evidence for every task.
@@ -34,7 +34,7 @@ If no active run exists, create or ask for the intended run directory under `har
 
 1. Read the active `spec.md`, then only the harness context and source files needed to understand scope.
 2. Identify dependencies, risk, and ordering constraints.
-3. If the spec has unresolved technology, architecture, data, service, deployment, or user-flow decisions, make the first task a non-coding decision task and do not add implementation tasks that depend on it.
+3. If the spec has unresolved product shape, content/data, information architecture, technology, architecture, data, service, deployment, or user-flow decisions, make the first task a non-coding decision task and do not add implementation tasks that depend on it.
 4. Split work into small tasks. Prefer vertical slices when they reduce integration risk, but do not force a product-style phase structure.
 5. Assign likely files or modules for each task.
 6. Add verification and evidence required for each task.
@@ -102,7 +102,7 @@ Break a task down further when it touches unrelated subsystems, cannot be verifi
 
 ## Implementation Gate
 
-Do not start coding from a plan that contains unresolved blocking questions. If a decision is unresolved, the plan must begin with a non-coding task to resolve it, and dependent implementation tasks must wait.
+Do not start coding from a plan that contains unresolved blocking questions. If a product or technical decision is unresolved, the plan must begin with a non-coding task to resolve it, and dependent implementation tasks must wait.
 
 ## Quality Bar
 
@@ -116,4 +116,4 @@ Before implementation starts:
 - [ ] Dependencies are ordered correctly.
 - [ ] Large tasks are split or explicitly marked as requiring user approval.
 - [ ] Open questions are resolved or carried forward.
-- [ ] No coding task depends on an unresolved technology, architecture, data, service, deployment, or user-flow decision.
+- [ ] No coding task depends on an unresolved product shape, content/data, information architecture, technology, architecture, data, service, deployment, or user-flow decision.

@@ -46,6 +46,7 @@ Use `idea.md` only when the task started as a raw idea and used `idea-refine`.
 ## Operating Principles
 
 - Clarify before coding: convert vague requests into explicit goals, constraints, and success criteria.
+- Confirm product shape before implementation: target audience, core workflow, information architecture, content/data sources, update model, and MVP quality bar must be explicit for product or content-driven projects.
 - Confirm blocking decisions before implementation: technology stack, runtime, data model, core architecture, external services, deployment target, and major UX/platform choices must be confirmed or explicitly deferred as non-coding decision tasks.
 - Spec before implementation: use the active run's `spec.md` for non-trivial work.
 - Plan into small verifiable tasks: each task should include scope, likely files, dependencies, and verification.
@@ -55,7 +56,7 @@ Use `idea.md` only when the task started as a raw idea and used `idea-refine`.
 
 ## Implementation Gate
 
-Do not write application code when `spec.md` or `plan.md` still has unresolved blocking questions. Blocking questions include technology stack, framework, runtime, data model, authentication, external services, deployment target, and core user-facing behavior.
+Do not write application code when `spec.md` or `plan.md` still has unresolved blocking questions. Blocking questions include target audience, content/data scope, information architecture, core UX, success criteria, technology stack, framework, runtime, data model, authentication, external services, deployment target, and core user-facing behavior.
 
 If the user wants to defer a decision, make that decision the first non-coding task in `plan.md`. Resolve it before implementation tasks begin.
 
