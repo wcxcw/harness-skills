@@ -1,13 +1,13 @@
 ---
 name: spec-driven-development
-description: Creates specs before coding. Use when starting a new project, feature, or significant change and no specification exists yet. Use when requirements are unclear, ambiguous, or only exist as a vague idea.
+description: Create a run-level executable spec before implementation. Use for new projects, features, bugfixes, or significant changes when requirements, scope, acceptance criteria, or verification are not yet explicit.
 ---
 
 # Spec-Driven Development
 
-## Overview
+Create the task contract before implementation. The spec defines what will change, what will not change, how success will be judged, and what evidence is required before completion.
 
-Write a structured specification before writing any code. The spec is the shared source of truth between you and the human engineer — it defines what we're building, why, and how we'll know it's done. Code without a spec is guessing.
+This skill only owns `spec.md`. Planning belongs to `task-planning`; execution belongs to the active harness run.
 
 ## Harness Output
 
@@ -17,220 +17,95 @@ Save the final spec to the active harness run:
 harness/runs/YYYY-MM-DD-short-task-name/spec.md
 ```
 
-If no active run exists, create or ask for the intended run directory under `harness/runs/` before saving. Do not create a separate documentation directory for this skill's output.
+If no active run exists, create or ask for the intended run directory under `harness/runs/`. Do not create a separate documentation directory.
 
 ## Scope Boundary
 
-This skill creates a run-level executable spec. It may reference or summarize project-level conventions, but it does not own the canonical project rules.
+This skill creates a run-level executable spec. It may reference project-level rules, but it does not own canonical harness files.
 
-- Put the active task or feature spec in `harness/runs/YYYY-MM-DD-short-task-name/spec.md`.
 - Read canonical commands from `harness/tools/commands.md` when available.
 - Read canonical coding conventions from `harness/context/coding-conventions.md` when available.
 - Read canonical boundaries from `harness/guardrails/` when available.
-- If the spec discovers a missing or changed project-level rule, record it in `Context Updates` or `Open Questions`.
-- Do not modify canonical harness files during spec writing unless the user asked for harness maintenance or the active project workflow explicitly allows it.
+- Record missing or stale project-level rules in `Context Updates` or `Open Questions`.
+- Do not edit canonical harness files during spec writing unless the user asked for harness maintenance or the active workflow explicitly allows it.
 
 ## Spec Principles
 
-- Clarify before coding: turn vague intent into explicit objective, scope, constraints, and success criteria.
-- Confirm assumptions early: list material assumptions before locking the spec.
-- Define evidence before implementation: every spec needs verification or manual evidence that can prove completion.
-- Keep scope small: state non-goals clearly and avoid speculative future work.
-- Feed harness gaps forward: missing commands, unclear conventions, or weak guardrails belong in `Context Updates`.
+- Clarify before coding.
+- Confirm material assumptions before locking scope.
+- Define success in testable terms.
+- Define required evidence before implementation.
+- Keep scope small and name non-goals.
+- Prefer project evidence over generic defaults.
 
-## When to Use
+## Default Flow
 
-- Starting a new project or feature
-- Requirements are ambiguous or incomplete
-- The change touches multiple files or modules
-- You're about to make an architectural decision
-- The task would take more than 30 minutes to implement
+1. Read `idea.md` when present, then relevant harness context and project facts.
+2. Restate the request as objective, scope, and non-goals.
+3. List material assumptions. Ask the user only when an assumption changes product behavior, architecture, data, security, cost, or timeline.
+4. Convert vague requirements into success criteria and acceptance criteria.
+5. Define verification and evidence required before completion.
+6. Record context or harness gaps in `Context Updates`.
+7. Ask the user to confirm the spec before planning or implementation.
 
-**When NOT to use:** Single-line fixes, typo corrections, or changes where requirements are unambiguous and self-contained.
+Do not generate an implementation plan in this skill. If the spec is accepted, use `task-planning` next.
 
-## The Gated Workflow
-
-Spec-driven development has four phases. Do not advance to the next phase until the current one is validated.
-
-```
-SPECIFY ──→ PLAN ──→ TASKS ──→ IMPLEMENT
-   │          │        │          │
-   ▼          ▼        ▼          ▼
- Human      Human    Human      Human
- reviews    reviews  reviews    reviews
-```
-
-### Phase 1: Specify
-
-Start with a high-level vision. Ask the human clarifying questions until requirements are concrete.
-
-**Surface assumptions immediately.** Before writing any spec content, list what you're assuming:
-
-```
-ASSUMPTIONS I'M MAKING:
-1. This is a web application (not native mobile)
-2. Authentication uses session-based cookies (not JWT)
-3. The database is PostgreSQL (based on existing Prisma schema)
-4. We're targeting modern browsers only (no IE11)
-→ Correct me now or I'll proceed with these.
-```
-
-Don't silently fill in ambiguous requirements. The spec's entire purpose is to surface misunderstandings *before* code gets written — assumptions are the most dangerous form of misunderstanding.
-
-**Write a spec document covering these six core areas:**
-
-1. **Objective** — What are we building and why? Who is the user? What does success look like?
-
-2. **Commands** — Full executable commands with flags, not just tool names.
-   ```
-   Build: npm run build
-   Test: npm test -- --coverage
-   Lint: npm run lint --fix
-   Dev: npm run dev
-   ```
-
-3. **Project Structure** — Where source code lives, where tests go, and where project documentation already belongs.
-   ```
-   src/           → Application source code
-   src/components → React components
-   src/lib        → Shared utilities
-   tests/         → Unit and integration tests
-   e2e/           → End-to-end tests
-   harness/       → Agent harness specs, context, plans, runs, and evaluations
-   ```
-
-4. **Code Style** — One real code snippet showing your style beats three paragraphs describing it. Include naming conventions, formatting rules, and examples of good output.
-
-5. **Testing Strategy** — What framework, where tests live, coverage expectations, which test levels for which concerns.
-
-6. **Boundaries** — Three-tier system:
-   - **Always do:** Run tests before commits, follow naming conventions, validate inputs
-   - **Ask first:** Database schema changes, adding dependencies, changing CI config
-   - **Never do:** Commit secrets, edit vendor directories, remove failing tests without approval
-
-**Spec template:**
+## Spec Template
 
 ```markdown
-# Spec: [Project/Feature Name]
+# Spec: [Project/Feature/Fix Name]
+
+## Context Source
+- Source: [user input | idea.md | brownfield audit | bug report | existing spec]
+- Initialization mode: [greenfield | brownfield | existing-harness]
 
 ## Objective
-[What we're building and why. User stories or acceptance criteria.]
+[What should be true when this is complete, and why it matters.]
 
-## Tech Stack
-[Framework, language, key dependencies with versions]
+## Target User
+[Specific user, operator, system, or stakeholder affected by the change.]
 
-## Commands
-[Build, test, lint, dev — full commands]
+## In Scope
+- [Behavior, capability, or fix included.]
+- [Behavior, capability, or fix included.]
 
-## Project Structure
-[Directory layout with descriptions]
+## Out of Scope
+- [Explicit non-goal.]
+- [Explicit non-goal.]
 
-## Code Style
-[Example snippet + key conventions]
+## Assumptions
+- [Assumption and whether it is confirmed, inferred, or needs confirmation.]
 
-## Testing Strategy
-[Framework, test locations, coverage requirements, test levels]
-
-## Boundaries
-- Always: [...]
-- Ask first: [...]
-- Never: [...]
-
-## Success Criteria
-[How we'll know this is done — specific, testable conditions]
-
-## Evidence Required
-[Command output, test result, manual check, or artifact needed before this can be called complete.]
-
-## Context Updates
-[Project-level conventions, commands, or guardrails that may need to be added or changed.]
-
-## Open Questions
-[Anything unresolved that needs human input]
-```
-
-**Reframe instructions as success criteria.** When receiving vague requirements, translate them into concrete conditions:
-
-```
-REQUIREMENT: "Make the dashboard faster"
-
-REFRAMED SUCCESS CRITERIA:
-- Dashboard LCP < 2.5s on 4G connection
-- Initial data load completes in < 500ms
-- No layout shift during load (CLS < 0.1)
-→ Are these the right targets?
-```
-
-This lets you loop, retry, and problem-solve toward a clear goal rather than guessing what "faster" means.
-
-### Phase 2: Plan
-
-With the validated spec, generate a technical implementation plan:
-
-1. Identify the major components and their dependencies
-2. Determine the implementation order (what must be built first)
-3. Note risks and mitigation strategies
-4. Identify what can be built in parallel vs. what must be sequential
-5. Define verification checkpoints between phases
-
-The plan should be reviewable: the human should be able to read it and say "yes, that's the right approach" or "no, change X."
-
-### Phase 3: Tasks
-
-Break the plan into discrete, implementable tasks:
-
-- Each task should be completable in a single focused session
-- Each task has explicit acceptance criteria
-- Each task includes a verification step (test, build, manual check)
-- Tasks are ordered by dependency, not by perceived importance
-- No task should require changing more than ~5 files
-
-**Task template:**
-```markdown
-- [ ] Task: [Description]
-  - Acceptance: [What must be true when done]
-  - Verify: [How to confirm — test command, build, manual check]
-  - Files: [Which files will be touched]
-```
-
-### Phase 4: Implement
-
-Execute tasks one at a time from the active `plan.md`. Load only the relevant spec sections, harness context files, and source files needed for the current task instead of flooding the agent with the entire repository.
-
-## Keeping the Spec Alive
-
-The spec is a living document, not a one-time artifact:
-
-- **Update when decisions change** — If you discover the data model needs to change, update the spec first, then implement.
-- **Update when scope changes** — Features added or cut should be reflected in the spec.
-- **Commit the spec** — The spec belongs in version control under the active `harness/runs/` directory alongside the code.
-- **Reference the spec in PRs** — Link back to the spec section that each PR implements.
-
-## Common Rationalizations
-
-| Rationalization | Reality |
-|---|---|
-| "This is simple, I don't need a spec" | Simple tasks don't need *long* specs, but they still need acceptance criteria. A two-line spec is fine. |
-| "I'll write the spec after I code it" | That's documentation, not specification. The spec's value is in forcing clarity *before* code. |
-| "The spec will slow us down" | A 15-minute spec prevents hours of rework. Waterfall in 15 minutes beats debugging in 15 hours. |
-| "Requirements will change anyway" | That's why the spec is a living document. An outdated spec is still better than no spec. |
-| "The user knows what they want" | Even clear requests have implicit assumptions. The spec surfaces those assumptions. |
-
-## Red Flags
-
-- Starting to write code without any written requirements
-- Asking "should I just start building?" before clarifying what "done" means
-- Implementing features not mentioned in any spec or task list
-- Making architectural decisions without documenting them
-- Skipping the spec because "it's obvious what to build"
+## Acceptance Criteria
+- [ ] [Specific, observable condition.]
+- [ ] [Specific, observable condition.]
+- [ ] Existing relevant behavior does not regress.
 
 ## Verification
+- [ ] [Command or manual check.]
+- [ ] [Command or manual check.]
 
-Before proceeding to implementation, confirm:
+## Evidence Required
+- [Command output, test result, manual check, or artifact needed before this can be called complete.]
 
-- [ ] The spec covers all six core areas
-- [ ] The human has reviewed and approved the spec
-- [ ] Success criteria are specific and testable
-- [ ] Required evidence is defined
-- [ ] Boundaries (Always/Ask First/Never) are defined
-- [ ] The spec is saved to the active `harness/runs/.../spec.md`
+## Constraints
+- [Technical, product, data, security, timeline, or compatibility constraint.]
+
+## Context Updates
+- [Project-level commands, conventions, guardrails, or context that may need to be added or changed. Use "None" if not needed.]
+
+## Open Questions
+- [Question needing user input before planning or implementation. Use "None" if resolved.]
+```
+
+## Quality Bar
+
+Before handing off to planning:
+
+- [ ] Objective is clear.
+- [ ] Scope and non-goals are explicit.
+- [ ] Assumptions are visible.
+- [ ] Acceptance criteria are testable.
+- [ ] Verification and required evidence are defined.
+- [ ] Open questions are resolved or explicitly carried forward.
+- [ ] The spec is saved to the active `harness/runs/.../spec.md`.

@@ -183,13 +183,15 @@ Harness Engineering
 每个任务都按统一流程跑：
 
 ```markdown
-input
-→ spec.md
-→ plan.md
-→ task.md
-→ code changes
-→ test output
-→ evaluation.md
+用户需求
+-> 想法收敛（按需）
+-> 规格说明
+-> 执行计划
+-> 任务实现
+-> 验证
+-> Run 记录
+-> 评估
+-> 改进 Harness
 ```
 
 
@@ -197,14 +199,17 @@ input
 **Harness 落地结构示例**
 
 ```
-docs/
+AGENTS.md
+harness/
 ├── specs/
 │   ├── feature-template.md
 │   └── bugfix-template.md
 ├── context/
+│   ├── project-brief.md
+│   ├── initialization-notes.md
 │   ├── repo-map.md
-│   ├── coding-conventions.md
 │   ├── architecture.md
+│   ├── coding-conventions.md
 │   └── dependency-notes.md
 ├── tools/
 │   ├── commands.md
@@ -218,9 +223,17 @@ docs/
 │   ├── regression-checklist.md
 │   └── task-scorecard.md
 └── runs/
-    └── 2026-05-19-example-task/
-        ├── input.md
-        ├── plan.md
-        ├── execution-log.md
-        └── evaluation.md
 ```
+
+每次 Agent 任务建议创建一个 run 目录
+
+```markdown
+harness/runs/YYYY-MM-DD-short-task-name/
+├── input.md
+├── idea.md
+├── spec.md
+├── plan.md
+├── execution-log.md
+└── evaluation.md
+```
+

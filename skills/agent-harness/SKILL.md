@@ -1,9 +1,9 @@
 ---
-name: agent-harness-bootstrap
-description: Initialize and operate a project-level Agent Harness for software engineering work. Use when the user wants to create or update AGENTS.md, scaffold a harness/ directory, define spec/context/tools/guardrails/evals templates, create run records, or combine bundled skills such as idea-refine, spec-driven-development, and planning-and-task-breakdown into a repeatable Harness Engineering workflow.
+name: agent-harness
+description: Initialize and operate a project-level Agent Harness for software engineering work. Use when the user wants to create or update AGENTS.md, scaffold a harness/ directory, define spec/context/tools/guardrails/evals templates, create run records, or combine bundled skills such as idea-refine, spec-driven-development, and task-planning into a repeatable Harness Engineering workflow.
 ---
 
-# Agent Harness Bootstrap
+# Agent Harness
 
 ## Overview
 
@@ -90,11 +90,11 @@ For non-trivial tasks, use `spec-driven-development`. Save the resulting task co
 harness/runs/YYYY-MM-DD-short-task-name/spec.md
 ```
 
-The spec must define goal, scope, non-goals, acceptance criteria, verification, and open questions.
+The spec must define objective, scope, non-goals, assumptions, acceptance criteria, verification, required evidence, context updates, and open questions. Do not use the spec step to generate the implementation plan.
 
 ### 6. Plan
 
-After the spec is clear, use `planning-and-task-breakdown`. Save the implementation plan in:
+After the spec is clear, use `task-planning`. Save the implementation plan in:
 
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/plan.md
@@ -153,7 +153,7 @@ Read `references/related-skills.md` when deciding how this skill composes with e
 
 - Use bundled `idea-refine` for the Idea layer when a request is still exploratory.
 - Use bundled `spec-driven-development` for the Spec layer.
-- Use bundled `planning-and-task-breakdown` for the Plan and Tasks layer.
+- Use bundled `task-planning` for the Plan and Tasks layer.
 
 ## Boundaries
 

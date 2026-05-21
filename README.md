@@ -2,106 +2,83 @@
 
 [中文](README.zh-CN.md)
 
-A Codex skill pack for applying Harness Engineering to real software projects.
+A Codex skill pack for creating and operating a project-level Agent Harness.
 
-Harness Engineering gives agents a controlled project workspace: clear specs, curated context, approved tools, feedback loops, guardrails, evaluations, and persistent run records. This pack bundles the skills needed to initialize and operate that workflow.
+Harness Engineering gives agents a controlled workspace: specs, curated context, approved commands, guardrails, run records, and evaluation loops. This pack turns that structure into reusable Codex skills and templates.
 
-## What This Pack Does
+## What It Does
 
-This pack creates and maintains an Agent Harness environment for a project:
+- Creates a project-level `AGENTS.md` and `harness/` workspace
+- Supports new projects, existing codebases, and existing harnesses
+- Keeps idea refinement, specs, plans, execution logs, verification, and evaluation in one workflow
+- Lets agents propose or apply targeted harness updates after each run, based on run evidence and user-confirmed decisions
 
-- Generate a project-level `AGENTS.md` and `harness/` workspace
-- Support new projects, existing codebases, and existing harnesses
-- Keep ideas, specs, plans, execution records, verification, and evaluation inside the harness workflow
+## Core Principles
 
-Harness maintenance is agent-assisted: after each run, the agent can propose or apply targeted harness updates from run evidence and user-confirmed decisions.
-
-Core principles:
-
-- Clarify before coding.
-- Spec before implementation.
-- Plan work into small verifiable tasks.
-- Require evidence before completion.
-- Feed run results back into the harness.
-
-The intended flow is:
-
-```text
-User request
--> Idea refinement, when needed
--> Spec
--> Plan
--> Task execution
--> Verification
--> Run record
--> Evaluation
--> Harness improvement
-```
+- Clarify before coding
+- Spec before implementation
+- Plan into small, verifiable tasks
+- Require evidence before completion
+- Feed run results back into the harness
 
 ## Included Skills
 
 | Skill | Purpose |
 | --- | --- |
-| `agent-harness-bootstrap` | Main orchestration skill. Initializes and operates the Harness Engineering workflow. |
-| `idea-refine` | Turns raw ideas into focused one-page concepts before specification. |
-| `spec-driven-development` | Turns ambiguous or multi-file work into a reviewed specification. |
-| `planning-and-task-breakdown` | Breaks a validated spec into ordered, verifiable implementation tasks. |
+| `agent-harness` | Main orchestration skill for initializing, running, and maintaining the harness. |
+| `idea-refine` | Converts raw ideas into a compact `idea.md` brief. |
+| `spec-driven-development` | Converts unclear work into a run-level `spec.md`. |
+| `task-planning` | Converts an accepted spec into scoped, ordered tasks in `plan.md`. |
+
+## Usage
+
+Use one of these prompts. `agent-harness` chooses `greenfield`, `brownfield`, or `existing-harness` mode from the project state.
+
+### New Project
+
+```text
+Use agent-harness to start a new project from this idea: a lightweight habit tracker for remote teams.
+```
+
+### Existing Project
+
+```text
+Use agent-harness to initialize an Agent Harness for this existing codebase.
+```
+
+### Run a Task
+
+```text
+Use agent-harness to run this task through the harness: add tag filtering to the issue list.
+```
 
 ## Repository Layout
 
 ```text
 harness-skills/
 ├── README.md
+├── README.zh-CN.md
+├── docs/
 └── skills/
-    ├── agent-harness-bootstrap/
+    ├── agent-harness/
     ├── idea-refine/
     ├── spec-driven-development/
-    └── planning-and-task-breakdown/
+    └── task-planning/
 ```
 
-The main entry point is:
+Main entry point:
 
 ```text
-skills/agent-harness-bootstrap/SKILL.md
+skills/agent-harness/SKILL.md
 ```
 
-The Harness templates used by that skill live under:
+Templates used by the main skill:
 
 ```text
-skills/agent-harness-bootstrap/assets/templates/
+skills/agent-harness/assets/templates/
 ```
 
-## Usage
-
-Use one of these three entry prompts. The skill chooses `greenfield`, `brownfield`, or `existing-harness` mode from the project state.
-
-### New Project
-
-Start from a short idea:
-
-```text
-Use agent-harness-bootstrap to start a new project from this idea: a lightweight habit tracker for remote teams.
-```
-
-### Existing Project
-
-Initialize or refresh the harness for an existing codebase:
-
-```text
-Use agent-harness-bootstrap to initialize an Agent Harness for this existing codebase.
-```
-
-### Run a Task
-
-Run a feature, bugfix, implementation step, or harness improvement through the harness:
-
-```text
-Use agent-harness-bootstrap to run this task through the harness: add tag filtering to the issue list.
-```
-
-## Generated Harness Structure
-
-The bootstrap workflow supports three initialization modes:
+## Initialization Modes
 
 | Mode | Use When | Default Behavior |
 | --- | --- | --- |
@@ -109,7 +86,7 @@ The bootstrap workflow supports three initialization modes:
 | `brownfield` | Existing source code, manifests, tests, CI, or README | Run read-only discovery, document facts, and add harness files conservatively. |
 | `existing-harness` | `AGENTS.md` or `harness/` already exists | Preserve existing harness content, fill gaps, and avoid overwriting conventions. |
 
-The bootstrap workflow creates a project-level structure like this:
+## Generated Harness
 
 ```text
 AGENTS.md
@@ -138,7 +115,9 @@ harness/
 └── runs/
 ```
 
-Each agent task should create a run directory:
+## Run Records
+
+Each agent task should use a run directory:
 
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/
@@ -151,3 +130,12 @@ harness/runs/YYYY-MM-DD-short-task-name/
 ```
 
 Use `idea.md` only when the run included idea refinement.
+
+| File | Purpose |
+| --- | --- |
+| `input.md` | Original user request. |
+| `idea.md` | Refined problem, direction, assumptions, MVP scope, and non-goals. |
+| `spec.md` | Objective, scope, assumptions, acceptance criteria, verification, and required evidence. |
+| `plan.md` | Ordered tasks, dependencies, likely files, verification, and required evidence. |
+| `execution-log.md` | Files changed, commands run, test results, failures, and skipped checks. |
+| `evaluation.md` | Spec compliance, regression risk, residual risks, and harness feedback. |

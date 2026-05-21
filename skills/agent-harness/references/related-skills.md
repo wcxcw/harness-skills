@@ -1,6 +1,6 @@
 # Related Skills
 
-Use this reference when operating `agent-harness-bootstrap` with other skills.
+Use this reference when operating `agent-harness` with other skills.
 
 ## idea-refine
 
@@ -38,7 +38,7 @@ Expected harness outputs:
 - `harness/runs/<run>/spec.md`
 - Clear goal, scope, non-goals, success criteria, acceptance criteria, required evidence, verification commands, and open questions.
 
-## planning-and-task-breakdown
+## task-planning
 
 Layer: Plan / Tasks
 
