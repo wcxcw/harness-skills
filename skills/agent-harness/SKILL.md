@@ -14,6 +14,7 @@ This is an orchestration skill. Do not duplicate the full workflows of related s
 ## Operating Principles
 
 - Clarify before coding: turn vague requests into explicit goals, constraints, and success criteria.
+- Confirm blocking decisions before implementation: technology stack, runtime, data model, core architecture, external services, deployment target, and major UX/platform choices must be confirmed or explicitly deferred as non-coding decision tasks.
 - Spec before implementation: non-trivial work needs a run-level spec before code changes.
 - Plan into small verifiable tasks: each task should have scope, likely files, dependencies, and verification.
 - Evidence before completion: do not claim completion without commands, checks, or a documented reason verification was skipped.
@@ -41,7 +42,7 @@ Inspect the target project before writing harness files:
 - Build, test, lint, dev, and verification commands
 - Existing documentation, CI, tests, and conventions
 
-For `greenfield`, also capture the project idea, target user, success criteria, constraints, preferred stack if provided, and unknown decisions. If the user only gave a one-sentence idea, use `idea-refine` when needed to clarify user, success, and constraints before writing the executable spec.
+For `greenfield`, also capture the project idea, target user, success criteria, constraints, preferred stack if provided, core implementation direction, and unknown decisions. If the user only gave a one-sentence idea, use `idea-refine` when needed to clarify user, success, constraints, technology stack, and core approach before writing the executable spec.
 
 For `brownfield`, use read-only discovery first. Prefer existing project facts over generic templates, reference existing documentation and configuration, and do not replace established conventions unless the user explicitly asks.
 
@@ -94,7 +95,7 @@ harness/runs/YYYY-MM-DD-short-task-name/idea.md
 
 The refined idea should define the problem statement, recommended direction, key assumptions, MVP scope, not-doing list, and open questions.
 
-For `greenfield`, a one-sentence idea should normally produce both `idea.md` and an executable `spec.md`. Do not silently choose a technology stack; record missing stack decisions in the spec or make choosing the stack the first planned task.
+For `greenfield`, a one-sentence idea should normally produce both `idea.md` and an executable `spec.md`. Do not silently choose a technology stack or core implementation approach. If technology or architecture decisions are missing, ask the user before planning implementation, or make choosing them the first non-coding task.
 
 ### 5. Specify
 
@@ -106,6 +107,17 @@ harness/runs/YYYY-MM-DD-short-task-name/spec.md
 
 The spec must define objective, scope, non-goals, assumptions, acceptance criteria, verification, required evidence, context updates, and open questions. Do not use the spec step to generate the implementation plan.
 
+Before moving to planning, block on unresolved decisions that would materially affect implementation:
+
+- Technology stack, framework, runtime, or package manager
+- Data storage, persistence model, or schema direction
+- Authentication, authorization, permissions, or identity model
+- External APIs, paid services, or infrastructure dependencies
+- Deployment target, platform, or runtime environment
+- Core UX flow or user-facing behavior
+
+If the user does not want to decide yet, record the decision in `Open Questions` and make it the first task in `plan.md`. Do not write application code before that decision task is resolved.
+
 ### 6. Plan
 
 After the spec is clear, use `task-planning`. Save the implementation plan in:
@@ -115,6 +127,8 @@ harness/runs/YYYY-MM-DD-short-task-name/plan.md
 ```
 
 Tasks should be small, ordered by dependency, and include verification steps.
+
+Do not proceed to execution if `spec.md` or `plan.md` contains unresolved blocking questions. Resolve them with the user or execute only the explicit non-coding decision task.
 
 ### 7. Execute
 

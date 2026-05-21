@@ -33,6 +33,7 @@ This skill creates a run-level executable spec. It may reference project-level r
 
 - Clarify before coding.
 - Confirm material assumptions before locking scope.
+- Block implementation when technology stack or core approach is unconfirmed.
 - Define success in testable terms.
 - Define required evidence before implementation.
 - Keep scope small and name non-goals.
@@ -42,11 +43,12 @@ This skill creates a run-level executable spec. It may reference project-level r
 
 1. Read `idea.md` when present, then relevant harness context and project facts.
 2. Restate the request as objective, scope, and non-goals.
-3. List material assumptions. Ask the user only when an assumption changes product behavior, architecture, data, security, cost, or timeline.
+3. List material assumptions. Ask the user when an assumption changes product behavior, technology stack, architecture, data, security, cost, deployment, or timeline.
 4. Convert vague requirements into success criteria and acceptance criteria.
-5. Define verification and evidence required before completion.
-6. Record context or harness gaps in `Context Updates`.
-7. Ask the user to confirm the spec before planning or implementation.
+5. Mark blocking decisions as confirmed, inferred from repository evidence, or `Needs decision`.
+6. Define verification and evidence required before completion.
+7. Record context or harness gaps in `Context Updates`.
+8. Ask the user to confirm the spec before planning or implementation.
 
 Do not generate an implementation plan in this skill. If the spec is accepted, use `task-planning` next.
 
@@ -76,6 +78,13 @@ Do not generate an implementation plan in this skill. If the spec is accepted, u
 ## Assumptions
 - [Assumption and whether it is confirmed, inferred, or needs confirmation.]
 
+## Technical Decisions
+- Stack/runtime: [Confirmed value, inferred project default, or "Needs decision"]
+- Core approach: [Confirmed approach, inferred project pattern, or "Needs decision"]
+- Data/storage: [Confirmed value, inferred project default, "Not applicable", or "Needs decision"]
+- External services: [Confirmed value, "None", or "Needs decision"]
+- Deployment/runtime target: [Confirmed value, inferred project default, or "Needs decision"]
+
 ## Acceptance Criteria
 - [ ] [Specific, observable condition.]
 - [ ] [Specific, observable condition.]
@@ -98,6 +107,12 @@ Do not generate an implementation plan in this skill. If the spec is accepted, u
 - [Question needing user input before planning or implementation. Use "None" if resolved.]
 ```
 
+## Blocking Questions
+
+Do not hand off to planning or implementation while a `Technical Decisions` item is `Needs decision`, unless the next plan task is explicitly a non-coding decision task.
+
+Blocking decisions include technology stack, runtime, framework, data model, authentication, external services, deployment target, and core user-facing behavior.
+
 ## Quality Bar
 
 Before handing off to planning:
@@ -105,6 +120,7 @@ Before handing off to planning:
 - [ ] Objective is clear.
 - [ ] Scope and non-goals are explicit.
 - [ ] Assumptions are visible.
+- [ ] Technical decisions are confirmed, inferred from repository evidence, or explicitly deferred as a non-coding decision task.
 - [ ] Acceptance criteria are testable.
 - [ ] Verification and required evidence are defined.
 - [ ] Open questions are resolved or explicitly carried forward.

@@ -46,11 +46,18 @@ Use `idea.md` only when the task started as a raw idea and used `idea-refine`.
 ## Operating Principles
 
 - Clarify before coding: convert vague requests into explicit goals, constraints, and success criteria.
+- Confirm blocking decisions before implementation: technology stack, runtime, data model, core architecture, external services, deployment target, and major UX/platform choices must be confirmed or explicitly deferred as non-coding decision tasks.
 - Spec before implementation: use the active run's `spec.md` for non-trivial work.
 - Plan into small verifiable tasks: each task should include scope, likely files, dependencies, and verification.
 - Evidence before completion: record commands, checks, failures, and skipped verification in the active run.
 - Keep scope small: avoid unrelated refactors, speculative abstractions, and behavior outside the spec.
 - Improve the harness from evidence: feed repeated failures or missing context back into canonical harness files.
+
+## Implementation Gate
+
+Do not write application code when `spec.md` or `plan.md` still has unresolved blocking questions. Blocking questions include technology stack, framework, runtime, data model, authentication, external services, deployment target, and core user-facing behavior.
+
+If the user wants to defer a decision, make that decision the first non-coding task in `plan.md`. Resolve it before implementation tasks begin.
 
 ## Agent Workflow
 
@@ -59,9 +66,10 @@ Use `idea.md` only when the task started as a raw idea and used `idea-refine`.
 3. For brownfield work, read needed files under `harness/context/`, then existing project documentation/configuration, then the active run.
 4. Load only the needed context files.
 5. Check guardrails before editing.
-6. Execute one small task at a time.
-7. Run approved verification commands.
-8. Record evidence in the run directory before claiming completion.
-9. Update evaluation before handoff.
-10. Review `Context Updates`, `execution-log.md`, and `evaluation.md` for harness gaps.
-11. Update canonical harness files only when the user asked for harness maintenance, the active workflow explicitly allows it, or the update is a factual correction from repository evidence. Otherwise, list proposed harness updates for confirmation.
+6. Confirm there are no unresolved blocking questions before editing application code.
+7. Execute one small task at a time.
+8. Run approved verification commands.
+9. Record evidence in the run directory before claiming completion.
+10. Update evaluation before handoff.
+11. Review `Context Updates`, `execution-log.md`, and `evaluation.md` for harness gaps.
+12. Update canonical harness files only when the user asked for harness maintenance, the active workflow explicitly allows it, or the update is a factual correction from repository evidence. Otherwise, list proposed harness updates for confirmation.

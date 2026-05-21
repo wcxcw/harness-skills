@@ -22,6 +22,14 @@ Use this file for `greenfield` projects or early product work. Keep it short and
 
 - [Smallest useful version]
 
+## Preferred Stack
+
+- [Confirmed stack, user preference, repository default, or "Needs decision"]
+
+## Core Approach
+
+- [Core implementation direction, key architecture choice, or "Needs decision"]
+
 ## Not Doing
 
 - [Explicit non-goal]

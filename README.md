@@ -16,6 +16,7 @@ Harness Engineering gives agents a controlled workspace: specs, curated context,
 ## Core Principles
 
 - Clarify before coding
+- Confirm technology stack and core approach before implementation
 - Spec before implementation
 - Plan into small, verifiable tasks
 - Require evidence before completion

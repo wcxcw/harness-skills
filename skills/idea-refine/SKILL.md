@@ -24,8 +24,8 @@ If no active run exists, create or ask for the intended run directory under `har
 Use this path for harness initialization, greenfield projects, and short feature ideas.
 
 1. Restate the idea as a clear problem statement.
-2. Ask at most 3 clarifying questions if target user, success criteria, or constraints are unclear.
-3. Identify the target user, desired outcome, constraints, and key assumptions.
+2. Ask at most 3 clarifying questions if target user, success criteria, constraints, technology stack, or core approach are unclear.
+3. Identify the target user, desired outcome, constraints, preferred stack, core approach, and key assumptions.
 4. Propose 1 recommended direction and, only if useful, 1-2 alternatives.
 5. Define the smallest MVP that tests the core assumption.
 6. Make the `Not Doing` list explicit.
@@ -64,6 +64,12 @@ Even in advanced mode, prefer 3-5 strong directions over many shallow ones.
 ## Constraints
 - [Time, tech, budget, platform, compliance, or project constraints.]
 
+## Preferred Stack
+- [Confirmed stack, user preference, or "Needs decision".]
+
+## Core Approach
+[Core implementation direction or "Needs decision".]
+
 ## Key Assumptions to Validate
 - [ ] [Assumption 1 and how to test it.]
 - [ ] [Assumption 2 and how to test it.]
@@ -83,7 +89,7 @@ Even in advanced mode, prefer 3-5 strong directions over many shallow ones.
 ## Guardrails
 
 - Do not proceed without a target user and success criteria.
-- Do not silently choose a technology stack; record it as an assumption or open question if unclear.
+- Do not silently choose a technology stack or core implementation approach; ask the user or record it as `Needs decision`.
 - Do not turn the idea brief into an implementation plan. Planning belongs in `plan.md`.
 - Do not over-expand a simple idea. Prefer the shortest useful path to a spec.
 - If inside an existing codebase, ground assumptions in repository evidence when available.
@@ -95,6 +101,7 @@ Before handing off to spec:
 - [ ] Problem statement is clear.
 - [ ] Target user is specific.
 - [ ] Success criteria are testable.
+- [ ] Preferred stack and core approach are confirmed or marked `Needs decision`.
 - [ ] MVP scope is small enough to build first.
 - [ ] Key assumptions and non-goals are explicit.
 - [ ] User confirmed the direction or unresolved questions are recorded.
