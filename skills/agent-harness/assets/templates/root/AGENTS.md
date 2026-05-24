@@ -60,6 +60,17 @@ Use `idea.md` only when the task started as a raw idea and used `idea-refine`.
 - Evidence before completion: record commands, checks, failures, and skipped verification in the active run.
 - Keep scope small: avoid unrelated refactors, speculative abstractions, and behavior outside the spec.
 - Improve the harness from evidence: feed repeated failures or missing context back into canonical harness files.
+- Treat canonical harness files as repository-owned collaboration assets.
+
+## Collaboration and Version Control
+
+- Commit canonical harness files: `AGENTS.md`, `harness/context/`, `harness/tools/`, `harness/feedback/`, `harness/guardrails/`, and `harness/evals/`.
+- Treat `harness/runs/` as task-owned records. Commit only run directories that are useful for review, audit, onboarding, future context, architecture decisions, or complex bug investigations.
+- Do not use personal local harness copies as the source of truth. Shared agent behavior should come from the repository harness.
+- During normal feature or bugfix work, record harness improvement proposals in the active run's `evaluation.md`; do not directly edit canonical harness files unless the workflow explicitly allows it.
+- Modify canonical harness files only for explicit harness maintenance, user-requested harness initialization/improvement, or factual corrections from repository evidence.
+- In multi-person repositories, protect `AGENTS.md` and canonical `harness/` directories with review rules or CODEOWNERS when practical.
+- If most run records should stay local, ignore `harness/runs/*` while preserving `harness/runs/.gitkeep`, then force-add selected run directories when needed.
 
 ## Guided Initialization
 

@@ -103,6 +103,12 @@ The scaffold script can use Chinese templates explicitly:
 python3 skills/agent-harness/scripts/init_harness.py --project /path/to/project --profile core --language zh-CN
 ```
 
+## Repository Ownership
+
+- Commit the shared harness: `AGENTS.md`, `harness/context/`, `harness/tools/`, `harness/feedback/`, `harness/guardrails/`, and `harness/evals/`.
+- Treat `harness/runs/` as task records. Commit selected runs only when they help review, audit, onboarding, future context, architecture decisions, or complex bug investigations.
+- Personal notes should not replace the repository harness. Normal feature work should propose harness changes in `evaluation.md`; canonical harness updates should happen through explicit harness maintenance.
+
 ## Guided Initialization
 
 One-sentence greenfield ideas should be clarified before implementation. `agent-harness` routes this to [`idea-refine`](skills/idea-refine/SKILL.md), which owns the focused question set.

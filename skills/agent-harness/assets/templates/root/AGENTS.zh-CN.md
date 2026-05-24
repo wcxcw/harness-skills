@@ -60,6 +60,17 @@ harness/runs/YYYY-MM-DD-short-task-name/
 - 完成必须有证据：命令、检查、失败和跳过原因都要记录到当前 run。
 - 控制范围：避免无关重构、猜测式抽象和规格外行为。
 - 从运行结果改进 harness：重复失败、上下文缺失或规则不清，应反馈到规范文件。
+- 规范 harness 文件属于仓库共享资产，不是个人本地约定。
+
+## 协作和版本控制
+
+- 提交规范 harness 文件：`AGENTS.md`、`harness/context/`、`harness/tools/`、`harness/feedback/`、`harness/guardrails/` 和 `harness/evals/`。
+- `harness/runs/` 是任务记录。只提交对 review、审计、新人理解、未来上下文、架构决策或复杂 bug 复盘有价值的 run 目录。
+- 不要把个人本地 harness 副本当作事实来源。团队共享的 Agent 行为应来自仓库里的 harness。
+- 普通功能或 bugfix 任务中，先把 harness 改进建议写到当前 run 的 `evaluation.md`；除非流程明确允许，不要直接改规范 harness 文件。
+- 只有在明确的 harness maintenance、用户要求初始化/改进 harness，或需要根据仓库证据修正事实错误时，才修改规范 harness 文件。
+- 多人仓库中，建议用 review 规则或 CODEOWNERS 保护 `AGENTS.md` 和规范 `harness/` 目录。
+- 如果多数 run 记录不需要进仓库，可以忽略 `harness/runs/*`，保留 `harness/runs/.gitkeep`，需要保留的 run 再单独 force-add。
 
 ## 引导式初始化
 

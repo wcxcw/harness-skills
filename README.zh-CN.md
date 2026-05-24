@@ -107,6 +107,12 @@ skills/agent-harness/assets/templates/
 python3 skills/agent-harness/scripts/init_harness.py --project /path/to/project --profile core --language zh-CN
 ```
 
+## 仓库归属
+
+- 提交共享 harness：`AGENTS.md`、`harness/context/`、`harness/tools/`、`harness/feedback/`、`harness/guardrails/` 和 `harness/evals/`。
+- `harness/runs/` 作为任务记录处理。只提交对 review、审计、新人理解、未来上下文、架构决策或复杂 bug 复盘有价值的 run。
+- 个人笔记不能替代仓库里的 harness。普通功能开发只在 `evaluation.md` 中提出 harness 改进建议；规范 harness 更新应通过明确的 harness maintenance 完成。
+
 ## 引导式初始化
 
 一句话新项目默认先问清楚，不直接开发。`agent-harness` 会把这一步路由给 [`idea-refine`](skills/idea-refine/SKILL.md)，由 `idea-refine` 负责具体问题清单。

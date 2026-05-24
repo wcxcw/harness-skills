@@ -8,6 +8,7 @@
 - Record commands and verification results.
 - Prefer the simplest change that satisfies the spec.
 - Keep useful existing patterns instead of inventing new ones.
+- Treat canonical harness files as repository-owned source of truth.
 
 ## Ask First
 
@@ -15,6 +16,7 @@
 - Requirements conflict with existing architecture.
 - Verification requires external credentials or production systems.
 - A change would introduce a new dependency, framework, service, or broad abstraction.
+- A normal feature or bugfix run wants to modify `AGENTS.md` or canonical `harness/` files instead of proposing the update in `evaluation.md`.
 
 ## Never
 
@@ -23,3 +25,4 @@
 - Modify generated, vendor, or lock files unless needed and understood.
 - Add speculative abstractions for unrequested future needs.
 - Treat "code changed" as completion without verification evidence.
+- Replace the shared repository harness with personal local notes.
