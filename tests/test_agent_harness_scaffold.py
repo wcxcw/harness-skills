@@ -41,7 +41,7 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
         self.assertEqual(marketplace["name"], "harness-skills")
         [plugin] = marketplace["plugins"]
         self.assertEqual(plugin["name"], "harness-skills")
-        self.assertEqual(plugin["source"], {"source": "local", "path": "."})
+        self.assertEqual(plugin["source"], {"source": "local", "path": "./"})
         self.assertEqual(plugin["policy"]["installation"], "AVAILABLE")
         self.assertTrue(PLUGIN_MANIFEST.exists())
 
