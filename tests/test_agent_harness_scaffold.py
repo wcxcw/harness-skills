@@ -120,14 +120,20 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
 
             for rel in [
                 "AGENTS.md",
+                "harness/context/project-brief.md",
                 "harness/controls/gates.md",
-                "harness/controls/lifecycle.md",
-                "harness/controls/skills.md",
+                "harness/tools/commands.md",
+                "harness/guardrails/boundaries.md",
                 "harness/scripts/check_run.py",
                 "harness/runs/.gitkeep",
             ]:
                 self.assertTrue((project / rel).exists(), rel)
             for rel in [
+                "harness/context/initialization-notes.md",
+                "harness/controls/lifecycle.md",
+                "harness/controls/skills.md",
+                "harness/feedback/verification.md",
+                "harness/evals/task-scorecard.md",
                 "harness/context/repo-map.md",
                 "harness/context/architecture.md",
                 "harness/context/coding-conventions.md",
@@ -323,9 +329,8 @@ No findings.
             )
             run_dir.mkdir(parents=True)
             for rel in [
-                "harness/controls/lifecycle.md",
                 "harness/controls/gates.md",
-                "harness/controls/skills.md",
+                "harness/scripts/check_run.py",
             ]:
                 self.assertTrue((project / rel).exists(), rel)
 

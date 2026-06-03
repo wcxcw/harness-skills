@@ -1,6 +1,6 @@
 ---
 name: agent-harness
-description: Initialize and operate a project-level Agent Harness for software engineering work. Use when the user wants to create or update AGENTS.md, scaffold a harness/ directory, define spec/context/tools/guardrails/evals templates, create run records, or combine bundled workflow skills into a repeatable Harness Engineering workflow.
+description: Initialize and operate a project-level Agent Harness for software engineering work. Use when the user wants to create or update AGENTS.md, scaffold a minimal harness/ directory, define project context/tools/guardrails/gates, create run records, or combine bundled workflow skills into a repeatable Harness Engineering workflow.
 ---
 
 # Agent Harness
@@ -53,7 +53,7 @@ Use guided initialization before implementation when the project has only a shor
 
 Use `brainstorming` for the actual clarifying questions and `design.md` output. Do not duplicate that workflow in this skill.
 
-Do not write application code after asking the `brainstorming` questions. Wait for the user's answers, then update `project-brief.md` and `initialization-notes.md`, create or update `workflow.md` and `design.md`, and proceed to spec only when the blocking decisions are answered or explicitly deferred as a non-coding decision task.
+Do not write application code after asking the `brainstorming` questions. Wait for the user's answers, then update `project-brief.md`, create or update `workflow.md` and `design.md`, and proceed to spec only when the blocking decisions are answered or explicitly deferred as a non-coding decision task.
 
 For content-driven products such as news, directories, dashboards, or curated feeds, this gate is required unless the user already provided content categories, source strategy, update cadence, ranking/filtering, page structure, and MVP quality bar.
 
@@ -82,20 +82,13 @@ Create or update the minimal harness from `assets/templates/`:
 AGENTS.md
 harness/
 ├── context/
-│   ├── project-brief.md
-│   └── initialization-notes.md
+│   └── project-brief.md
 ├── controls/
-│   ├── gates.md
-│   ├── lifecycle.md
-│   └── skills.md
+│   └── gates.md
 ├── tools/
 │   └── commands.md
-├── feedback/
-│   └── verification.md
 ├── guardrails/
 │   └── boundaries.md
-├── evals/
-│   └── task-scorecard.md
 ├── scripts/
 │   └── check_run.py
 └── runs/
@@ -110,7 +103,7 @@ Use `scripts/init_harness.py` for deterministic scaffolding when creating the st
 
 Do not use `--force` for existing projects unless the user explicitly confirms overwriting harness files.
 
-For `greenfield`, fill `harness/context/project-brief.md` and `harness/context/initialization-notes.md` from the user idea and discovered facts.
+For `greenfield`, fill `harness/context/project-brief.md` from the user idea and discovered facts.
 
 For `brownfield`, scaffold the same minimal core first. Add extra context files later only when repository evidence shows they remove real ambiguity.
 
@@ -118,13 +111,13 @@ For `existing-harness`, update only missing or clearly stale harness files. Pres
 
 Do not expand the harness just because templates exist.
 
-Use `harness/controls/skills.md` to map workflow skills to local harness stages. Workflow skills may guide how the agent works, but local gates, commands, guardrails, and verification evidence remain authoritative.
+Workflow skills may guide how the agent works, but local gates, commands, guardrails, and verification evidence remain authoritative.
 
 ### 6. Collaboration and Version Control
 
 Use this ownership model for team projects:
 
-- Commit canonical harness files to the repository: `AGENTS.md`, `harness/context/`, `harness/controls/`, `harness/tools/`, `harness/feedback/`, `harness/guardrails/`, `harness/evals/`, and `harness/scripts/`.
+- Commit canonical harness files to the repository: `AGENTS.md`, `harness/context/`, `harness/controls/`, `harness/tools/`, `harness/guardrails/`, and `harness/scripts/`.
 - Treat `harness/runs/` as task-owned records. Commit run directories only when they are useful for review, audit, onboarding, future context, architecture decisions, or complex bug investigations.
 - Do not maintain separate personal copies of the canonical harness as the source of truth. Personal notes may exist locally, but shared agent behavior should come from the repository harness.
 - During normal feature or bugfix runs, write harness improvement proposals in the active run's `evaluation.md` instead of directly editing canonical harness files.
@@ -189,7 +182,7 @@ Implement against the active run only:
 - Read the active run's `workflow.md` and `design.md` when present
 - Read the active run's `spec.md` and `plan.md`
 - Load only the needed files under `harness/context/`
-- Check `harness/controls/gates.md` and `harness/controls/skills.md`
+- Check `harness/controls/gates.md`
 - Check `harness/guardrails/` before edits
 - Run `python3 harness/scripts/check_run.py harness/runs/<run> --stage before-implementation --tier <xs|standard|full>` when an active run exists and the checker is available
 - Keep code changes scoped to the current spec

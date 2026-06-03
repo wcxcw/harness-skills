@@ -49,20 +49,13 @@ codex plugin add harness-skills@harness-skills
 AGENTS.md
 harness/
 ├── context/
-│   ├── project-brief.md
-│   └── initialization-notes.md
+│   └── project-brief.md
 ├── controls/
-│   ├── gates.md
-│   ├── lifecycle.md
-│   └── skills.md
+│   └── gates.md
 ├── tools/
 │   └── commands.md
-├── feedback/
-│   └── verification.md
 ├── guardrails/
 │   └── boundaries.md
-├── evals/
-│   └── task-scorecard.md
 ├── scripts/
 │   └── check_run.py
 └── runs/
