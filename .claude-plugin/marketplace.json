@@ -1,0 +1,20 @@
+{
+  "name": "harness-skills",
+  "description": "Development marketplace for Harness Skills",
+  "owner": {
+    "name": "wcxcw",
+    "url": "https://github.com/wcxcw"
+  },
+  "plugins": [
+    {
+      "name": "harness-skills",
+      "description": "Project-level Agent Harness scaffolding and closed-loop workflow skills for Codex.",
+      "version": "0.1.0",
+      "source": "./",
+      "author": {
+        "name": "wcxcw",
+        "url": "https://github.com/wcxcw"
+      }
+    }
+  ]
+}
