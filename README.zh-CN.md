@@ -2,176 +2,169 @@
 
 [English](README.md)
 
-用于创建和运行项目级 Agent Harness 的 Codex Skill Pack。
+Harness Skills 是一个用于启动和运行项目级 Agent Harness 的 Codex plugin。
 
-Harness Engineering 的目标，是给 Agent 提供一个受控的项目工作环境：规格、上下文、可执行命令、guardrails、run 记录和评估闭环。这个 Skill Pack 把这套结构沉淀成可复用的 Codex skills 和模板。
+它的目标不是替代业务项目，也不是单纯提供一组 workflow skills，而是把任意项目初始化成一个 Agent 可以稳定接管的受控工作环境：有项目上下文、规格、计划、可执行命令、guardrails、run 记录、本地 gate 和评估闭环。
 
-## 延伸阅读
+## 一句话定位
 
-- [Harness Engineering 介绍](docs/Harness%20Engineering.zh-CN.md)
+```text
+harness-skills
+= Codex plugin
+= Agent Harness 启动脚手架
+= 项目级控制系统模板
+= workflow skills + local gates + run artifacts
+```
 
-## 它能做什么
+## 适合什么时候用
 
-- 生成项目级 `AGENTS.md` 和 `harness/` 工作区
-- 兼容新项目、已有代码库和已有 harness
-- 把想法收敛、规格、计划、执行记录、验证和评估统一放进 harness 流程
-- 每次 run 后，Agent 可以基于执行证据和用户确认的决策提出或执行小范围 harness 更新
+- 新项目只有一句话想法，需要先澄清再进入实现。
+- 老项目希望补一套 Agent 可读的 `AGENTS.md` 和 `harness/` 工作区。
+- 团队希望 Agent 的每次任务都有 spec、plan、执行证据和评估记录。
+- 你不想只靠 Agent 口头说“完成了”，而是希望用本地 checker 检查关键 gate。
+- 你希望简单任务轻量走，复杂任务完整闭环走。
 
-## 核心原则
+## 安装
 
-- 先澄清，再编码
-- 输出语言跟随用户和项目环境，中文项目默认生成中文 harness
-- 实现前先确认产品形态和内容/数据范围
-- 实现前先确认技术栈和核心方案
-- 先规格，再实现
-- 把工作拆成小而可验证的任务
-- 完成必须有证据
-- 将 run 结果反哺到 harness
+通过 Git marketplace 安装：
 
-## 包含的 Skills
+```text
+codex plugin marketplace add wcxcw/harness-skills --ref main
+codex plugin add harness-skills@harness-skills
+```
+
+## 主要入口
 
 | Skill | 用途 |
 | --- | --- |
-| [`agent-harness`](skills/agent-harness/SKILL.md) | 主编排 skill，用于初始化、运行和维护 harness。 |
-| [`idea-refine`](skills/idea-refine/SKILL.md) | 把原始想法收敛成简洁的 `idea.md`。 |
-| [`spec-driven-development`](skills/spec-driven-development/SKILL.md) | 把不清晰的工作转成 run 级 `spec.md`。 |
-| [`task-planning`](skills/task-planning/SKILL.md) | 把确认后的 spec 拆成 `plan.md` 中有范围、有顺序、可验证的任务。 |
+| [`agent-harness`](skills/agent-harness/SKILL.md) | 初始化、运行和维护项目级 harness 的主入口。 |
+| [`workflows`](skills/workflows/SKILL.md) | 闭环工作流集合：澄清、规格、计划、执行、调试、review、验证和收尾。 |
+| [`meta`](skills/meta/SKILL.md) | 维护和改进 Harness 自身 skills。 |
 
-## 使用方式
+## 它会生成什么
 
-使用下面三个入口之一。`agent-harness` 会根据项目状态选择 `greenfield`、`brownfield` 或 `existing-harness` 模式。
-
-### 新项目
+默认 `core` 脚手架会在目标项目中生成：
 
 ```text
-Use agent-harness to start a new project from this idea: 我想做一个技术资讯网站，主要包含 AI 前沿资讯和 GitHub Trending 趋势。
-```
-
-当只有一句话想法时，`agent-harness` 应先用少量问题确认目标用户、产品形态、内容/数据来源、技术栈和成功标准，不应直接进入编码。
-
-### 老项目
-
-```text
-Use agent-harness to initialize an Agent Harness for this existing codebase.
-```
-
-### 执行任务
-
-```text
-Use agent-harness to run this task through the harness: add tag filtering to the issue list.
-```
-
-## 仓库结构
-
-```text
-harness-skills/
-├── README.md
-├── README.zh-CN.md
-├── docs/
-└── skills/
-    ├── agent-harness/
-    ├── idea-refine/
-    ├── spec-driven-development/
-    └── task-planning/
-```
-
-主入口：
-
-```text
-skills/agent-harness/SKILL.md
-```
-
-主 skill 使用的模板：
-
-```text
-skills/agent-harness/assets/templates/
-```
-
-## 初始化模式
-
-| 模式 | 使用场景 | 默认行为 |
-| --- | --- | --- |
-| `greenfield`（新项目） | 空项目或一句话项目想法 | 按需先收敛想法，生成项目简介，再产出可执行的规格和计划。 |
-| `brownfield`（老项目） | 已有源码、项目配置、测试、CI 或 README | 先做只读发现，记录项目事实，再保守补充 harness 文件。 |
-| `existing-harness`（已有 harness） | 已存在 `AGENTS.md` 或 `harness/` | 保留现有 harness 内容，补齐缺口，避免覆盖既有约定。 |
-
-## 输出语言
-
-- 用户用中文描述项目时，生成的 `AGENTS.md`、`harness/context/*`、`idea.md`、`spec.md`、`plan.md` 和 run 记录默认使用中文。
-- 命令、路径、包名、框架名、API 名称保持原文。
-- 老项目优先尊重已有文档语言；如果用户中文沟通但项目文档英文，可以用中文写新增 run 记录，并保留对英文文件的引用。
-
-脚手架脚本支持显式指定中文模板：
-
-```text
-python3 skills/agent-harness/scripts/init_harness.py --project /path/to/project --profile core --language zh-CN
-```
-
-## 仓库归属
-
-- 提交共享 harness：`AGENTS.md`、`harness/context/`、`harness/tools/`、`harness/feedback/`、`harness/guardrails/` 和 `harness/evals/`。
-- `harness/runs/` 作为任务记录处理。只提交对 review、审计、新人理解、未来上下文、架构决策或复杂 bug 复盘有价值的 run。
-- 个人笔记不能替代仓库里的 harness。普通功能开发只在 `evaluation.md` 中提出 harness 改进建议；规范 harness 更新应通过明确的 harness maintenance 完成。
-
-## 引导式初始化
-
-一句话新项目默认先问清楚，不直接开发。`agent-harness` 会把这一步路由给 [`idea-refine`](skills/idea-refine/SKILL.md)，由 `idea-refine` 负责具体问题清单。
-
-回答这些问题后，再生成或更新 `project-brief.md`、`idea.md`、`spec.md` 和 `plan.md`。如果仍有关键问题未确认，先把它作为 `plan.md` 的第一个非编码任务。
-
-## 生成的 Harness
-
-默认脚手架使用最小的 `core` 配置：
-
-```text
-AGENTS.md                         Agent 入口和 harness 索引
-harness/                          项目级 Agent Harness 工作区
+AGENTS.md
+harness/
 ├── context/
-│   ├── project-brief.md          项目想法、用户、目标、MVP 和假设
-│   └── initialization-notes.md    初始化模式、发现事实、未知项和决策
+│   ├── project-brief.md
+│   └── initialization-notes.md
+├── controls/
+│   ├── gates.md
+│   ├── lifecycle.md
+│   └── skills.md
 ├── tools/
-│   └── commands.md               已确认的项目命令及来源
+│   └── commands.md
 ├── feedback/
-│   └── verification.md           验证流程和完成证据要求
+│   └── verification.md
 ├── guardrails/
-│   └── boundaries.md             范围、权限和安全边界
+│   └── boundaries.md
 ├── evals/
-│   └── task-scorecard.md         完成度、质量、风险和 harness 反馈
+│   └── task-scorecard.md
+├── scripts/
+│   └── check_run.py
 └── runs/
-    └──                           每次任务的运行记录
 ```
 
-扩展文件只在需要时创建：
+也可以直接运行脚手架脚本：
 
-| 配置 / 场景 | 额外文件 |
+```text
+python3 skills/agent-harness/scripts/init_harness.py --project /path/to/project --language zh-CN
+```
+
+## 工作闭环
+
+完整 run 的生命周期是：
+
+```text
+intake/design
+  -> spec
+  -> plan
+  -> before-implementation gate
+  -> execute
+  -> review
+  -> verification
+  -> evaluation
+  -> harness feedback
+```
+
+对应的 run artifacts：
+
+| 文件 | 用途 |
 | --- | --- |
-| `brownfield`（老项目上下文） | `harness/context/repo-map.md`、`harness/context/architecture.md`、`harness/context/coding-conventions.md`、`harness/context/dependency-notes.md` |
-| 扩展安全边界 | `harness/guardrails/permissions.md`、`harness/guardrails/rollback.md` |
-| 扩展评估 | `harness/evals/acceptance-checklist.md`、`harness/evals/regression-checklist.md` |
-| 规格模板 | `harness/specs/feature-template.md`、`harness/specs/bugfix-template.md` |
-| `full` | 所有内置模板 |
+| `workflow.md` | 记录使用过的 skills、生命周期决策和 gate 状态。 |
+| `design.md` | 收敛问题、目标用户、推荐方向、MVP、非目标和开放问题。 |
+| `spec.md` | 目标、范围、假设、验收标准、验证方式和所需证据。 |
+| `plan.md` | 任务顺序、依赖、可能修改的文件、验证方式和证据要求。 |
+| `execution-log.md` | 修改文件、执行命令、测试结果、失败信息和跳过的检查。 |
+| `review.md` | review 范围、发现、处理结果和剩余风险。 |
+| `evaluation.md` | 验收结果、验证结果、review 状态、残留风险和 harness 反馈。 |
 
-## Run 记录
+## 分级闭环
 
-每次 Agent 任务建议创建一个 run 目录：
+每次任务都应选择能安全控制工作的最小 tier。
+
+### XS
+
+适合很小的文档、配置或低风险修改。
 
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/
-├── input.md
-├── idea.md
+├── execution-log.md
+└── evaluation.md
+```
+
+### Standard
+
+适合大多数功能、bugfix 和结构化修改。
+
+```text
+harness/runs/YYYY-MM-DD-short-task-name/
+├── workflow.md
 ├── spec.md
 ├── plan.md
 ├── execution-log.md
 └── evaluation.md
 ```
 
-只有当 run 使用了 idea refinement 时，才需要 `idea.md`。
+### Full
 
-| 文件 | 用途 |
-| --- | --- |
-| `input.md` | 记录用户原始需求。 |
-| `idea.md` | 记录收敛后的问题、方向、关键假设、MVP 范围和不做事项。 |
-| `spec.md` | 记录目标、范围、假设、验收标准、验证方式和所需证据。 |
-| `plan.md` | 记录任务顺序、依赖关系、可能修改的文件、验证方式和所需证据。 |
-| `execution-log.md` | 记录修改文件、执行命令、测试结果、失败信息和跳过的检查。 |
-| `evaluation.md` | 记录是否满足规格、回归风险、残留风险和 harness 反馈。 |
+适合新功能、greenfield、产品方向、复杂 bug 或高风险修改。
+
+```text
+harness/runs/YYYY-MM-DD-short-task-name/
+├── input.md
+├── workflow.md
+├── design.md
+├── spec.md
+├── plan.md
+├── execution-log.md
+├── review.md
+└── evaluation.md
+```
+
+## 本地 Gate
+
+目标项目会生成 `harness/scripts/check_run.py`，用于在实现前和交付前检查当前 run 是否满足所选 tier 的最低要求。
+
+Workflow skills 可以帮助 Agent 做事，但不能绕过项目本地 gate。
+
+## 初始化模式
+
+| 模式 | 使用场景 | 默认行为 |
+| --- | --- | --- |
+| `greenfield` | 空项目或一句话项目想法 | 先澄清方向，再生成项目简介、规格和计划。 |
+| `brownfield` | 已有源码、README、测试、CI 或依赖配置 | 先只读发现，再保守补充 harness 文件。 |
+| `existing-harness` | 已存在 `AGENTS.md` 或 `harness/` | 保留现有约定，补齐缺口，避免覆盖。 |
+
+## 输出语言
+
+- 用户用中文描述项目时，生成的 `AGENTS.md`、`harness/context/*`、`workflow.md`、`design.md`、`spec.md`、`plan.md` 和 run 记录默认使用中文。
+- 命令、路径、包名、框架名和 API 名称保持原文。
+- 老项目优先尊重已有文档语言；新增 run 记录可以跟随用户语言。
+
+## 延伸阅读
+
+- [Harness Engineering 介绍](docs/Harness%20Engineering.zh-CN.md)

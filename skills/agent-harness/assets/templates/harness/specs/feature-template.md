@@ -2,7 +2,7 @@
 
 ## Context Source
 
-- Source: [user input | idea.md | project-brief.md | brownfield audit | existing spec]
+- Source: [user input | design.md | project-brief.md | brownfield audit | existing spec]
 - Initialization mode: [greenfield | brownfield | existing-harness]
 
 ## Goal

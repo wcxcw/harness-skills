@@ -38,7 +38,7 @@ Record how the Agent Harness was initialized and what still needs confirmation.
 
 ## Guided Initialization Questions
 
-When the user only provides a one-sentence idea, use `idea-refine` before coding. Record the user's answers, unresolved decisions, and whether `idea.md` was created.
+When the user only provides a one-sentence idea, use `brainstorming` before coding. Record the user's answers, unresolved decisions, and whether `workflow.md` and `design.md` were created.
 
 ## Existing Project Constraints
 

@@ -2,7 +2,7 @@
 
 ## 上下文来源
 
-- 来源：[用户输入 | idea.md | project-brief.md | brownfield 审计 | 现有 spec]
+- 来源：[用户输入 | design.md | project-brief.md | brownfield 审计 | 现有 spec]
 - 初始化模式：[greenfield | brownfield | existing-harness]
 
 ## 目标

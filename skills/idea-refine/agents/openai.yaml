@@ -1,4 +1,0 @@
-interface:
-  display_name: "Idea Refine"
-  short_description: "Turn raw ideas into focused one-page concepts."
-  default_prompt: "Refine this idea into a concrete one-page concept."

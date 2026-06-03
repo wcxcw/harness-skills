@@ -1,0 +1,20 @@
+{
+  "name": "harness-skills",
+  "version": "0.1.0",
+  "description": "Closed-loop Harness Engineering workflows and scaffolding for Codex.",
+  "author": {
+    "name": "Harness Skills"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Harness Skills",
+    "shortDescription": "Install closed-loop Harness Engineering workflows for Codex.",
+    "longDescription": "Harness Skills turns Harness Engineering into a Codex plugin with project-local gates, workflow skills, scaffold templates, run records, review, verification, and feedback loops.",
+    "developerName": "Harness Skills",
+    "category": "Productivity",
+    "capabilities": [
+      "Write"
+    ],
+    "defaultPrompt": "Use agent-harness to initialize a closed-loop project harness."
+  }
+}

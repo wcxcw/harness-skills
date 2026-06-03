@@ -12,20 +12,16 @@ from pathlib import Path
 CORE_HARNESS_FILES = [
     "context/project-brief.md",
     "context/initialization-notes.md",
+    "controls/gates.md",
+    "controls/lifecycle.md",
+    "controls/skills.md",
     "tools/commands.md",
     "feedback/verification.md",
     "guardrails/boundaries.md",
     "evals/task-scorecard.md",
+    "scripts/check_run.py",
     "runs/.gitkeep",
 ]
-
-BROWNFIELD_EXTRA_FILES = [
-    "context/repo-map.md",
-    "context/architecture.md",
-    "context/coding-conventions.md",
-    "context/dependency-notes.md",
-]
-
 
 def localized_source(path: Path, language: str) -> Path:
     if language == "en":
@@ -92,9 +88,9 @@ def main() -> int:
     parser.add_argument("--force", action="store_true", help="Overwrite existing files.")
     parser.add_argument(
         "--profile",
-        choices=["core", "brownfield", "full"],
+        choices=["core"],
         default="core",
-        help="Template set to scaffold. core is minimal; brownfield adds repository context files; full copies every bundled template.",
+        help="Template set to scaffold. Only core is supported; it creates the minimal harness.",
     )
     parser.add_argument(
         "--language",
@@ -115,13 +111,7 @@ def main() -> int:
 
     written = copy_tree(templates / "root", project, args.force, language)
     harness_templates = templates / "harness"
-    if args.profile == "full":
-        written += copy_tree(harness_templates, project / "harness", args.force, language)
-    else:
-        harness_files = list(CORE_HARNESS_FILES)
-        if args.profile == "brownfield":
-            harness_files += BROWNFIELD_EXTRA_FILES
-        written += copy_files(harness_templates, project / "harness", harness_files, args.force, language)
+    written += copy_files(harness_templates, project / "harness", CORE_HARNESS_FILES, args.force, language)
     (project / "harness" / "runs").mkdir(parents=True, exist_ok=True)
 
     print(f"Initialized Agent Harness in {project} using profile: {args.profile}, language: {language}")

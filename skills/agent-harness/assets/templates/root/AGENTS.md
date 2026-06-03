@@ -8,47 +8,67 @@ This file is the index for the project Agent Harness. It points agents and human
 | --- | --- | --- |
 | Context | Project brief | [harness/context/project-brief.md](harness/context/project-brief.md) |
 | Context | Initialization notes | [harness/context/initialization-notes.md](harness/context/initialization-notes.md) |
+| Controls | Local gates | [harness/controls/gates.md](harness/controls/gates.md) |
+| Controls | Closed-loop lifecycle | [harness/controls/lifecycle.md](harness/controls/lifecycle.md) |
+| Controls | Skill compatibility | [harness/controls/skills.md](harness/controls/skills.md) |
 | Tools | Approved commands | [harness/tools/commands.md](harness/tools/commands.md) |
 | Feedback | Verification process | [harness/feedback/verification.md](harness/feedback/verification.md) |
 | Feedback | Run records | [harness/runs/](harness/runs/) |
 | Guardrails | Work boundaries | [harness/guardrails/boundaries.md](harness/guardrails/boundaries.md) |
 | Evaluation | Task scorecard | [harness/evals/task-scorecard.md](harness/evals/task-scorecard.md) |
-
-## Optional Harness Files
-
-Create these only when the project needs them:
-
-- Brownfield context: `harness/context/repo-map.md`, `harness/context/architecture.md`, `harness/context/coding-conventions.md`, `harness/context/dependency-notes.md`
-- Extra guardrails: `harness/guardrails/permissions.md`, `harness/guardrails/rollback.md`
-- Extra evals: `harness/evals/acceptance-checklist.md`, `harness/evals/regression-checklist.md`
-- Spec templates: `harness/specs/feature-template.md`, `harness/specs/bugfix-template.md`
+| Scripts | Run gate checker | [harness/scripts/check_run.py](harness/scripts/check_run.py) |
 
 ## Initialization Mode
 
-- `greenfield`: New project or one-sentence project idea. Start from `project-brief.md`, `initialization-notes.md`, and the active run's `idea.md` when present.
+- `greenfield`: New project or one-sentence project idea. Start from `project-brief.md`, `initialization-notes.md`, and the active run's `workflow.md` and `design.md` when present.
 - `brownfield`: Existing codebase. Start from available `harness/context/*`, existing README/config/CI/package files, then the active run.
 - `existing-harness`: Existing `AGENTS.md` or `harness/`. Preserve current harness content unless the user asks for a rewrite.
 
 ## Language Policy
 
 - Use the user's main language for generated harness content.
-- If the user describes the project in Chinese, write `idea.md`, `spec.md`, `plan.md`, run records, and harness context in Chinese.
+- If the user describes the project in Chinese, write `workflow.md`, `design.md`, `spec.md`, `plan.md`, run records, and harness context in Chinese.
 - Keep code identifiers, commands, file paths, library names, framework names, and API names in their original language.
 - For existing projects, prefer the project's established documentation language when it is consistent.
 
 ## Run Convention
 
+Use the smallest tier that safely controls the work.
+
+XS:
+
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/
-├── input.md
-├── idea.md
+├── execution-log.md
+└── evaluation.md
+```
+
+Standard:
+
+```text
+harness/runs/YYYY-MM-DD-short-task-name/
+├── workflow.md
 ├── spec.md
 ├── plan.md
 ├── execution-log.md
 └── evaluation.md
 ```
 
-Use `idea.md` only when the task started as a raw idea and used `idea-refine`.
+Full:
+
+```text
+harness/runs/YYYY-MM-DD-short-task-name/
+├── input.md
+├── workflow.md
+├── design.md
+├── spec.md
+├── plan.md
+├── execution-log.md
+├── review.md
+└── evaluation.md
+```
+
+Use `design.md` for new feature, greenfield, or product direction work. Use `review.md` for `full` runs or when risk justifies review. Use `idea.md` only for legacy runs that started before the workflow layer existed.
 
 ## Operating Principles
 
@@ -57,6 +77,7 @@ Use `idea.md` only when the task started as a raw idea and used `idea-refine`.
 - Confirm blocking decisions before implementation: technology stack, runtime, data model, core architecture, external services, deployment target, and major UX/platform choices must be confirmed or explicitly deferred as non-coding decision tasks.
 - Spec before implementation: use the active run's `spec.md` for non-trivial work.
 - Plan into small verifiable tasks: each task should include scope, likely files, dependencies, and verification.
+- Check local gates before implementation and before completion.
 - Evidence before completion: record commands, checks, failures, and skipped verification in the active run.
 - Keep scope small: avoid unrelated refactors, speculative abstractions, and behavior outside the spec.
 - Improve the harness from evidence: feed repeated failures or missing context back into canonical harness files.
@@ -74,9 +95,9 @@ Use `idea.md` only when the task started as a raw idea and used `idea-refine`.
 
 ## Guided Initialization
 
-When the project only has a one-sentence idea, product shape is unclear, technology choices are missing, or the user wants to discuss direction first, do not write application code. Use `idea-refine` to ask focused questions and produce `idea.md`.
+When the project only has a one-sentence idea, product shape is unclear, technology choices are missing, or the user wants to discuss direction first, do not write application code. Use `brainstorming` to ask focused questions and produce `design.md`.
 
-After the user answers, update `project-brief.md` and `initialization-notes.md`, then create or update `idea.md`, `spec.md`, and `plan.md`. If a blocking decision remains unresolved, make it the first non-coding task in `plan.md`.
+After the user answers, update `project-brief.md` and `initialization-notes.md`, then create or update `workflow.md`, `design.md`, `spec.md`, and `plan.md`. If a blocking decision remains unresolved, make it the first non-coding task in `plan.md`.
 
 ## Implementation Gate
 
@@ -84,17 +105,45 @@ Do not write application code when `spec.md` or `plan.md` still has unresolved b
 
 If the user wants to defer a decision, make that decision the first non-coding task in `plan.md`. Resolve it before implementation tasks begin.
 
+When an active run exists, use the local gate checker before implementation:
+
+```text
+python3 harness/scripts/check_run.py harness/runs/<run> --stage before-implementation --tier standard
+```
+
+Before claiming completion, use the local gate checker again:
+
+```text
+python3 harness/scripts/check_run.py harness/runs/<run> --stage before-completion --tier standard
+```
+
+Before claiming completion, use the completion gate:
+
+```text
+python3 harness/scripts/check_run.py harness/runs/<run> --stage before-completion
+```
+
+## Skill Compatibility
+
+Workflow skills may be used when they help satisfy the local spec, plan, gates, or verification requirements. They do not replace this repository's harness.
+
+Use [harness/controls/skills.md](harness/controls/skills.md) to map workflow skills to local stages. If an external skill conflicts with project commands, guardrails, or user instructions, follow the local harness and ask when the conflict is material.
+
 ## Agent Workflow
 
 1. Determine the initialization mode from `harness/context/initialization-notes.md`.
-2. For greenfield work, read `project-brief.md`, then the active run's `idea.md`, `spec.md`, and `plan.md`.
+2. For greenfield work, read `project-brief.md`, then the active run's `workflow.md`, `design.md`, `spec.md`, and `plan.md`.
 3. For brownfield work, read needed files under `harness/context/`, then existing project documentation/configuration, then the active run.
-4. Load only the needed context files.
-5. Check guardrails before editing.
-6. Confirm there are no unresolved blocking questions before editing application code.
-7. Execute one small task at a time.
-8. Run approved verification commands.
-9. Record evidence in the run directory before claiming completion.
-10. Update evaluation before handoff.
-11. Review `Context Updates`, `execution-log.md`, and `evaluation.md` for harness gaps.
-12. Update canonical harness files only when the user asked for harness maintenance, the active workflow explicitly allows it, or the update is a factual correction from repository evidence. Otherwise, list proposed harness updates for confirmation.
+4. Read `harness/controls/lifecycle.md`, `gates.md`, and `skills.md`.
+5. Load only the needed context files.
+6. Check controls and guardrails before editing.
+7. Confirm there are no unresolved blocking questions before editing application code.
+8. Run the before-implementation gate when an active run exists.
+9. Execute one small task at a time.
+10. Run approved verification commands.
+11. Record evidence in the run directory before claiming completion.
+12. Create or update `review.md`.
+13. Run the before-completion gate when an active run exists.
+14. Update evaluation before handoff.
+15. Review `Context Updates`, `execution-log.md`, `review.md`, and `evaluation.md` for harness gaps.
+16. Update canonical harness files only when the user asked for harness maintenance, the active workflow explicitly allows it, or the update is a factual correction from repository evidence. Otherwise, list proposed harness updates for confirmation.

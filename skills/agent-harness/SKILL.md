@@ -1,6 +1,6 @@
 ---
 name: agent-harness
-description: Initialize and operate a project-level Agent Harness for software engineering work. Use when the user wants to create or update AGENTS.md, scaffold a harness/ directory, define spec/context/tools/guardrails/evals templates, create run records, or combine bundled skills such as idea-refine, spec-driven-development, and task-planning into a repeatable Harness Engineering workflow.
+description: Initialize and operate a project-level Agent Harness for software engineering work. Use when the user wants to create or update AGENTS.md, scaffold a harness/ directory, define spec/context/tools/guardrails/evals templates, create run records, or combine bundled workflow skills into a repeatable Harness Engineering workflow.
 ---
 
 # Agent Harness
@@ -19,6 +19,7 @@ This is an orchestration skill. Do not duplicate the full workflows of related s
 - Confirm blocking decisions before implementation: technology stack, runtime, data model, core architecture, external services, deployment target, and major UX/platform choices must be confirmed or explicitly deferred as non-coding decision tasks.
 - Spec before implementation: non-trivial work needs a run-level spec before code changes.
 - Plan into small verifiable tasks: each task should have scope, likely files, dependencies, and verification.
+- Gate continuation locally: pass project-local gates before implementation and completion, using the smallest safe tier (`xs`, `standard`, or `full`).
 - Evidence before completion: do not claim completion without commands, checks, or a documented reason verification was skipped.
 - Keep scope small: prefer the simplest change that satisfies the spec; avoid unrelated refactors or speculative abstractions.
 - Improve the harness from evidence: repeated failures, missing commands, stale context, or weak guardrails should feed back into canonical harness files.
@@ -41,7 +42,7 @@ For `existing-harness`, preserve existing harness content by default. Add missin
 Choose the harness language before writing files:
 
 - Use the user's main language for generated harness content.
-- If the user prompt is Chinese, use Chinese for `AGENTS.md`, `harness/context/*`, run records, `idea.md`, `spec.md`, `plan.md`, `execution-log.md`, and `evaluation.md`.
+- If the user prompt is Chinese, use Chinese for `AGENTS.md`, `harness/context/*`, run records, `workflow.md`, `design.md`, `spec.md`, `plan.md`, `execution-log.md`, `review.md`, and `evaluation.md`.
 - Keep code identifiers, commands, file paths, package names, framework names, and API names in their original language.
 - For `brownfield`, prefer the existing project documentation language when it is consistent. If the user language and project language differ, use the user language for new run records and keep references to existing files unchanged.
 - When scaffolding Chinese files with the script, pass `--language zh-CN`. Use `--language en` only when the project or user clearly prefers English.
@@ -50,9 +51,9 @@ Choose the harness language before writing files:
 
 Use guided initialization before implementation when the project has only a short idea, the product shape is unclear, or blocking decisions are missing.
 
-Use `idea-refine` for the actual clarifying questions and `idea.md` output. Do not duplicate that workflow in this skill.
+Use `brainstorming` for the actual clarifying questions and `design.md` output. Do not duplicate that workflow in this skill.
 
-Do not write application code after asking the `idea-refine` questions. Wait for the user's answers, then update `project-brief.md` and `initialization-notes.md`, create or update `idea.md`, and proceed to spec only when the blocking decisions are answered or explicitly deferred as a non-coding decision task.
+Do not write application code after asking the `brainstorming` questions. Wait for the user's answers, then update `project-brief.md` and `initialization-notes.md`, create or update `workflow.md` and `design.md`, and proceed to spec only when the blocking decisions are answered or explicitly deferred as a non-coding decision task.
 
 For content-driven products such as news, directories, dashboards, or curated feeds, this gate is required unless the user already provided content categories, source strategy, update cadence, ranking/filtering, page structure, and MVP quality bar.
 
@@ -65,7 +66,7 @@ Inspect the target project before writing harness files:
 - Build, test, lint, dev, and verification commands
 - Existing documentation, CI, tests, and conventions
 
-For `greenfield`, also capture the project idea, target user, success criteria, constraints, product shape, preferred stack if provided, core implementation direction, and unknown decisions. If the user only gave a one-sentence idea, use `idea-refine` to clarify target audience, content/data scope, core user experience, success criteria, constraints, technology stack, and core approach before writing the executable spec.
+For `greenfield`, also capture the project idea, target user, success criteria, constraints, product shape, preferred stack if provided, core implementation direction, and unknown decisions. If the user only gave a one-sentence idea, use `brainstorming` to clarify target audience, content/data scope, core user experience, success criteria, constraints, technology stack, and core approach before writing the executable spec.
 
 For content-driven products such as news, directories, dashboards, or curated feeds, clarify content categories, source strategy, update cadence, ranking/filtering, page structure, and MVP quality bar before implementation. Do not turn a broad content product idea into a generic demo without confirming what the user wants the experience to be.
 
@@ -83,6 +84,10 @@ harness/
 ├── context/
 │   ├── project-brief.md
 │   └── initialization-notes.md
+├── controls/
+│   ├── gates.md
+│   ├── lifecycle.md
+│   └── skills.md
 ├── tools/
 │   └── commands.md
 ├── feedback/
@@ -91,33 +96,35 @@ harness/
 │   └── boundaries.md
 ├── evals/
 │   └── task-scorecard.md
+├── scripts/
+│   └── check_run.py
 └── runs/
 ```
 
 Use `scripts/init_harness.py` for deterministic scaffolding when creating the structure from scratch:
 
-- `--profile core` (default): minimal harness for new projects and general use.
-- `--profile brownfield`: core plus repository context files for existing codebases.
-- `--profile full`: every bundled template; use only when the user wants the expanded harness.
+- `--profile core` (default): the only supported scaffold profile. It creates the minimal harness, local gates, and run checker.
 - `--language zh-CN`: Chinese harness templates.
 - `--language en`: English harness templates.
 - `--language auto` (default): follows process locale; prefer explicit `zh-CN` when the user prompt is Chinese.
 
-Do not use `--force` for `brownfield` or `existing-harness` unless the user explicitly confirms overwriting harness files.
+Do not use `--force` for existing projects unless the user explicitly confirms overwriting harness files.
 
 For `greenfield`, fill `harness/context/project-brief.md` and `harness/context/initialization-notes.md` from the user idea and discovered facts.
 
-For `brownfield`, use `--profile brownfield` when project context files are useful, then fill `harness/context/repo-map.md`, `architecture.md`, `coding-conventions.md`, `dependency-notes.md`, `tools/commands.md`, and `initialization-notes.md` from repository evidence.
+For `brownfield`, scaffold the same minimal core first. Add extra context files later only when repository evidence shows they remove real ambiguity.
 
 For `existing-harness`, update only missing or clearly stale harness files. Preserve existing `AGENTS.md`, README, CI, tests, and code conventions unless the user confirms a rewrite.
 
-Create optional files only when they remove real ambiguity or support a project need. Do not expand the harness just because templates exist.
+Do not expand the harness just because templates exist.
+
+Use `harness/controls/skills.md` to map workflow skills to local harness stages. Workflow skills may guide how the agent works, but local gates, commands, guardrails, and verification evidence remain authoritative.
 
 ### 6. Collaboration and Version Control
 
 Use this ownership model for team projects:
 
-- Commit canonical harness files to the repository: `AGENTS.md`, `harness/context/`, `harness/tools/`, `harness/feedback/`, `harness/guardrails/`, and `harness/evals/`.
+- Commit canonical harness files to the repository: `AGENTS.md`, `harness/context/`, `harness/controls/`, `harness/tools/`, `harness/feedback/`, `harness/guardrails/`, `harness/evals/`, and `harness/scripts/`.
 - Treat `harness/runs/` as task-owned records. Commit run directories only when they are useful for review, audit, onboarding, future context, architecture decisions, or complex bug investigations.
 - Do not maintain separate personal copies of the canonical harness as the source of truth. Personal notes may exist locally, but shared agent behavior should come from the repository harness.
 - During normal feature or bugfix runs, write harness improvement proposals in the active run's `evaluation.md` instead of directly editing canonical harness files.
@@ -128,19 +135,19 @@ If the project wants to keep most run records out of version control, recommend 
 
 ### 7. Refine
 
-For raw product ideas, vague project concepts, or early feature directions, use `idea-refine` before writing a spec. Save the one-page concept in the active run directory when the user confirms:
+For raw product ideas, vague project concepts, or early feature directions, use `brainstorming` before writing a spec. Save the one-page design in the active run directory when the user confirms:
 
 ```text
-harness/runs/YYYY-MM-DD-short-task-name/idea.md
+harness/runs/YYYY-MM-DD-short-task-name/design.md
 ```
 
-The refined idea should define the problem statement, recommended direction, key assumptions, MVP scope, not-doing list, and open questions.
+The refined design should define the problem statement, recommended direction, key assumptions, MVP scope, not-doing list, and open questions.
 
-For `greenfield`, a one-sentence idea should normally produce both `idea.md` and an executable `spec.md`. Do not silently choose product shape, content scope, information architecture, technology stack, or core implementation approach. If product, technology, or architecture decisions are missing, ask the user before planning implementation, or make choosing them the first non-coding task.
+For `greenfield`, a one-sentence idea should normally produce `workflow.md`, `design.md`, and an executable `spec.md`. Do not silently choose product shape, content scope, information architecture, technology stack, or core implementation approach. If product, technology, or architecture decisions are missing, ask the user before planning implementation, or make choosing them the first non-coding task.
 
 ### 8. Specify
 
-For non-trivial tasks, use `spec-driven-development`. Save the resulting task contract in the active run directory:
+For non-trivial tasks, use `writing-specs`. Save the resulting task contract in the active run directory:
 
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/spec.md
@@ -164,7 +171,7 @@ If the user does not want to decide yet, record the decision in `Open Questions`
 
 ### 9. Plan
 
-After the spec is clear, use `task-planning`. Save the implementation plan in:
+After the spec is clear, use `writing-plans`. Save the implementation plan in:
 
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/plan.md
@@ -179,31 +186,58 @@ Do not proceed to execution if `spec.md` or `plan.md` contains unresolved blocki
 Implement against the active run only:
 
 - Read `AGENTS.md`
-- Read the active run's `idea.md` when present
+- Read the active run's `workflow.md` and `design.md` when present
 - Read the active run's `spec.md` and `plan.md`
 - Load only the needed files under `harness/context/`
+- Check `harness/controls/gates.md` and `harness/controls/skills.md`
 - Check `harness/guardrails/` before edits
+- Run `python3 harness/scripts/check_run.py harness/runs/<run> --stage before-implementation --tier <xs|standard|full>` when an active run exists and the checker is available
 - Keep code changes scoped to the current spec
 
 ### 11. Verify
 
 Run commands from `harness/tools/commands.md` and record results in `execution-log.md`.
 
+Before claiming completion, run `python3 harness/scripts/check_run.py harness/runs/<run> --stage before-completion --tier <xs|standard|full>` when an active run exists and the checker is available. If the checker cannot be run, record the reason in `execution-log.md`.
+
 ### 12. Record
 
-Each task run should use this structure:
+Each task run should use the smallest tier that safely controls the work.
+
+XS:
 
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/
-├── input.md
-├── idea.md
+├── execution-log.md
+└── evaluation.md
+```
+
+Standard:
+
+```text
+harness/runs/YYYY-MM-DD-short-task-name/
+├── workflow.md
 ├── spec.md
 ├── plan.md
 ├── execution-log.md
 └── evaluation.md
 ```
 
-Use `idea.md` only when `idea-refine` was part of the run. Record changed files, commands run, verification results, unresolved risks, and whether each acceptance criterion passed.
+Full:
+
+```text
+harness/runs/YYYY-MM-DD-short-task-name/
+├── input.md
+├── workflow.md
+├── design.md
+├── spec.md
+├── plan.md
+├── execution-log.md
+├── review.md
+└── evaluation.md
+```
+
+Use `design.md` for new feature or product direction work. Legacy runs may still contain `idea.md`. Record changed files, commands run, verification results, review findings, unresolved risks, and whether each acceptance criterion passed.
 
 ### 13. Improve
 
@@ -223,9 +257,10 @@ Update harness files, not unrelated application code, during this improvement ph
 
 Read `references/related-skills.md` when deciding how this skill composes with existing skills. In short:
 
-- Use bundled `idea-refine` for the Idea layer when a request is still exploratory.
-- Use bundled `spec-driven-development` for the Spec layer.
-- Use bundled `task-planning` for the Plan and Tasks layer.
+- Use bundled `brainstorming` for the Intake layer when a request is still exploratory.
+- Use bundled `writing-specs` for the Spec layer.
+- Use bundled `writing-plans` for the Plan layer.
+- Use bundled execution, review, verification, and finishing workflows to close the run.
 
 ## Boundaries
 
