@@ -12,6 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 INIT_SCRIPT = ROOT / "skills" / "agent-harness" / "scripts" / "init_harness.py"
 PLUGIN_MANIFEST = ROOT / ".codex-plugin" / "plugin.json"
 MARKETPLACE_MANIFEST = ROOT / ".agents" / "plugins" / "marketplace.json"
+PLUGIN_WRAPPER = ROOT / "plugins" / "harness-skills"
+PLUGIN_WRAPPER_MANIFEST = PLUGIN_WRAPPER / ".codex-plugin" / "plugin.json"
 WORKFLOW_SKILLS = ROOT / "skills" / "workflows"
 VENDOR_SUPERPOWERS = ROOT / "vendor" / "superpowers"
 OPERATIONAL_WORKFLOW_SECTIONS = [
@@ -36,21 +38,28 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
         for vendor_skill in vendor_skill_files:
             self.assertFalse(vendor_skill.resolve().is_relative_to(exposed_skills), vendor_skill)
 
-    def test_git_marketplace_manifest_points_to_root_plugin(self) -> None:
+    def test_git_marketplace_manifest_points_to_plugin_wrapper(self) -> None:
         marketplace = json.loads(MARKETPLACE_MANIFEST.read_text(encoding="utf-8"))
         self.assertEqual(marketplace["name"], "harness-skills")
         [plugin] = marketplace["plugins"]
         self.assertEqual(plugin["name"], "harness-skills")
-        self.assertEqual(plugin["source"], {"source": "local", "path": "."})
+        self.assertEqual(plugin["source"], {"source": "local", "path": "./plugins/harness-skills"})
         self.assertEqual(plugin["policy"]["installation"], "AVAILABLE")
         plugin_path = (ROOT / plugin["source"]["path"]).resolve()
-        self.assertEqual(plugin_path, ROOT)
-        self.assertEqual(plugin_path / ".codex-plugin" / "plugin.json", PLUGIN_MANIFEST)
-        self.assertTrue(PLUGIN_MANIFEST.exists())
+        self.assertEqual(plugin_path, PLUGIN_WRAPPER)
+        self.assertEqual(plugin_path / ".codex-plugin" / "plugin.json", PLUGIN_WRAPPER_MANIFEST)
+        self.assertTrue(PLUGIN_WRAPPER_MANIFEST.exists())
+        self.assertEqual(
+            json.loads(PLUGIN_MANIFEST.read_text(encoding="utf-8")),
+            json.loads(PLUGIN_WRAPPER_MANIFEST.read_text(encoding="utf-8")),
+        )
 
     def test_repository_uses_single_skills_source(self) -> None:
-        self.assertTrue((ROOT / "skills").exists())
-        self.assertFalse((ROOT / "plugins" / "harness-skills").exists())
+        root_skills = ROOT / "skills"
+        wrapper_skills = PLUGIN_WRAPPER / "skills"
+        self.assertTrue(root_skills.exists())
+        self.assertTrue(wrapper_skills.is_symlink())
+        self.assertEqual(wrapper_skills.resolve(), root_skills.resolve())
 
     def test_vendor_superpowers_curated_subset_is_present(self) -> None:
         expected = {
