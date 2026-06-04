@@ -37,9 +37,9 @@ codex plugin add harness-skills@harness-skills
 
 | Skill | 用途 |
 | --- | --- |
-| [`agent-harness`](skills/agent-harness/SKILL.md) | 初始化、运行和维护项目级 harness 的主入口。 |
-| [`workflows`](skills/workflows/SKILL.md) | 闭环工作流集合：澄清、规格、计划、执行、调试、review、验证和收尾。 |
-| [`meta`](skills/meta/SKILL.md) | 维护和改进 Harness 自身 skills。 |
+| [`agent-harness`](plugins/harness-skills/skills/agent-harness/SKILL.md) | 初始化、运行和维护项目级 harness 的主入口。 |
+| [`workflows`](plugins/harness-skills/skills/workflows/SKILL.md) | 闭环工作流集合：澄清、规格、计划、执行、调试、review、验证和收尾。 |
+| [`meta`](plugins/harness-skills/skills/meta/SKILL.md) | 维护和改进 Harness 自身 skills。 |
 
 ## 它会生成什么
 
@@ -64,7 +64,7 @@ harness/
 也可以直接运行脚手架脚本：
 
 ```text
-python3 skills/agent-harness/scripts/init_harness.py --project /path/to/project --language zh-CN
+python3 plugins/harness-skills/skills/agent-harness/scripts/init_harness.py --project /path/to/project --language zh-CN
 ```
 
 ## 工作闭环

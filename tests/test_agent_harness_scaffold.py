@@ -9,12 +9,11 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-INIT_SCRIPT = ROOT / "skills" / "agent-harness" / "scripts" / "init_harness.py"
-PLUGIN_MANIFEST = ROOT / ".codex-plugin" / "plugin.json"
 MARKETPLACE_MANIFEST = ROOT / ".agents" / "plugins" / "marketplace.json"
-PLUGIN_WRAPPER = ROOT / "plugins" / "harness-skills"
-PLUGIN_WRAPPER_MANIFEST = PLUGIN_WRAPPER / ".codex-plugin" / "plugin.json"
-WORKFLOW_SKILLS = ROOT / "skills" / "workflows"
+PLUGIN_ROOT = ROOT / "plugins" / "harness-skills"
+PLUGIN_MANIFEST = PLUGIN_ROOT / ".codex-plugin" / "plugin.json"
+INIT_SCRIPT = PLUGIN_ROOT / "skills" / "agent-harness" / "scripts" / "init_harness.py"
+WORKFLOW_SKILLS = PLUGIN_ROOT / "skills" / "workflows"
 VENDOR_SUPERPOWERS = ROOT / "vendor" / "superpowers"
 OPERATIONAL_WORKFLOW_SECTIONS = [
     "## Gate Mapping",
@@ -29,7 +28,7 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
         manifest = json.loads(PLUGIN_MANIFEST.read_text(encoding="utf-8"))
         self.assertEqual(manifest["skills"], "./skills/")
 
-        exposed_skills = (ROOT / manifest["skills"]).resolve()
+        exposed_skills = (PLUGIN_ROOT / manifest["skills"]).resolve()
         self.assertTrue(exposed_skills.exists())
         self.assertNotIn("vendor", exposed_skills.parts)
 
@@ -46,20 +45,18 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
         self.assertEqual(plugin["source"], {"source": "local", "path": "./plugins/harness-skills"})
         self.assertEqual(plugin["policy"]["installation"], "AVAILABLE")
         plugin_path = (ROOT / plugin["source"]["path"]).resolve()
-        self.assertEqual(plugin_path, PLUGIN_WRAPPER)
-        self.assertEqual(plugin_path / ".codex-plugin" / "plugin.json", PLUGIN_WRAPPER_MANIFEST)
-        self.assertTrue(PLUGIN_WRAPPER_MANIFEST.exists())
-        self.assertEqual(
-            json.loads(PLUGIN_MANIFEST.read_text(encoding="utf-8")),
-            json.loads(PLUGIN_WRAPPER_MANIFEST.read_text(encoding="utf-8")),
-        )
+        self.assertEqual(plugin_path, PLUGIN_ROOT)
+        self.assertEqual(plugin_path / ".codex-plugin" / "plugin.json", PLUGIN_MANIFEST)
+        self.assertTrue(PLUGIN_MANIFEST.exists())
 
     def test_repository_uses_single_skills_source(self) -> None:
         root_skills = ROOT / "skills"
-        wrapper_skills = PLUGIN_WRAPPER / "skills"
-        self.assertTrue(root_skills.exists())
-        self.assertTrue(wrapper_skills.is_symlink())
-        self.assertEqual(wrapper_skills.resolve(), root_skills.resolve())
+        plugin_skills = PLUGIN_ROOT / "skills"
+        self.assertFalse(root_skills.exists())
+        self.assertFalse((ROOT / ".codex-plugin").exists())
+        self.assertFalse((ROOT / ".claude-plugin").exists())
+        self.assertTrue(plugin_skills.is_dir())
+        self.assertFalse(plugin_skills.is_symlink())
 
     def test_vendor_superpowers_curated_subset_is_present(self) -> None:
         expected = {
@@ -190,7 +187,7 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
             zh_agents = (zh_project / "AGENTS.md").read_text(encoding="utf-8")
             zh_gates = (zh_project / "harness" / "controls" / "gates.md").read_text(encoding="utf-8")
             lifecycle = (
-                ROOT
+                PLUGIN_ROOT
                 / "skills"
                 / "agent-harness"
                 / "assets"

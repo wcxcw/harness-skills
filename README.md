@@ -37,9 +37,9 @@ codex plugin add harness-skills@harness-skills
 
 | Skill | Purpose |
 | --- | --- |
-| [`agent-harness`](skills/agent-harness/SKILL.md) | Main entry point for initializing, running, and maintaining a project harness. |
-| [`workflows`](skills/workflows/SKILL.md) | Closed-loop workflows for brainstorming, specs, plans, execution, debugging, review, verification, and finishing. |
-| [`meta`](skills/meta/SKILL.md) | Skills for maintaining and improving Harness skills themselves. |
+| [`agent-harness`](plugins/harness-skills/skills/agent-harness/SKILL.md) | Main entry point for initializing, running, and maintaining a project harness. |
+| [`workflows`](plugins/harness-skills/skills/workflows/SKILL.md) | Closed-loop workflows for brainstorming, specs, plans, execution, debugging, review, verification, and finishing. |
+| [`meta`](plugins/harness-skills/skills/meta/SKILL.md) | Skills for maintaining and improving Harness skills themselves. |
 
 ## Generated Harness
 
@@ -64,7 +64,7 @@ harness/
 You can also run the scaffold script directly:
 
 ```text
-python3 skills/agent-harness/scripts/init_harness.py --project /path/to/project --language en
+python3 plugins/harness-skills/skills/agent-harness/scripts/init_harness.py --project /path/to/project --language en
 ```
 
 ## Closed Loop
@@ -167,5 +167,5 @@ Workflow skills help the agent work, but they do not bypass project-local gates.
 Use Chinese templates explicitly:
 
 ```text
-python3 skills/agent-harness/scripts/init_harness.py --project /path/to/project --language zh-CN
+python3 plugins/harness-skills/skills/agent-harness/scripts/init_harness.py --project /path/to/project --language zh-CN
 ```
