@@ -208,6 +208,49 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
             self.assertIn("同一目标的返修", zh_agents)
             self.assertIn("不要因为同一目标下的小修复新建 run", zh_gates)
 
+    def test_micro_change_guidance_allows_no_run_direct_execution(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            en_project = Path(tmp) / "en"
+            zh_project = Path(tmp) / "zh"
+            for project, language in [(en_project, "en"), (zh_project, "zh-CN")]:
+                subprocess.run(
+                    [
+                        sys.executable,
+                        str(INIT_SCRIPT),
+                        "--project",
+                        str(project),
+                        "--profile",
+                        "core",
+                        "--language",
+                        language,
+                    ],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+
+            en_agents = (en_project / "AGENTS.md").read_text(encoding="utf-8")
+            en_gates = (en_project / "harness" / "controls" / "gates.md").read_text(encoding="utf-8")
+            zh_agents = (zh_project / "AGENTS.md").read_text(encoding="utf-8")
+            zh_gates = (zh_project / "harness" / "controls" / "gates.md").read_text(encoding="utf-8")
+            agent_harness = (PLUGIN_ROOT / "skills" / "agent-harness" / "SKILL.md").read_text(encoding="utf-8")
+            readme = (ROOT / "README.md").read_text(encoding="utf-8")
+
+            self.assertIn("Do not create a run for explicit, low-risk micro changes", en_agents)
+            self.assertIn("behavior-preserving, decision-free", en_agents)
+            self.assertIn("Not micro: \"improve the homepage visuals\"", en_agents)
+            self.assertIn("Run tiers apply only when a run is warranted", en_gates)
+            self.assertIn("all micro-change criteria are met", readme)
+            self.assertIn("typography hierarchy changes", readme)
+            self.assertIn("Skip run creation for explicit, low-risk micro changes", agent_harness)
+            self.assertIn("no-run micro change only when all of these are true", agent_harness)
+
+            self.assertIn("微小改动不要创建 run", zh_agents)
+            self.assertIn("必须同时满足", zh_agents)
+            self.assertIn("不属于微小改动", zh_agents)
+            self.assertIn("只有需要 run 时才选择 run tier", zh_gates)
+            self.assertIn("宽泛视觉", zh_gates)
+
     def test_scaffold_only_accepts_core_profile(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             project = Path(tmp) / "project"

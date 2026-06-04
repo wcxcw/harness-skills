@@ -19,6 +19,7 @@ This is an orchestration skill. Do not duplicate the full workflows of related s
 - Confirm blocking decisions before implementation: technology stack, runtime, data model, core architecture, external services, deployment target, and major UX/platform choices must be confirmed or explicitly deferred as non-coding decision tasks.
 - Spec before implementation: non-trivial work needs a run-level spec before code changes.
 - Plan into small verifiable tasks: each task should have scope, likely files, dependencies, and verification.
+- Skip run creation for explicit, low-risk micro changes when no active run exists; make the edit, run the smallest relevant check, and summarize the result instead.
 - Gate continuation locally: pass project-local gates before implementation and completion, using the smallest safe tier (`xs`, `standard`, or `full`).
 - Keep run boundaries tied to user objectives: follow-up corrections, test fixes, verification additions, and small adjustments for the same objective stay in the active run.
 - Evidence before completion: do not claim completion without commands, checks, or a documented reason verification was skipped.
@@ -27,6 +28,41 @@ This is an orchestration skill. Do not duplicate the full workflows of related s
 - Treat canonical harness files as repository-owned collaboration assets. Personal notes and local run records must not replace the shared harness.
 
 ## Workflow
+
+### 0. Decide Whether A Run Is Needed
+
+Create a run only when the work needs a controlled record. A change is a
+no-run micro change only when all of these are true:
+
+- The user request is explicit and specific.
+- The edit is local to one surface or one nearby file area.
+- It does not change behavior, business logic, state flow, APIs, data shape,
+  permissions, routing, validation, persistence, CI, dependencies, or schema.
+- It does not require a product, design-direction, technical, architecture, or
+  verification-strategy decision.
+- It can be verified with a small targeted check.
+- It can be reverted locally without broader impact.
+
+For micro changes, make the edit directly, run the smallest relevant check, and
+summarize the result in the response. If an active run already exists and the
+micro change belongs to that objective, append the evidence to the active run.
+
+Examples that may be no-run micro changes:
+
+- Fix a typo or one sentence of copy.
+- Change a named selector's font size from `18px` to `16px`.
+- Adjust one button's spacing token or one color token.
+
+Examples that are not micro changes:
+
+- "Improve the homepage visuals."
+- "Adjust the typography hierarchy."
+- A change that spans multiple pages, alters interaction behavior, or needs a
+  design decision.
+
+Use `xs`, `standard`, or `full` when the task needs an audit trail, touches
+project behavior, spans multiple concerns, requires a decision, or the user
+explicitly asks to run it through the harness.
 
 ### 1. Choose Initialization Mode
 
@@ -188,6 +224,7 @@ Implement against the active run only:
 - Run `python3 harness/scripts/check_run.py harness/runs/<run> --stage before-implementation --tier <xs|standard|full>` when an active run exists and the checker is available
 - Keep code changes scoped to the current spec
 - For user-requested corrections to the same objective, update the active run's `plan.md`, `execution-log.md`, or `evaluation.md` instead of creating a new run
+- For direct micro changes with no active run, skip run artifacts and rely on the smallest relevant verification plus the final response summary
 
 ### 11. Verify
 
@@ -197,7 +234,9 @@ Before claiming completion, run `python3 harness/scripts/check_run.py harness/ru
 
 ### 12. Record
 
-Each task run should use the smallest tier that safely controls the work.
+When a run is warranted, use the smallest tier that safely controls the work.
+Do not treat `xs` as mandatory for every tiny edit; no-run direct execution is
+allowed for explicit, low-risk micro changes with no active run.
 A run represents one user objective, not one agent attempt. Keep follow-up
 corrections, test fixes, verification additions, and small adjustments in the
 active run until the work is accepted or the run is closed. Create a new run

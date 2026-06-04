@@ -13,7 +13,12 @@ This project uses an Agent Harness. Treat the files below as the shared source o
 ## Core Rules
 
 - Clarify unclear product, technical, or scope decisions before implementation.
-- Use the smallest run tier that safely controls the task.
+- Do not create a run for explicit, low-risk micro changes when no active run exists.
+- A no-run micro change must be explicit, local to one surface or nearby file area, behavior-preserving, decision-free, easy to verify with one targeted check, and locally reversible.
+- Examples: fix a typo, change one sentence of copy, change a named selector's font size from `18px` to `16px`, or adjust one spacing/color token.
+- Not micro: "improve the homepage visuals", "adjust the typography hierarchy", cross-page changes, behavior changes, or anything requiring a design/product/technical decision.
+- For micro changes, make the edit, run the smallest relevant check, and summarize the result in the response.
+- When a run is warranted, use the smallest run tier that safely controls the task.
 - Treat a run as one user objective, not one agent attempt.
 - Continue the active run for follow-up corrections, test fixes, verification additions, and small adjustments to the same objective.
 - Create a new run only when the objective changes, scope materially expands, the previous run is closed, or the user explicitly starts a new task.

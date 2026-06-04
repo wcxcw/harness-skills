@@ -4,9 +4,14 @@
 
 ## 分级
 
+只有需要 run 时才选择 run tier。no-run 微小改动必须同时满足：请求明确、影响
+局部、不改变行为、不需要决策、能用一次小检查验证、可以局部回滚。例子：错别字、
+一句文案、一个明确选择器的字号修改、一个间距/颜色 token。非微小改动：宽泛视觉
+优化、整体字体层级调整、跨页面修改、行为变化，或需要设计/产品/技术决策的任务。
+
 | 等级 | 使用场景 | 必要 run artifacts |
 | --- | --- | --- |
-| `xs` | 极小文档/配置/单文件改动，没有产品或技术决策 | `execution-log.md`、`evaluation.md` |
+| `xs` | 仍需要 run 记录的小改动，例如低风险配置/文档/代码修改，并需要验证证据 | `execution-log.md`、`evaluation.md` |
 | `standard` | 普通功能、范围明确的 bugfix、多文件但风险可控的修改 | `workflow.md`、`spec.md`、`plan.md`、`execution-log.md`、`evaluation.md` |
 | `full` | greenfield、新产品/功能方向、架构/数据/安全/CI/依赖风险 | `workflow.md`、`design.md`、`spec.md`、`plan.md`、`execution-log.md`、`review.md`、`evaluation.md` |
 

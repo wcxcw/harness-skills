@@ -20,6 +20,14 @@ The harness lifecycle is the closed loop for agentic work. Workflow skills can h
 
 Use the smallest tier that safely controls the work:
 
+Do not create a run for a micro change when no active run exists. It must be
+explicit, local to one surface or nearby file area, behavior-preserving,
+decision-free, easy to verify with one targeted check, and locally reversible.
+Examples include typo fixes, one sentence of copy, one named selector font-size
+change, or one spacing/color token. Broad visual improvements, typography
+hierarchy changes, cross-page changes, behavior changes, or work requiring a
+design/product/technical decision are not micro changes.
+
 A run represents a user objective. It is not a record for every individual
 agent attempt, patch, or follow-up message. When the user asks for corrections,
 test fixes, extra verification, or small adjustments that still target the same

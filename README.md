@@ -97,7 +97,15 @@ Run artifacts:
 
 ## Run Tiers
 
-Use the smallest tier that safely controls the work.
+Use the smallest tier that safely controls the work when a run is warranted.
+
+No-run direct changes are allowed only when all micro-change criteria are met:
+the request is explicit, local, behavior-preserving, decision-free, easy to
+verify with one targeted check, and locally reversible. Examples: typo fixes,
+one sentence of copy, one named selector font-size change, or one spacing/color
+token. Broad visual improvements, typography hierarchy changes, cross-page
+changes, behavior changes, or work requiring a design/product/technical
+decision should use the smallest run tier instead.
 
 A run tracks one user objective, not each agent attempt. Follow-up corrections,
 test fixes, verification additions, and small adjustments for the same objective
@@ -107,7 +115,8 @@ expands, or the user explicitly starts a new task.
 
 ### XS
 
-For tiny documentation, configuration, or low-risk changes.
+For small changes that still need a run record, such as low-risk
+documentation/config/code edits with verification evidence.
 
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/

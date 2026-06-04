@@ -4,9 +4,17 @@ Gates turn harness guidance into checks. Agents should use these gates before im
 
 ## Tiers
 
+Run tiers apply only when a run is warranted. A no-run micro change is allowed
+only when the request is explicit, local to one surface or nearby file area,
+behavior-preserving, decision-free, easy to verify with one targeted check, and
+locally reversible. Examples: typo fixes, one sentence of copy, one named
+selector font-size change, or one spacing/color token. Not micro: broad visual
+improvements, typography hierarchy changes, cross-page changes, behavior
+changes, or work requiring a design/product/technical decision.
+
 | Tier | Use for | Required run artifacts |
 | --- | --- | --- |
-| `xs` | tiny docs/config/single-file changes with no product or technical decisions | `execution-log.md`, `evaluation.md` |
+| `xs` | small changes that still need a run record, such as low-risk config/docs/code edits with verification evidence | `execution-log.md`, `evaluation.md` |
 | `standard` | normal feature work, contained bugfixes, and multi-file changes | `workflow.md`, `spec.md`, `plan.md`, `execution-log.md`, `evaluation.md` |
 | `full` | greenfield work, new product/feature direction, architecture/data/security/CI/dependency risk | `workflow.md`, `design.md`, `spec.md`, `plan.md`, `execution-log.md`, `review.md`, `evaluation.md` |
 
