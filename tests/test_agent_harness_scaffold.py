@@ -198,14 +198,14 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
             ).read_text(encoding="utf-8")
             executing = (WORKFLOW_SKILLS / "executing-plans" / "SKILL.md").read_text(encoding="utf-8")
 
-            self.assertIn("Treat a run as one user objective", en_agents)
-            self.assertIn("Continue the active run for follow-up corrections", en_agents)
+            self.assertIn("Run eligibility, tiers, and boundaries are defined in `harness/controls/gates.md`", en_agents)
+            self.assertIn("keep one active run per user objective", en_agents)
             self.assertIn("Do not create a new run for a small fix to the same objective", en_gates_normalized)
             self.assertIn("A run represents a user objective", lifecycle)
             self.assertIn("continue the active run", executing)
 
-            self.assertIn("一个 run 对应一个用户目标", zh_agents)
-            self.assertIn("同一目标的返修", zh_agents)
+            self.assertIn("Run 是否需要、分级和边界以 `harness/controls/gates.md` 为准", zh_agents)
+            self.assertIn("一个用户目标对应一个 active run", zh_agents)
             self.assertIn("不要因为同一目标下的小修复新建 run", zh_gates)
 
     def test_micro_change_guidance_allows_no_run_direct_execution(self) -> None:
@@ -236,18 +236,18 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
             agent_harness = (PLUGIN_ROOT / "skills" / "agent-harness" / "SKILL.md").read_text(encoding="utf-8")
             readme = (ROOT / "README.md").read_text(encoding="utf-8")
 
-            self.assertIn("Do not create a run for explicit, low-risk micro changes", en_agents)
-            self.assertIn("behavior-preserving, decision-free", en_agents)
-            self.assertIn("Not micro: \"improve the homepage visuals\"", en_agents)
+            self.assertIn("If gates classify the request as a no-run micro change", en_agents)
+            self.assertIn("behavior-preserving, decision-free", en_gates)
+            self.assertIn("Not micro: broad visual", en_gates)
             self.assertIn("Run tiers apply only when a run is warranted", en_gates)
             self.assertIn("all micro-change criteria are met", readme)
             self.assertIn("typography hierarchy changes", readme)
             self.assertIn("Skip run creation for explicit, low-risk micro changes", agent_harness)
             self.assertIn("no-run micro change only when all of these are true", agent_harness)
 
-            self.assertIn("微小改动不要创建 run", zh_agents)
-            self.assertIn("必须同时满足", zh_agents)
-            self.assertIn("不属于微小改动", zh_agents)
+            self.assertIn("gates 判定为 no-run 微小改动", zh_agents)
+            self.assertIn("必须同时满足", zh_gates)
+            self.assertIn("非微小改动", zh_gates)
             self.assertIn("只有需要 run 时才选择 run tier", zh_gates)
             self.assertIn("宽泛视觉", zh_gates)
 
