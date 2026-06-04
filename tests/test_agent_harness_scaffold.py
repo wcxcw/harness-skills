@@ -12,8 +12,6 @@ ROOT = Path(__file__).resolve().parents[1]
 INIT_SCRIPT = ROOT / "skills" / "agent-harness" / "scripts" / "init_harness.py"
 PLUGIN_MANIFEST = ROOT / ".codex-plugin" / "plugin.json"
 MARKETPLACE_MANIFEST = ROOT / ".agents" / "plugins" / "marketplace.json"
-PACKAGED_PLUGIN = ROOT / "plugins" / "harness-skills"
-PACKAGED_PLUGIN_MANIFEST = PACKAGED_PLUGIN / ".codex-plugin" / "plugin.json"
 WORKFLOW_SKILLS = ROOT / "skills" / "workflows"
 VENDOR_SUPERPOWERS = ROOT / "vendor" / "superpowers"
 OPERATIONAL_WORKFLOW_SECTIONS = [
@@ -38,39 +36,21 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
         for vendor_skill in vendor_skill_files:
             self.assertFalse(vendor_skill.resolve().is_relative_to(exposed_skills), vendor_skill)
 
-    def test_git_marketplace_manifest_points_to_this_plugin(self) -> None:
+    def test_git_marketplace_manifest_points_to_root_plugin(self) -> None:
         marketplace = json.loads(MARKETPLACE_MANIFEST.read_text(encoding="utf-8"))
         self.assertEqual(marketplace["name"], "harness-skills")
         [plugin] = marketplace["plugins"]
         self.assertEqual(plugin["name"], "harness-skills")
-        self.assertEqual(plugin["source"], {"source": "local", "path": "./plugins/harness-skills"})
+        self.assertEqual(plugin["source"], {"source": "local", "path": "."})
         self.assertEqual(plugin["policy"]["installation"], "AVAILABLE")
-        self.assertTrue(PACKAGED_PLUGIN_MANIFEST.exists())
+        plugin_path = (ROOT / plugin["source"]["path"]).resolve()
+        self.assertEqual(plugin_path, ROOT)
+        self.assertEqual(plugin_path / ".codex-plugin" / "plugin.json", PLUGIN_MANIFEST)
+        self.assertTrue(PLUGIN_MANIFEST.exists())
 
-    def test_packaged_plugin_matches_root_plugin_sources(self) -> None:
-        root_manifest = json.loads(PLUGIN_MANIFEST.read_text(encoding="utf-8"))
-        packaged_manifest = json.loads(PACKAGED_PLUGIN_MANIFEST.read_text(encoding="utf-8"))
-        self.assertEqual(root_manifest, packaged_manifest)
-
-        root_skills = ROOT / "skills"
-        packaged_skills = PACKAGED_PLUGIN / "skills"
-        root_files = sorted(
-            path.relative_to(root_skills)
-            for path in root_skills.rglob("*")
-            if path.is_file() and "__pycache__" not in path.parts
-        )
-        packaged_files = sorted(
-            path.relative_to(packaged_skills)
-            for path in packaged_skills.rglob("*")
-            if path.is_file() and "__pycache__" not in path.parts
-        )
-        self.assertEqual(root_files, packaged_files)
-        for rel in root_files:
-            self.assertEqual(
-                (root_skills / rel).read_bytes(),
-                (packaged_skills / rel).read_bytes(),
-                str(rel),
-            )
+    def test_repository_uses_single_skills_source(self) -> None:
+        self.assertTrue((ROOT / "skills").exists())
+        self.assertFalse((ROOT / "plugins" / "harness-skills").exists())
 
     def test_vendor_superpowers_curated_subset_is_present(self) -> None:
         expected = {

@@ -8,7 +8,7 @@
       "name": "harness-skills",
       "source": {
         "source": "local",
-        "path": "./plugins/harness-skills"
+        "path": "."
       },
       "policy": {
         "installation": "AVAILABLE",
