@@ -20,6 +20,15 @@ The harness lifecycle is the closed loop for agentic work. Workflow skills can h
 
 Use the smallest tier that safely controls the work:
 
+A run represents a user objective. It is not a record for every individual
+agent attempt, patch, or follow-up message. When the user asks for corrections,
+test fixes, extra verification, or small adjustments that still target the same
+objective, continue the active run and append the new evidence to its artifacts.
+
+Create a new run only when the objective changes, the requested scope
+materially expands, the previous run has been accepted and closed, or the user
+explicitly starts a new task.
+
 ### XS
 
 ```text
@@ -57,4 +66,8 @@ Use `design.md` for new feature, greenfield, or product direction work. Narrow b
 
 ## Continuation Rule
 
-Do not advance to the next stage when the required artifact or gate is missing. If a stage is intentionally skipped, record the reason in `workflow.md` and make sure the next gate still passes.
+Do not advance to the next stage when the required artifact or gate is missing.
+If a stage is intentionally skipped, record the reason in `workflow.md` and make
+sure the next gate still passes. Follow-up work for the same objective remains
+in the active run; update `plan.md`, `execution-log.md`, or `evaluation.md`
+instead of creating a sibling run.

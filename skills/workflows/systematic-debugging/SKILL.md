@@ -33,6 +33,7 @@ Use this skill for bug reports, failing tests, regressions, or unexplained runti
 8. Apply the smallest fix that addresses the root cause.
 9. Verify the original issue and adjacent behavior.
 10. Record commands, failures, hypothesis changes, and final evidence in `execution-log.md`; record residual risk in `evaluation.md`.
+11. If the user reports the fix is still wrong for the same objective, continue the active run and append the new symptom, hypothesis, fix attempt, and evidence instead of creating a new run.
 
 ## Stop Conditions
 
@@ -58,3 +59,4 @@ Use this skill for bug reports, failing tests, regressions, or unexplained runti
 - Changing multiple variables in one diagnostic step.
 - Treating a symptom patch as root-cause resolution.
 - Trying a fourth fix after three failures without reassessing the design.
+- Creating a separate run for the next fix attempt while the original objective is still open.

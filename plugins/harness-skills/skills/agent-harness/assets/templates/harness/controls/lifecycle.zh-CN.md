@@ -20,6 +20,13 @@ Harness 生命周期是 agentic work 的完整闭环。Workflow skills 可以辅
 
 使用能安全控制工作的最小等级：
 
+一个 run 表示一个用户目标，不是 agent 每次尝试、每个 patch 或每条后续消息的
+记录。用户要求返修、补测试、补验证或做同一目标下的小调整时，继续使用当前
+active run，并把新的证据追加到已有 artifact。
+
+只有目标改变、请求范围明显扩大、上一个 run 已验收关闭，或用户明确开始新任务时，
+才新建 run。
+
 ### XS
 
 ```text
@@ -57,4 +64,7 @@ harness/runs/YYYY-MM-DD-short-task-name/
 
 ## 继续规则
 
-必要 artifact 或 gate 缺失时，不要进入下一阶段。如果某个阶段被有意跳过，在 `workflow.md` 中记录原因，并确保下一个 gate 仍然通过。
+必要 artifact 或 gate 缺失时，不要进入下一阶段。如果某个阶段被有意跳过，在
+`workflow.md` 中记录原因，并确保下一个 gate 仍然通过。同一目标的后续工作
+继续留在当前 active run；更新 `plan.md`、`execution-log.md` 或
+`evaluation.md`，不要创建并列 run。

@@ -14,6 +14,9 @@ This project uses an Agent Harness. Treat the files below as the shared source o
 
 - Clarify unclear product, technical, or scope decisions before implementation.
 - Use the smallest run tier that safely controls the task.
+- Treat a run as one user objective, not one agent attempt.
+- Continue the active run for follow-up corrections, test fixes, verification additions, and small adjustments to the same objective.
+- Create a new run only when the objective changes, scope materially expands, the previous run is closed, or the user explicitly starts a new task.
 - For non-trivial work, create a run with `spec.md`, `plan.md`, `execution-log.md`, and `evaluation.md`.
 - Record commands, manual checks, failures, skipped checks, and residual risk in the active run.
 - Before implementation and completion, use `harness/scripts/check_run.py` when an active run exists.

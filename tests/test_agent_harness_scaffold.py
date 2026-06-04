@@ -174,6 +174,54 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
             ]:
                 self.assertFalse((project / rel).exists(), rel)
 
+    def test_run_boundary_guidance_reuses_active_run_for_followups(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            en_project = Path(tmp) / "en"
+            zh_project = Path(tmp) / "zh"
+            for project, language in [(en_project, "en"), (zh_project, "zh-CN")]:
+                subprocess.run(
+                    [
+                        sys.executable,
+                        str(INIT_SCRIPT),
+                        "--project",
+                        str(project),
+                        "--profile",
+                        "core",
+                        "--language",
+                        language,
+                    ],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+
+            en_agents = (en_project / "AGENTS.md").read_text(encoding="utf-8")
+            en_gates = (en_project / "harness" / "controls" / "gates.md").read_text(encoding="utf-8")
+            en_gates_normalized = " ".join(en_gates.split())
+            zh_agents = (zh_project / "AGENTS.md").read_text(encoding="utf-8")
+            zh_gates = (zh_project / "harness" / "controls" / "gates.md").read_text(encoding="utf-8")
+            lifecycle = (
+                ROOT
+                / "skills"
+                / "agent-harness"
+                / "assets"
+                / "templates"
+                / "harness"
+                / "controls"
+                / "lifecycle.md"
+            ).read_text(encoding="utf-8")
+            executing = (WORKFLOW_SKILLS / "executing-plans" / "SKILL.md").read_text(encoding="utf-8")
+
+            self.assertIn("Treat a run as one user objective", en_agents)
+            self.assertIn("Continue the active run for follow-up corrections", en_agents)
+            self.assertIn("Do not create a new run for a small fix to the same objective", en_gates_normalized)
+            self.assertIn("A run represents a user objective", lifecycle)
+            self.assertIn("continue the active run", executing)
+
+            self.assertIn("一个 run 对应一个用户目标", zh_agents)
+            self.assertIn("同一目标的返修", zh_agents)
+            self.assertIn("不要因为同一目标下的小修复新建 run", zh_gates)
+
     def test_scaffold_only_accepts_core_profile(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             project = Path(tmp) / "project"

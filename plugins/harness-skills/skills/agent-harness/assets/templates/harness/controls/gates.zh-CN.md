@@ -10,6 +10,12 @@
 | `standard` | 普通功能、范围明确的 bugfix、多文件但风险可控的修改 | `workflow.md`、`spec.md`、`plan.md`、`execution-log.md`、`evaluation.md` |
 | `full` | greenfield、新产品/功能方向、架构/数据/安全/CI/依赖风险 | `workflow.md`、`design.md`、`spec.md`、`plan.md`、`execution-log.md`、`review.md`、`evaluation.md` |
 
+## Run 边界
+
+一个 run 应覆盖一个用户目标的完整生命周期，包括验收前用户要求的返修和补验证。
+不要因为同一目标下的小修复新建 run。只有目标改变、范围明显扩大、上一个 run
+已关闭，或用户明确开始另一个任务时，才新建 run。
+
 ## 实现前
 
 对于 `standard` 和 `full` run，编辑应用代码前必须通过这些检查：

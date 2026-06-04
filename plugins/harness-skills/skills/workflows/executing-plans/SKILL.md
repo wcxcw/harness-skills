@@ -31,6 +31,7 @@ Use this skill after `check_run.py --stage before-implementation` passes.
 - Stop on blockers, failing required gates, missing files, or user decisions. Do not guess through a blocker.
 - After each task, mark the task status in `plan.md` or record the checkpoint in `execution-log.md`.
 - If implementation diverges from the plan, record the reason and update `plan.md` before continuing.
+- If the user requests a correction to the same objective, continue the active run and append the new attempt, changed files, commands, and outcome to `execution-log.md` instead of creating a new run.
 
 ## Execution Log Format
 
@@ -81,3 +82,4 @@ Update `workflow.md` with `executing-plans` under `## Skills Used`.
 - Fixing unrelated code because it is nearby.
 - Continuing after a failed command without diagnosis.
 - Updating `plan.md` after the fact to match accidental implementation.
+- Creating a new run for a follow-up correction that still belongs to the same user objective.

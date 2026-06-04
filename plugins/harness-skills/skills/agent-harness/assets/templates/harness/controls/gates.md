@@ -10,6 +10,14 @@ Gates turn harness guidance into checks. Agents should use these gates before im
 | `standard` | normal feature work, contained bugfixes, and multi-file changes | `workflow.md`, `spec.md`, `plan.md`, `execution-log.md`, `evaluation.md` |
 | `full` | greenfield work, new product/feature direction, architecture/data/security/CI/dependency risk | `workflow.md`, `design.md`, `spec.md`, `plan.md`, `execution-log.md`, `review.md`, `evaluation.md` |
 
+## Run Boundary
+
+One run should cover the full lifecycle of one user objective, including
+follow-up corrections and verification requested before acceptance. Do not
+create a new run for a small fix to the same objective. Create a new run when
+the objective changes, scope materially expands, the previous run is closed, or
+the user explicitly starts another task.
+
 ## Before Implementation
 
 For `standard` and `full` runs, the active run must pass these checks before editing application code:

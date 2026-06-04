@@ -14,6 +14,9 @@
 
 - 产品、技术或范围决策不清楚时，先澄清再实现。
 - 每次任务选择能安全控制工作的最小 run tier。
+- 一个 run 对应一个用户目标，不对应 agent 的一次尝试。
+- 同一目标的返修、补测试、补验证和小调整，继续使用当前 active run。
+- 只有目标改变、范围明显扩大、上一个 run 已关闭，或用户明确开始新任务时，才新建 run。
 - 非平凡任务应创建 run，并记录 `spec.md`、`plan.md`、`execution-log.md` 和 `evaluation.md`。
 - 命令、手动检查、失败、跳过原因和残留风险都要写入当前 run。
 - 存在 active run 时，实现前和完成前使用 `harness/scripts/check_run.py`。

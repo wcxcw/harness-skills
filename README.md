@@ -99,6 +99,12 @@ Run artifacts:
 
 Use the smallest tier that safely controls the work.
 
+A run tracks one user objective, not each agent attempt. Follow-up corrections,
+test fixes, verification additions, and small adjustments for the same objective
+should append to the active run until the user accepts the work or the run is
+closed. Create a new run only when the objective changes, the scope materially
+expands, or the user explicitly starts a new task.
+
 ### XS
 
 For tiny documentation, configuration, or low-risk changes.

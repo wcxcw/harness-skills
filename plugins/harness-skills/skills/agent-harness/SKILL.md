@@ -20,6 +20,7 @@ This is an orchestration skill. Do not duplicate the full workflows of related s
 - Spec before implementation: non-trivial work needs a run-level spec before code changes.
 - Plan into small verifiable tasks: each task should have scope, likely files, dependencies, and verification.
 - Gate continuation locally: pass project-local gates before implementation and completion, using the smallest safe tier (`xs`, `standard`, or `full`).
+- Keep run boundaries tied to user objectives: follow-up corrections, test fixes, verification additions, and small adjustments for the same objective stay in the active run.
 - Evidence before completion: do not claim completion without commands, checks, or a documented reason verification was skipped.
 - Keep scope small: prefer the simplest change that satisfies the spec; avoid unrelated refactors or speculative abstractions.
 - Improve the harness from evidence: repeated failures, missing commands, stale context, or weak guardrails should feed back into canonical harness files.
@@ -186,6 +187,7 @@ Implement against the active run only:
 - Check `harness/guardrails/` before edits
 - Run `python3 harness/scripts/check_run.py harness/runs/<run> --stage before-implementation --tier <xs|standard|full>` when an active run exists and the checker is available
 - Keep code changes scoped to the current spec
+- For user-requested corrections to the same objective, update the active run's `plan.md`, `execution-log.md`, or `evaluation.md` instead of creating a new run
 
 ### 11. Verify
 
@@ -196,6 +198,11 @@ Before claiming completion, run `python3 harness/scripts/check_run.py harness/ru
 ### 12. Record
 
 Each task run should use the smallest tier that safely controls the work.
+A run represents one user objective, not one agent attempt. Keep follow-up
+corrections, test fixes, verification additions, and small adjustments in the
+active run until the work is accepted or the run is closed. Create a new run
+only when the objective changes, scope materially expands, or the user
+explicitly starts a new task.
 
 XS:
 
