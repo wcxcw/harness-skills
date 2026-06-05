@@ -15,6 +15,8 @@ PLUGIN_MANIFEST = PLUGIN_ROOT / ".codex-plugin" / "plugin.json"
 INIT_SCRIPT = PLUGIN_ROOT / "skills" / "agent-harness" / "scripts" / "init_harness.py"
 WORKFLOW_SKILLS = PLUGIN_ROOT / "skills" / "workflows"
 VENDOR_SUPERPOWERS = ROOT / "vendor" / "superpowers"
+QUALITY_CHECK = PLUGIN_ROOT / "scripts" / "quality_check.py"
+HOOKS_JSON = PLUGIN_ROOT / "hooks" / "hooks.json"
 OPERATIONAL_WORKFLOW_SECTIONS = [
     "## Gate Mapping",
     "## Stop Conditions",
@@ -134,9 +136,12 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
             for rel in [
                 "AGENTS.md",
                 "harness/context/project-brief.md",
+                "harness/context/coding-conventions.md",
                 "harness/controls/gates.md",
+                "harness/controls/risk-matrix.md",
                 "harness/tools/commands.md",
                 "harness/guardrails/boundaries.md",
+                "harness/evals/task-scorecard.md",
                 "harness/scripts/check_run.py",
                 "harness/runs/.gitkeep",
             ]:
@@ -146,10 +151,8 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
                 "harness/controls/lifecycle.md",
                 "harness/controls/skills.md",
                 "harness/feedback/verification.md",
-                "harness/evals/task-scorecard.md",
                 "harness/context/repo-map.md",
                 "harness/context/architecture.md",
-                "harness/context/coding-conventions.md",
                 "harness/context/dependency-notes.md",
                 "harness/guardrails/permissions.md",
                 "harness/guardrails/rollback.md",
@@ -159,6 +162,113 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
                 "harness/specs/bugfix-template.md",
             ]:
                 self.assertFalse((project / rel).exists(), rel)
+
+    def test_quality_workflows_are_exposed_and_scaffolded(self) -> None:
+        expected_skills = {
+            "code-quality-review",
+            "frontend-quality-review",
+            "backend-quality-review",
+            "receiving-code-review",
+            "context-budget",
+            "code-reviewer",
+        }
+        actual_skills = {path.parent.name for path in WORKFLOW_SKILLS.glob("*/SKILL.md")}
+        self.assertTrue(expected_skills.issubset(actual_skills), expected_skills - actual_skills)
+
+        workflows = (WORKFLOW_SKILLS / "SKILL.md").read_text(encoding="utf-8")
+        related = (
+            PLUGIN_ROOT
+            / "skills"
+            / "agent-harness"
+            / "references"
+            / "related-skills.md"
+        ).read_text(encoding="utf-8")
+        agent_harness = (PLUGIN_ROOT / "skills" / "agent-harness" / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("code-quality-review/SKILL.md", workflows)
+        self.assertIn("frontend-quality-review/SKILL.md", workflows)
+        self.assertIn("backend-quality-review/SKILL.md", workflows)
+        self.assertIn("receiving-code-review/SKILL.md", workflows)
+        self.assertIn("context-budget/SKILL.md", workflows)
+        self.assertIn("code-reviewer/SKILL.md", workflows)
+        self.assertIn("Code quality is a completion gate", agent_harness)
+        self.assertIn("frontend-quality-review", related)
+        self.assertIn("code-reviewer", related)
+        requesting_review = (WORKFLOW_SKILLS / "requesting-code-review" / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("This skill is the review coordinator", requesting_review)
+        self.assertIn("Do not run every review skill mechanically", requesting_review)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp) / "project"
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(INIT_SCRIPT),
+                    "--project",
+                    str(project),
+                    "--profile",
+                    "core",
+                    "--language",
+                    "en",
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+
+            agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+            conventions = (project / "harness" / "context" / "coding-conventions.md").read_text(encoding="utf-8")
+            scorecard = (project / "harness" / "evals" / "task-scorecard.md").read_text(encoding="utf-8")
+            gates = (project / "harness" / "controls" / "gates.md").read_text(encoding="utf-8")
+            risk_matrix = (project / "harness" / "controls" / "risk-matrix.md").read_text(encoding="utf-8")
+
+            self.assertIn("run code-quality review before final verification", agents)
+            self.assertIn("App.vue", conventions)
+            self.assertIn("logging, error handling, and testability gaps", conventions)
+            self.assertIn("Code-quality review was run", scorecard)
+            self.assertIn("Application code changes received code-quality review", gates)
+            self.assertIn("Data loss", risk_matrix)
+
+    def test_plugin_hooks_and_quality_script_are_present(self) -> None:
+        hooks = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        self.assertIn("SessionStart", hooks["hooks"])
+        self.assertIn("Stop", hooks["hooks"])
+        self.assertIn("harness_hook.py", json.dumps(hooks))
+        self.assertTrue((PLUGIN_ROOT / "scripts" / "harness_hook.py").exists())
+        self.assertTrue(QUALITY_CHECK.exists())
+
+    def test_quality_check_blocks_missing_code_quality_review_for_code_changes(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp) / "project"
+            project.mkdir()
+            src = project / "src"
+            src.mkdir()
+            app = src / "App.vue"
+            app.write_text("<template><main>ok</main></template>\n", encoding="utf-8")
+            subprocess.run(["git", "init"], cwd=project, check=True, capture_output=True, text=True)
+            subprocess.run(["git", "add", "."], cwd=project, check=True, capture_output=True, text=True)
+            subprocess.run(
+                ["git", "-c", "user.email=test@example.com", "-c", "user.name=Test", "commit", "-m", "init"],
+                cwd=project,
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+
+            app.write_text(
+                "<script setup>\nconst state = ref(null)\nfetch('/api/items')\n</script>\n"
+                + "\n".join(f"// line {index}" for index in range(220)),
+                encoding="utf-8",
+            )
+            run_dir = project / "harness" / "runs" / "2026-06-05-test"
+            run_dir.mkdir(parents=True)
+
+            result = subprocess.run(
+                [sys.executable, str(QUALITY_CHECK), "--project", str(project), "--run", str(run_dir), "--strict"],
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("no code-quality review or skip reason", result.stdout)
 
     def test_generated_agents_uses_selective_context_loading(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

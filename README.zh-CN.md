@@ -49,13 +49,17 @@ codex plugin add harness-skills@harness-skills
 AGENTS.md
 harness/
 ├── context/
-│   └── project-brief.md
+│   ├── project-brief.md
+│   └── coding-conventions.md
 ├── controls/
-│   └── gates.md
+│   ├── gates.md
+│   └── risk-matrix.md
 ├── tools/
 │   └── commands.md
 ├── guardrails/
 │   └── boundaries.md
+├── evals/
+│   └── task-scorecard.md
 ├── scripts/
 │   └── check_run.py
 └── runs/
@@ -94,6 +98,25 @@ intake/design
 | `execution-log.md` | 修改文件、执行命令、测试结果、失败信息和跳过的检查。 |
 | `review.md` | review 范围、发现、处理结果和剩余风险。 |
 | `evaluation.md` | 验收结果、验证结果、review 状态、残留风险和 harness 反馈。 |
+
+应用代码变更可以使用质量 workflow：
+
+| Skill | 用途 |
+| --- | --- |
+| `code-quality-review` | 检查可维护性、结构、本地约定、注释、日志和可测试性。 |
+| `frontend-quality-review` | 检查前端组件边界、状态/数据分离、响应式、可访问性和浏览器证据。 |
+| `backend-quality-review` | 检查后端边界、输入校验、日志、错误处理和可运维性。 |
+| `code-reviewer` | 专用 reviewer 角色；平台支持时作为 subagent prompt 使用。 |
+| `receiving-code-review` | 在同一个 active run 中处理 review 反馈并记录验证证据。 |
+| `context-budget` | 在上下文文件或历史 run 较多时控制选择性读取。 |
+
+插件级 hooks 和脚本提供更强约束：
+
+| 能力 | 用途 |
+| --- | --- |
+| `hooks/hooks.json` | SessionStart 上下文提醒，以及 Stop 阶段 harness gate。 |
+| `scripts/quality_check.py` | 轻量代码质量检查：根组件膨胀、缺少 review 证据、未解决发现、后端日志缺口。 |
+| `harness/controls/risk-matrix.md` | 风险分级，用于 tier、review 深度和证据强度选择。 |
 
 ## 分级闭环
 

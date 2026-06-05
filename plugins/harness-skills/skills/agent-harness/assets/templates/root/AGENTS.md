@@ -25,6 +25,7 @@ This project uses an Agent Harness. Treat the files below as the shared source o
 - If gates classify the request as a no-run micro change, edit directly, run the smallest relevant check, and summarize the result.
 - If a run is warranted, use the smallest safe tier and keep one active run per user objective; append same-objective follow-ups to that run.
 - For non-trivial work, create a run with `spec.md`, `plan.md`, `execution-log.md`, and `evaluation.md`.
+- For application code changes, run code-quality review before final verification; use frontend/backend quality review when the changed surface applies.
 - Record commands, manual checks, failures, skipped checks, and residual risk in the active run.
 - Before implementation and completion, use `harness/scripts/check_run.py` when an active run exists.
 - Do not invent project commands. Record unknown commands in `harness/tools/commands.md`.

@@ -1,6 +1,6 @@
 ---
 name: workflows
-description: Route closed-loop Agent Harness work through workflow skills such as brainstorming, writing-specs, writing-plans, executing-plans, review, verification, and finishing-run.
+description: Route closed-loop Agent Harness work through workflow skills such as brainstorming, writing-specs, writing-plans, executing-plans, code quality review, verification, and finishing-run.
 ---
 
 # Workflows
@@ -12,12 +12,18 @@ Use this skill as the workflow layer for the full closed-loop harness. It routes
 1. `brainstorming/SKILL.md`
 2. `writing-specs/SKILL.md`
 3. `writing-plans/SKILL.md`
-4. `executing-plans/SKILL.md`
-5. `test-driven-development/SKILL.md` when automated tests fit the task
-6. `systematic-debugging/SKILL.md` for bugfixes
-7. `requesting-code-review/SKILL.md`
-8. `verification-before-completion/SKILL.md`
-9. `finishing-run/SKILL.md`
+4. `context-budget/SKILL.md` when project context or run history could become large
+5. `executing-plans/SKILL.md`
+6. `test-driven-development/SKILL.md` when automated tests fit the task
+7. `systematic-debugging/SKILL.md` for bugfixes
+8. `requesting-code-review/SKILL.md`
+9. `code-reviewer/SKILL.md` as the dedicated reviewer role when subagents are available
+10. `code-quality-review/SKILL.md` for application code changes
+11. `frontend-quality-review/SKILL.md` for frontend/UI/browser changes
+12. `backend-quality-review/SKILL.md` for backend/API/service changes
+13. `receiving-code-review/SKILL.md` when review feedback requires fixes
+14. `verification-before-completion/SKILL.md`
+15. `finishing-run/SKILL.md`
 
 ## Harness Contract
 
@@ -26,6 +32,7 @@ Use this skill as the workflow layer for the full closed-loop harness. It routes
 - Use `harness/controls/lifecycle.md` to decide which artifact is required next.
 - Run `python3 harness/scripts/check_run.py harness/runs/<run> --stage before-implementation --tier xs|standard|full` before implementation when the selected tier requires it.
 - Run `python3 harness/scripts/check_run.py harness/runs/<run> --stage before-completion --tier xs|standard|full` before claiming completion.
+- For application code changes, run the appropriate quality review workflow before final verification unless the task is a no-run micro change or the skip reason is recorded.
 - Do not bypass `check_run.py` because another workflow says to continue.
 
 ## Optional Advanced Modes

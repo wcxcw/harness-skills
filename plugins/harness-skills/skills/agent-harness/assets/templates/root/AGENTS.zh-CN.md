@@ -25,6 +25,7 @@
 - 如果 gates 判定为 no-run 微小改动，直接修改，运行最小相关检查，并在回复中说明结果。
 - 如果需要 run，选择最小安全 tier，并保持一个用户目标对应一个 active run；同一目标后续修改追加到该 run。
 - 非平凡任务应创建 run，并记录 `spec.md`、`plan.md`、`execution-log.md` 和 `evaluation.md`。
+- 应用代码变更在最终验证前必须执行代码质量 review；涉及前端或后端时使用对应质量 review。
 - 命令、手动检查、失败、跳过原因和残留风险都要写入当前 run。
 - 存在 active run 时，实现前和完成前使用 `harness/scripts/check_run.py`。
 - 不要编造项目命令；未知命令记录到 `harness/tools/commands.md`。

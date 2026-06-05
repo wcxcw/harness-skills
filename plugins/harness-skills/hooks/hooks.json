@@ -1,0 +1,27 @@
+{
+  "description": "Harness Skills hooks for lightweight context guidance and stop-time quality gates.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT:-${CODEX_PLUGIN_ROOT:-.}}/scripts/harness_hook.py\" SessionStart",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT:-${CODEX_PLUGIN_ROOT:-.}}/scripts/harness_hook.py\" Stop",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,6 +1,7 @@
 # 门槛
 
 门槛用于把 harness 建议变成可检查项。Agent 应在实现前和交付前使用这些门槛。
+当风险影响 tier、review 深度或验证范围时，使用 `harness/controls/risk-matrix.md`。
 
 ## 分级
 
@@ -47,6 +48,8 @@ python3 harness/scripts/check_run.py harness/runs/<run> --stage before-implement
 - `full` run 的 `review.md` 存在，并记录 review 发现或“无”。
 - `evaluation.md` 存在。
 - `execution-log.md` 记录已执行的命令或手动检查及其结果。
+- 应用代码变更已执行代码质量 review；适用时执行前端/后端质量 review，或已记录跳过原因。
+- Critical 和 Important review 发现已修复、被用户明确接受，或记录为残留风险。
 - `evaluation.md` 记录验收状态、残留风险和 harness 反馈。
 - 跳过的验证必须说明原因。
 

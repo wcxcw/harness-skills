@@ -9,10 +9,14 @@ This project harness is the source of truth for project facts, gates, commands, 
 | Intake | `brainstorming` | brainstorming |
 | Spec | `writing-specs` | planning-oriented discovery |
 | Plan | `writing-plans` | writing-plans |
+| Context | `context-budget` | context-budget |
 | Preflight | `agent-harness` | local gate check |
 | Implementation | `executing-plans` | test-driven-development when practical |
 | Debugging | `systematic-debugging` | systematic-debugging |
 | Review | `requesting-code-review` | requesting-code-review |
+| Reviewer role | `code-reviewer` | code reviewer subagent |
+| Quality Review | `code-quality-review`, `frontend-quality-review`, `backend-quality-review` | coding standards, frontend/backend patterns |
+| Review Resolution | `receiving-code-review` | receiving-code-review |
 | Completion | `verification-before-completion`, `finishing-run` | verification-before-completion |
 | Harness improvement | `writing-skills` | writing-skills when improving skills |
 

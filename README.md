@@ -49,13 +49,17 @@ The default `core` scaffold creates:
 AGENTS.md
 harness/
 ├── context/
-│   └── project-brief.md
+│   ├── project-brief.md
+│   └── coding-conventions.md
 ├── controls/
-│   └── gates.md
+│   ├── gates.md
+│   └── risk-matrix.md
 ├── tools/
 │   └── commands.md
 ├── guardrails/
 │   └── boundaries.md
+├── evals/
+│   └── task-scorecard.md
 ├── scripts/
 │   └── check_run.py
 └── runs/
@@ -94,6 +98,25 @@ Run artifacts:
 | `execution-log.md` | Files changed, commands run, test results, failures, and skipped checks. |
 | `review.md` | Review scope, findings, resolution, and remaining risk. |
 | `evaluation.md` | Acceptance, verification, review status, residual risk, and harness feedback. |
+
+Quality workflows are available for application code changes:
+
+| Skill | Use |
+| --- | --- |
+| `code-quality-review` | Maintainability, structure, local conventions, comments, logging, and testability review. |
+| `frontend-quality-review` | Frontend component boundaries, state/data separation, responsive behavior, accessibility, and browser evidence. |
+| `backend-quality-review` | Backend boundaries, input validation, logging, error handling, and operability. |
+| `code-reviewer` | Dedicated reviewer role; use as a subagent prompt when supported. |
+| `receiving-code-review` | Resolve review feedback in the same active run with verification evidence. |
+| `context-budget` | Keep context loading selective for large context files or long run history. |
+
+Plugin-level hooks and scripts add stronger enforcement:
+
+| Capability | Purpose |
+| --- | --- |
+| `hooks/hooks.json` | SessionStart context reminder and Stop-time harness gate. |
+| `scripts/quality_check.py` | Lightweight code-quality checks for root component bloat, missing review evidence, unresolved findings, and backend logging gaps. |
+| `harness/controls/risk-matrix.md` | Risk classification for tier choice, review depth, and evidence strength. |
 
 ## Run Tiers
 

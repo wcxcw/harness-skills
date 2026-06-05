@@ -23,6 +23,7 @@ This is an orchestration skill. Do not duplicate the full workflows of related s
 - Gate continuation locally: pass project-local gates before implementation and completion, using the smallest safe tier (`xs`, `standard`, or `full`).
 - Load context on demand: do not bulk-read `harness/context/*` or completed runs; use targeted search or section reads.
 - Keep run boundaries tied to user objectives: follow-up corrections, test fixes, verification additions, and small adjustments for the same objective stay in the active run.
+- Code quality is a completion gate: application code changes must preserve maintainable structure, local conventions, error handling, logging/observability where relevant, and useful comments for non-obvious rules.
 - Evidence before completion: do not claim completion without commands, checks, or a documented reason verification was skipped.
 - Keep scope small: prefer the simplest change that satisfies the spec; avoid unrelated refactors or speculative abstractions.
 - Improve the harness from evidence: repeated failures, missing commands, stale context, or weak guardrails should feed back into canonical harness files.
@@ -305,7 +306,8 @@ Read `references/related-skills.md` when deciding how this skill composes with e
 - Use bundled `brainstorming` for the Intake layer when a request is still exploratory.
 - Use bundled `writing-specs` for the Spec layer.
 - Use bundled `writing-plans` for the Plan layer.
-- Use bundled execution, review, verification, and finishing workflows to close the run.
+- Use bundled `context-budget` when project context or run history could become large.
+- Use bundled execution, code quality review, receiving-review, verification, and finishing workflows to close the run.
 
 ## Boundaries
 

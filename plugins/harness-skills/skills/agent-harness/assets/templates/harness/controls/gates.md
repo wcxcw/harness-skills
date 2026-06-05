@@ -1,6 +1,7 @@
 # Gates
 
 Gates turn harness guidance into checks. Agents should use these gates before implementation and before completion.
+Use `harness/controls/risk-matrix.md` when risk affects tier choice, review depth, or verification scope.
 
 ## Tiers
 
@@ -52,6 +53,8 @@ The active run must pass these checks before claiming completion:
 - `review.md` exists and records review findings or "none" for `full` runs.
 - `evaluation.md` exists.
 - `execution-log.md` records commands or manual checks and their results.
+- Application code changes received code-quality review, frontend/backend quality review when applicable, or the skip reason is recorded.
+- Critical and Important review findings are fixed, explicitly accepted by the user, or recorded as residual risk.
 - `evaluation.md` records acceptance status, residual risk, and harness feedback.
 - Skipped verification is explicitly explained.
 

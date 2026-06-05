@@ -9,6 +9,10 @@
 
 - [ ] Changes follow local conventions.
 - [ ] Complexity is appropriate for the task.
+- [ ] Root/page components, handlers, services, and modules keep focused responsibilities.
+- [ ] Frontend state, data access, and UI rendering are separated when the feature is non-trivial.
+- [ ] Backend changes include appropriate error handling and logging/observability where relevant.
+- [ ] Non-obvious business rules, edge cases, and tradeoffs are documented with useful comments.
 - [ ] No unrelated refactors were introduced.
 
 ## Verification
@@ -18,6 +22,7 @@
 - [ ] Build passed or was not applicable.
 - [ ] Project-specific verification passed or skipped checks are explained.
 - [ ] Completion is backed by recorded evidence, not only by agent summary.
+- [ ] Code-quality review was run for application code changes, or the skip reason is recorded.
 
 ## Risk
 

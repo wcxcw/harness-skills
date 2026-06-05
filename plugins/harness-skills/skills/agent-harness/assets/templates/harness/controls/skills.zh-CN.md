@@ -9,10 +9,14 @@
 | Intake | `brainstorming` | brainstorming |
 | Spec | `writing-specs` | planning-oriented discovery |
 | Plan | `writing-plans` | writing-plans |
+| Context | `context-budget` | context-budget |
 | Preflight | `agent-harness` | local gate check |
 | 实现 | `executing-plans` | test-driven-development when practical |
 | 调试 | `systematic-debugging` | systematic-debugging |
 | Review | `requesting-code-review` | requesting-code-review |
+| Reviewer 角色 | `code-reviewer` | code reviewer subagent |
+| 质量 Review | `code-quality-review`、`frontend-quality-review`、`backend-quality-review` | coding standards、frontend/backend patterns |
+| Review 处理 | `receiving-code-review` | receiving-code-review |
 | 完成 | `verification-before-completion`、`finishing-run` | verification-before-completion |
 | Harness 改进 | `writing-skills` | writing-skills when improving skills |
 

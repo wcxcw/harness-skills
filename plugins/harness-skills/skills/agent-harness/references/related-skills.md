@@ -33,6 +33,16 @@ Expected output:
 
 Use when an accepted spec needs implementation sequencing.
 
+## context-budget
+
+Layer: Context Control
+
+Expected output:
+
+- Context choices recorded in `workflow.md`, `execution-log.md`, or `evaluation.md` when they affect the run
+
+Use when the project has multiple context files, long run history, or a task risks loading more context than it needs.
+
 ## executing-plans
 
 Layer: Execute
@@ -72,6 +82,59 @@ Expected output:
 - `harness/runs/<run>/review.md`
 
 Use after implementation and before completion.
+
+## code-reviewer
+
+Layer: Review / Dedicated Reviewer Role
+
+Expected output:
+
+- Independent findings in `review.md`
+
+Use as a subagent reviewer when the platform supports subagents, or as a focused local review checklist otherwise.
+
+## code-quality-review
+
+Layer: Review / Maintainability
+
+Expected output:
+
+- Code-quality findings and resolution in `review.md`
+- Follow-up verification in `execution-log.md`
+
+Use for application code changes before final verification.
+
+## frontend-quality-review
+
+Layer: Review / Frontend Quality
+
+Expected output:
+
+- Frontend maintainability, accessibility, responsive, and browser evidence in `review.md` and `execution-log.md`
+
+Use for UI, frontend, browser, or client-side application changes.
+
+## backend-quality-review
+
+Layer: Review / Backend Quality
+
+Expected output:
+
+- Backend boundary, logging, error-handling, and operability findings in `review.md`
+
+Use for backend, API, service, worker, persistence, CLI, or integration changes.
+
+## receiving-code-review
+
+Layer: Review Resolution
+
+Expected output:
+
+- Updated `review.md` resolution
+- Updated `execution-log.md` verification evidence
+- Updated `evaluation.md` residual risk when needed
+
+Use when review feedback requires fixes, clarification, pushback, or accepted residual risk.
 
 ## verification-before-completion
 

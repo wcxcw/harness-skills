@@ -11,9 +11,12 @@ from pathlib import Path
 
 CORE_HARNESS_FILES = [
     "context/project-brief.md",
+    "context/coding-conventions.md",
     "controls/gates.md",
+    "controls/risk-matrix.md",
     "tools/commands.md",
     "guardrails/boundaries.md",
+    "evals/task-scorecard.md",
     "scripts/check_run.py",
     "runs/.gitkeep",
 ]
