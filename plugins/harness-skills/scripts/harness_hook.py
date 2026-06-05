@@ -80,9 +80,10 @@ def session_start() -> None:
             "hookSpecificOutput": {
                 "hookEventName": "SessionStart",
                 "additionalContext": (
-                    "Harness Skills hook active. For harness projects, read project-brief first, "
-                    "avoid bulk-reading harness/context or completed runs, and run stop-time gates "
-                    "before claiming completion."
+                    "Harness Skills hook active. For harness projects, use project-brief for "
+                    "first orientation or when context may be stale; reuse it within the same "
+                    "session when already loaded. Avoid bulk-reading harness/context or completed "
+                    "runs, and run stop-time gates before claiming completion."
                 ),
             },
         }

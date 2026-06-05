@@ -1,6 +1,6 @@
 {
   "name": "harness-skills",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Project-level Agent Harness scaffolding and closed-loop workflow skills for Codex.",
   "author": {
     "name": "wcxcw",

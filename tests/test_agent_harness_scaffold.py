@@ -235,6 +235,8 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
         self.assertIn("harness_hook.py", json.dumps(hooks))
         self.assertTrue((PLUGIN_ROOT / "scripts" / "harness_hook.py").exists())
         self.assertTrue(QUALITY_CHECK.exists())
+        hook_script = (PLUGIN_ROOT / "scripts" / "harness_hook.py").read_text(encoding="utf-8")
+        self.assertIn("reuse it within the same", hook_script)
 
     def test_quality_check_blocks_missing_code_quality_review_for_code_changes(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -298,10 +300,12 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
             self.assertIn("Do not bulk-read `harness/context/*` or `harness/runs/*`", en_agents)
             self.assertIn("1. `harness/context/project-brief.md`", en_agents)
             self.assertIn("when maintaining it, keep it to a short project summary", en_agents)
+            self.assertIn("reuse an already-loaded `project-brief.md`", en_agents)
             self.assertIn("Prefer targeted search or section reads", en_agents)
             self.assertIn("不要批量读取 `harness/context/*` 或 `harness/runs/*`", zh_agents)
             self.assertIn("1. `harness/context/project-brief.md`", zh_agents)
             self.assertIn("维护或更新该文件时，只保留短项目摘要", zh_agents)
+            self.assertIn("应复用已加载内容", zh_agents)
             self.assertIn("按章节读取", zh_agents)
             self.assertIn("Load context on demand", agent_harness)
 
@@ -385,8 +389,8 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
             self.assertIn("behavior-preserving, decision-free", en_gates)
             self.assertIn("Not micro: broad visual", en_gates)
             self.assertIn("Run tiers apply only when a run is warranted", en_gates)
-            self.assertIn("all micro-change criteria are met", readme)
-            self.assertIn("typography hierarchy changes", readme)
+            self.assertTrue("all micro-change criteria are met" in readme or "微小改动条件" in readme)
+            self.assertTrue("typography hierarchy changes" in readme or "整体字体层级调整" in readme)
             self.assertIn("Skip run creation for explicit, low-risk micro changes", agent_harness)
             self.assertIn("no-run micro change only when all of these are true", agent_harness)
 

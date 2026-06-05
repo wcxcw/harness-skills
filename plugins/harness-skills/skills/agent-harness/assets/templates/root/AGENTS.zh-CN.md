@@ -4,6 +4,8 @@
 
 ## 优先阅读
 
+在项目定向或当前任务需要刷新 harness 上下文时，读取或复用以下文件：
+
 1. `harness/context/project-brief.md`
 2. `harness/controls/gates.md`
 3. `harness/tools/commands.md`
@@ -14,6 +16,7 @@
 
 - 不要批量读取 `harness/context/*` 或 `harness/runs/*`。
 - `harness/context/project-brief.md` 可以默认读取；维护或更新该文件时，只保留短项目摘要，不要写入详细状态、历史记录或长设计内容。
+- 同一会话中，如果 `project-brief.md` 已读取且未过期，应复用已加载内容；只有项目事实变化、上下文被压缩，或当前任务需要重新定向时才重新读取。
 - 只在当前任务需要时读取额外 context 文件，并先明确读取原因。
 - 优先用定向搜索或按章节读取，避免整文件加载大型上下文。
 - 已完成 run 是历史记录；只有用户询问历史或当前任务依赖该 run 时才读取。
