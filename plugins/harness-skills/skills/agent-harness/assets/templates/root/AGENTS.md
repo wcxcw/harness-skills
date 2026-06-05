@@ -8,7 +8,15 @@ This project uses an Agent Harness. Treat the files below as the shared source o
 2. `harness/controls/gates.md`
 3. `harness/tools/commands.md`
 4. `harness/guardrails/boundaries.md`
-5. The active run under `harness/runs/`, when one exists
+5. The active run under `harness/runs/`, only when the request belongs to an active run
+
+## Context Loading
+
+- Do not bulk-read `harness/context/*` or `harness/runs/*`.
+- `harness/context/project-brief.md` is safe to read by default; when maintaining it, keep it to a short project summary and do not put detailed state, history, or long design content there.
+- Read extra context files only after identifying why the current task needs them.
+- Prefer targeted search or section reads over loading whole large files.
+- Completed run directories are historical records; read them only when the user asks for history or the current task depends on that run.
 
 ## Core Rules
 

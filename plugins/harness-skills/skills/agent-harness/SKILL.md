@@ -21,6 +21,7 @@ This is an orchestration skill. Do not duplicate the full workflows of related s
 - Plan into small verifiable tasks: each task should have scope, likely files, dependencies, and verification.
 - Skip run creation for explicit, low-risk micro changes when no active run exists; make the edit, run the smallest relevant check, and summarize the result instead.
 - Gate continuation locally: pass project-local gates before implementation and completion, using the smallest safe tier (`xs`, `standard`, or `full`).
+- Load context on demand: do not bulk-read `harness/context/*` or completed runs; use targeted search or section reads.
 - Keep run boundaries tied to user objectives: follow-up corrections, test fixes, verification additions, and small adjustments for the same objective stay in the active run.
 - Evidence before completion: do not claim completion without commands, checks, or a documented reason verification was skipped.
 - Keep scope small: prefer the simplest change that satisfies the spec; avoid unrelated refactors or speculative abstractions.
@@ -110,6 +111,11 @@ For content-driven products such as news, directories, dashboards, or curated fe
 For `brownfield`, use read-only discovery first. Prefer existing project facts over generic templates, reference existing documentation and configuration, and do not replace established conventions unless the user explicitly asks.
 
 If a command is unknown, mark it as `Unknown` or `Not applicable` in `harness/tools/commands.md`; do not invent commands.
+
+For existing harnesses, keep context loading selective. Read the concise
+`project-brief.md`, `gates.md`, `commands.md`, and `boundaries.md` first, then
+read only the active run and context files required by the task. Do not load all
+`harness/context/*` or all completed run records during routine work.
 
 ### 5. Bootstrap
 
@@ -218,7 +224,7 @@ Implement against the active run only:
 - Read `AGENTS.md`
 - Read the active run's `workflow.md` and `design.md` when present
 - Read the active run's `spec.md` and `plan.md`
-- Load only the needed files under `harness/context/`
+- Load only the needed files under `harness/context/`; use targeted search or section reads for large context files
 - Check `harness/controls/gates.md`
 - Check `harness/guardrails/` before edits
 - Run `python3 harness/scripts/check_run.py harness/runs/<run> --stage before-implementation --tier <xs|standard|full>` when an active run exists and the checker is available

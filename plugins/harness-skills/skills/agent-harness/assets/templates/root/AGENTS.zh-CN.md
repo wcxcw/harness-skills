@@ -8,7 +8,15 @@
 2. `harness/controls/gates.md`
 3. `harness/tools/commands.md`
 4. `harness/guardrails/boundaries.md`
-5. 如果存在 active run，再阅读 `harness/runs/` 下对应目录
+5. 只有当请求属于某个 active run 时，才阅读 `harness/runs/` 下对应目录
+
+## 上下文加载
+
+- 不要批量读取 `harness/context/*` 或 `harness/runs/*`。
+- `harness/context/project-brief.md` 可以默认读取；维护或更新该文件时，只保留短项目摘要，不要写入详细状态、历史记录或长设计内容。
+- 只在当前任务需要时读取额外 context 文件，并先明确读取原因。
+- 优先用定向搜索或按章节读取，避免整文件加载大型上下文。
+- 已完成 run 是历史记录；只有用户询问历史或当前任务依赖该 run 时才读取。
 
 ## 核心规则
 

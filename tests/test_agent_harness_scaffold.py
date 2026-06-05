@@ -160,6 +160,41 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
             ]:
                 self.assertFalse((project / rel).exists(), rel)
 
+    def test_generated_agents_uses_selective_context_loading(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            en_project = Path(tmp) / "en"
+            zh_project = Path(tmp) / "zh"
+            for project, language in [(en_project, "en"), (zh_project, "zh-CN")]:
+                subprocess.run(
+                    [
+                        sys.executable,
+                        str(INIT_SCRIPT),
+                        "--project",
+                        str(project),
+                        "--profile",
+                        "core",
+                        "--language",
+                        language,
+                    ],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+
+            en_agents = (en_project / "AGENTS.md").read_text(encoding="utf-8")
+            zh_agents = (zh_project / "AGENTS.md").read_text(encoding="utf-8")
+            agent_harness = (PLUGIN_ROOT / "skills" / "agent-harness" / "SKILL.md").read_text(encoding="utf-8")
+
+            self.assertIn("Do not bulk-read `harness/context/*` or `harness/runs/*`", en_agents)
+            self.assertIn("1. `harness/context/project-brief.md`", en_agents)
+            self.assertIn("when maintaining it, keep it to a short project summary", en_agents)
+            self.assertIn("Prefer targeted search or section reads", en_agents)
+            self.assertIn("不要批量读取 `harness/context/*` 或 `harness/runs/*`", zh_agents)
+            self.assertIn("1. `harness/context/project-brief.md`", zh_agents)
+            self.assertIn("维护或更新该文件时，只保留短项目摘要", zh_agents)
+            self.assertIn("按章节读取", zh_agents)
+            self.assertIn("Load context on demand", agent_harness)
+
     def test_run_boundary_guidance_reuses_active_run_for_followups(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             en_project = Path(tmp) / "en"
