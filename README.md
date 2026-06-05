@@ -1,49 +1,49 @@
 # Harness Skills
+Harness Skills 是一个用于启动和运行项目级 Agent Harness 的 Codex plugin。
 
-[中文](README.zh-CN.md)
+它的目标不是替代业务项目，也不是单纯提供一组 workflow skills，而是把任意项目初始化成一个 Agent 可以稳定接管的受控工作环境：有项目上下文、规格、计划、可执行命令、guardrails、run 记录、本地 gate 和评估闭环。
 
-Harness Skills is a Codex plugin for bootstrapping and operating a project-level Agent Harness.
-
-It does not replace an application project and it is not just a workflow skill collection. It initializes a controlled workspace that agents can use consistently: project context, specs, plans, approved commands, guardrails, run records, local gates, and evaluation feedback.
-
-## Positioning
+## 一句话定位
 
 ```text
 harness-skills
 = Codex plugin
-= Agent Harness bootstrap scaffold
-= project-level control system templates
+= Agent Harness 启动脚手架
+= 项目级控制系统模板
 = workflow skills + local gates + run artifacts
 ```
 
-## When To Use
+## 适合什么时候用
 
-- A new project starts from a one-sentence idea and needs clarification before implementation.
-- An existing codebase needs an agent-readable `AGENTS.md` and `harness/` workspace.
-- Agent tasks should produce specs, plans, execution evidence, and evaluation records.
-- Completion should be checked by local gates instead of a verbal "done".
-- Small tasks should stay light while complex work can use a full closed loop.
+- 新项目只有一句话想法，需要先澄清再进入实现。
+- 老项目希望补一套 Agent 可读的 `AGENTS.md` 和 `harness/` 工作区。
+- 团队希望 Agent 的每次任务都有 spec、plan、执行证据和评估记录。
+- 你不想只靠 Agent 口头说“完成了”，而是希望用本地 checker 检查关键 gate。
+- 你希望简单任务轻量走，复杂任务完整闭环走。
 
-## Install
+## 结构图
+![harness-skills-architecture.svg](docs/assets/harness-skills-architecture.svg)
 
-Install through a Git marketplace:
+## 安装
+
+通过 Git marketplace 安装：
 
 ```text
 codex plugin marketplace add wcxcw/harness-skills --ref main
 codex plugin add harness-skills@harness-skills
 ```
 
-## Main Skills
+## 主要入口
 
-| Skill | Purpose |
+| Skill | 用途 |
 | --- | --- |
-| [`agent-harness`](plugins/harness-skills/skills/agent-harness/SKILL.md) | Main entry point for initializing, running, and maintaining a project harness. |
-| [`workflows`](plugins/harness-skills/skills/workflows/SKILL.md) | Closed-loop workflows for brainstorming, specs, plans, execution, debugging, review, verification, and finishing. |
-| [`meta`](plugins/harness-skills/skills/meta/SKILL.md) | Skills for maintaining and improving Harness skills themselves. |
+| [`agent-harness`](plugins/harness-skills/skills/agent-harness/SKILL.md) | 初始化、运行和维护项目级 harness 的主入口。 |
+| [`workflows`](plugins/harness-skills/skills/workflows/SKILL.md) | 闭环工作流集合：澄清、规格、计划、执行、调试、review、验证和收尾。 |
+| [`meta`](plugins/harness-skills/skills/meta/SKILL.md) | 维护和改进 Harness 自身 skills。 |
 
-## Generated Harness
+## 它会生成什么
 
-The default `core` scaffold creates:
+默认 `core` 脚手架会在目标项目中生成：
 
 ```text
 AGENTS.md
@@ -65,15 +65,15 @@ harness/
 └── runs/
 ```
 
-You can also run the scaffold script directly:
+也可以直接运行脚手架脚本：
 
 ```text
-python3 plugins/harness-skills/skills/agent-harness/scripts/init_harness.py --project /path/to/project --language en
+python3 plugins/harness-skills/skills/agent-harness/scripts/init_harness.py --project /path/to/project --language zh-CN
 ```
 
-## Closed Loop
+## 工作闭环
 
-A full run follows:
+完整 run 的生命周期是：
 
 ```text
 intake/design
@@ -87,59 +87,53 @@ intake/design
   -> harness feedback
 ```
 
-Run artifacts:
+对应的 run artifacts：
 
-| File | Purpose |
+| 文件 | 用途 |
 | --- | --- |
-| `workflow.md` | Skills used, lifecycle decisions, and gate status. |
-| `design.md` | Refined problem, target user, recommended direction, MVP, non-goals, and open questions. |
-| `spec.md` | Objective, scope, assumptions, acceptance criteria, verification, and required evidence. |
-| `plan.md` | Ordered tasks, dependencies, likely files, verification, and evidence requirements. |
-| `execution-log.md` | Files changed, commands run, test results, failures, and skipped checks. |
-| `review.md` | Review scope, findings, resolution, and remaining risk. |
-| `evaluation.md` | Acceptance, verification, review status, residual risk, and harness feedback. |
+| `workflow.md` | 记录使用过的 skills、生命周期决策和 gate 状态。 |
+| `design.md` | 收敛问题、目标用户、推荐方向、MVP、非目标和开放问题。 |
+| `spec.md` | 目标、范围、假设、验收标准、验证方式和所需证据。 |
+| `plan.md` | 任务顺序、依赖、可能修改的文件、验证方式和证据要求。 |
+| `execution-log.md` | 修改文件、执行命令、测试结果、失败信息和跳过的检查。 |
+| `review.md` | review 范围、发现、处理结果和剩余风险。 |
+| `evaluation.md` | 验收结果、验证结果、review 状态、残留风险和 harness 反馈。 |
 
-Quality workflows are available for application code changes:
+应用代码变更可以使用质量 workflow：
 
-| Skill | Use |
+| Skill | 用途 |
 | --- | --- |
-| `code-quality-review` | Maintainability, structure, local conventions, comments, logging, and testability review. |
-| `frontend-quality-review` | Frontend component boundaries, state/data separation, responsive behavior, accessibility, and browser evidence. |
-| `backend-quality-review` | Backend boundaries, input validation, logging, error handling, and operability. |
-| `code-reviewer` | Dedicated reviewer role; use as a subagent prompt when supported. |
-| `receiving-code-review` | Resolve review feedback in the same active run with verification evidence. |
-| `context-budget` | Keep context loading selective for large context files or long run history. |
+| `code-quality-review` | 检查可维护性、结构、本地约定、注释、日志和可测试性。 |
+| `frontend-quality-review` | 检查前端组件边界、状态/数据分离、响应式、可访问性和浏览器证据。 |
+| `backend-quality-review` | 检查后端边界、输入校验、日志、错误处理和可运维性。 |
+| `code-reviewer` | 专用 reviewer 角色；平台支持时作为 subagent prompt 使用。 |
+| `receiving-code-review` | 在同一个 active run 中处理 review 反馈并记录验证证据。 |
+| `context-budget` | 在上下文文件或历史 run 较多时控制选择性读取。 |
 
-Plugin-level hooks and scripts add stronger enforcement:
+插件级 hooks 和脚本提供更强约束：
 
-| Capability | Purpose |
+| 能力 | 用途 |
 | --- | --- |
-| `hooks/hooks.json` | SessionStart context reminder and Stop-time harness gate. |
-| `scripts/quality_check.py` | Lightweight code-quality checks for root component bloat, missing review evidence, unresolved findings, and backend logging gaps. |
-| `harness/controls/risk-matrix.md` | Risk classification for tier choice, review depth, and evidence strength. |
+| `hooks/hooks.json` | SessionStart 上下文提醒，以及 Stop 阶段 harness gate。 |
+| `scripts/quality_check.py` | 轻量代码质量检查：根组件膨胀、缺少 review 证据、未解决发现、后端日志缺口。 |
+| `harness/controls/risk-matrix.md` | 风险分级，用于 tier、review 深度和证据强度选择。 |
 
-## Run Tiers
+## 分级闭环
 
-Use the smallest tier that safely controls the work when a run is warranted.
+需要 run 时，选择能安全控制工作的最小 tier。
 
-No-run direct changes are allowed only when all micro-change criteria are met:
-the request is explicit, local, behavior-preserving, decision-free, easy to
-verify with one targeted check, and locally reversible. Examples: typo fixes,
-one sentence of copy, one named selector font-size change, or one spacing/color
-token. Broad visual improvements, typography hierarchy changes, cross-page
-changes, behavior changes, or work requiring a design/product/technical
-decision should use the smallest run tier instead.
+no-run 直接修改必须同时满足微小改动条件：请求明确、影响局部、不改变行为、
+不需要决策、能用一次小检查验证、可以局部回滚。例子：错别字、一句文案、一个
+明确选择器的字号修改、一个间距/颜色 token。宽泛视觉优化、整体字体层级调整、
+跨页面修改、行为变化，或需要设计/产品/技术决策的任务，应使用最小 run tier。
 
-A run tracks one user objective, not each agent attempt. Follow-up corrections,
-test fixes, verification additions, and small adjustments for the same objective
-should append to the active run until the user accepts the work or the run is
-closed. Create a new run only when the objective changes, the scope materially
-expands, or the user explicitly starts a new task.
+一个 run 对应一个用户目标，不对应 agent 的每次尝试。针对同一目标的返修、
+补测试、补验证和小调整，应继续追加到当前 active run，直到用户验收或该 run
+关闭。只有目标改变、范围明显扩大，或用户明确开始新任务时，才新建 run。
 
 ### XS
 
-For small changes that still need a run record, such as low-risk
-documentation/config/code edits with verification evidence.
+适合仍需要 run 记录的小改动，例如低风险文档/配置/代码修改，并需要验证证据。
 
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/
@@ -149,7 +143,7 @@ harness/runs/YYYY-MM-DD-short-task-name/
 
 ### Standard
 
-For most features, bugfixes, and structured changes.
+适合大多数功能、bugfix 和结构化修改。
 
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/
@@ -162,7 +156,7 @@ harness/runs/YYYY-MM-DD-short-task-name/
 
 ### Full
 
-For greenfield work, new product direction, complex bugs, or higher-risk changes.
+适合新功能、greenfield、产品方向、复杂 bug 或高风险修改。
 
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/
@@ -176,28 +170,26 @@ harness/runs/YYYY-MM-DD-short-task-name/
 └── evaluation.md
 ```
 
-## Local Gates
+## 本地 Gate
 
-Generated projects include `harness/scripts/check_run.py` to check whether the active run satisfies the selected tier before implementation and completion.
+目标项目会生成 `harness/scripts/check_run.py`，用于在实现前和交付前检查当前 run 是否满足所选 tier 的最低要求。
 
-Workflow skills help the agent work, but they do not bypass project-local gates.
+Workflow skills 可以帮助 Agent 做事，但不能绕过项目本地 gate。
 
-## Initialization Modes
+## 初始化模式
 
-| Mode | Use when | Default behavior |
+| 模式 | 使用场景 | 默认行为 |
 | --- | --- | --- |
-| `greenfield` | Empty project or one-sentence idea | Clarify direction, then create project brief, spec, and plan. |
-| `brownfield` | Existing source, README, tests, CI, or dependency manifests | Run read-only discovery, then add harness files conservatively. |
-| `existing-harness` | `AGENTS.md` or `harness/` already exists | Preserve existing conventions, fill gaps, and avoid overwrites. |
+| `greenfield` | 空项目或一句话项目想法 | 先澄清方向，再生成项目简介、规格和计划。 |
+| `brownfield` | 已有源码、README、测试、CI 或依赖配置 | 先只读发现，再保守补充 harness 文件。 |
+| `existing-harness` | 已存在 `AGENTS.md` 或 `harness/` | 保留现有约定，补齐缺口，避免覆盖。 |
 
-## Language
+## 输出语言
 
-- Chinese user prompts should generate Chinese `AGENTS.md`, `harness/context/*`, `workflow.md`, `design.md`, `spec.md`, `plan.md`, and run records by default.
-- Commands, paths, package names, framework names, and API names stay in their original language.
-- Existing projects should respect the established documentation language when it is consistent.
+- 用户用中文描述项目时，生成的 `AGENTS.md`、`harness/context/*`、`workflow.md`、`design.md`、`spec.md`、`plan.md` 和 run 记录默认使用中文。
+- 命令、路径、包名、框架名和 API 名称保持原文。
+- 老项目优先尊重已有文档语言；新增 run 记录可以跟随用户语言。
 
-Use Chinese templates explicitly:
+## 延伸阅读
 
-```text
-python3 plugins/harness-skills/skills/agent-harness/scripts/init_harness.py --project /path/to/project --language zh-CN
-```
+- [Harness Engineering 介绍](docs/Harness%20Engineering.zh-CN.md)

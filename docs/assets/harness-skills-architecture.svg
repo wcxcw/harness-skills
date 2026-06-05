@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980" role="img" aria-labelledby="title desc">
+  <title id="title">Harness Skills architecture</title>
+  <desc id="desc">Architecture diagram for Harness Skills showing plugin layer, persistent project harness, per-objective run lifecycle, enforcement gates, and feedback maintenance.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+    <style>
+      .bg { fill: #f8fafc; }
+      .title { font: 700 42px -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 400 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; fill: #475569; }
+      .section-title { font: 700 23px -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; fill: #0f172a; }
+      .section-note { font: 400 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; fill: #64748b; }
+      .box-title { font: 700 18px -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; fill: #0f172a; }
+      .box-text { font: 400 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; fill: #334155; }
+      .small { font: 400 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; fill: #475569; }
+      .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; rx: 18; }
+      .panel-blue { fill: #eff6ff; stroke: #93c5fd; stroke-width: 1.5; rx: 18; }
+      .panel-green { fill: #f0fdf4; stroke: #86efac; stroke-width: 1.5; rx: 18; }
+      .panel-amber { fill: #fffbeb; stroke: #fcd34d; stroke-width: 1.5; rx: 18; }
+      .panel-purple { fill: #faf5ff; stroke: #d8b4fe; stroke-width: 1.5; rx: 18; }
+      .chip { fill: #ffffff; stroke: #dbeafe; stroke-width: 1.2; rx: 10; }
+      .chip-green { fill: #ffffff; stroke: #bbf7d0; stroke-width: 1.2; rx: 10; }
+      .chip-amber { fill: #ffffff; stroke: #fde68a; stroke-width: 1.2; rx: 10; }
+      .chip-purple { fill: #ffffff; stroke: #e9d5ff; stroke-width: 1.2; rx: 10; }
+      .line { stroke: #2563eb; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .line-muted { stroke: #64748b; stroke-width: 2.5; stroke-dasharray: 8 8; fill: none; marker-end: url(#arrow-muted); }
+      .badge { fill: #0f172a; rx: 12; }
+      .badge-text { font: 700 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="980"/>
+
+  <text class="title" x="72" y="72">Harness Skills</text>
+  <text class="subtitle" x="72" y="106">Codex 插件：把项目初始化成可追踪、可验证、可维护的 Agent Harness</text>
+
+  <rect class="badge" x="1192" y="54" width="268" height="36"/>
+  <text class="badge-text" x="1210" y="78">Project-level, not per-attempt</text>
+
+  <!-- Plugin layer -->
+  <rect class="panel-blue" x="70" y="150" width="310" height="610"/>
+  <text class="section-title" x="100" y="190">Codex Plugin</text>
+  <text class="section-note" x="100" y="216">一次安装，提供 skills/hooks/scripts</text>
+
+  <rect class="chip" x="100" y="248" width="250" height="56"/>
+  <text class="box-title" x="118" y="282">plugin.json</text>
+  <text class="small" x="118" y="300">版本、入口、元数据</text>
+
+  <rect class="chip" x="100" y="326" width="250" height="92"/>
+  <text class="box-title" x="118" y="360">skills/</text>
+  <text class="box-text" x="118" y="386">agent-harness</text>
+  <text class="box-text" x="118" y="408">workflows</text>
+
+  <rect class="chip" x="100" y="440" width="250" height="84"/>
+  <text class="box-title" x="118" y="474">hooks/</text>
+  <text class="box-text" x="118" y="500">SessionStart</text>
+  <text class="box-text" x="220" y="500">Stop gate</text>
+
+  <rect class="chip" x="100" y="546" width="250" height="104"/>
+  <text class="box-title" x="118" y="580">scripts/</text>
+  <text class="box-text" x="118" y="606">quality_check.py</text>
+  <text class="box-text" x="118" y="628">harness_hook.py</text>
+
+  <text class="section-note" x="100" y="705">插件本身不替代项目；它给项目</text>
+  <text class="section-note" x="100" y="727">生成和维护一套本地控制面。</text>
+
+  <!-- Persistent project harness -->
+  <rect class="panel-green" x="470" y="150" width="430" height="610"/>
+  <text class="section-title" x="500" y="190">Persistent Project Harness</text>
+  <text class="section-note" x="500" y="216">初始化一次；之后低频维护，不随每个任务重写</text>
+
+  <rect class="chip-green" x="500" y="248" width="370" height="58"/>
+  <text class="box-title" x="520" y="282">AGENTS.md</text>
+  <text class="small" x="520" y="300">项目级 agent 入口规则</text>
+
+  <rect class="chip-green" x="500" y="326" width="370" height="86"/>
+  <text class="box-title" x="520" y="360">harness/context/</text>
+  <text class="box-text" x="520" y="386">project-brief.md</text>
+  <text class="box-text" x="690" y="386">coding-conventions.md</text>
+
+  <rect class="chip-green" x="500" y="432" width="370" height="86"/>
+  <text class="box-title" x="520" y="466">harness/controls/</text>
+  <text class="box-text" x="520" y="492">gates.md</text>
+  <text class="box-text" x="630" y="492">risk-matrix.md</text>
+
+  <rect class="chip-green" x="500" y="538" width="370" height="86"/>
+  <text class="box-title" x="520" y="572">harness/tools + evals</text>
+  <text class="box-text" x="520" y="598">commands.md</text>
+  <text class="box-text" x="650" y="598">task-scorecard.md</text>
+
+  <rect class="chip-green" x="500" y="644" width="370" height="72"/>
+  <text class="box-title" x="520" y="686">harness/scripts/check_run.py</text>
+  <text class="small" x="520" y="704">本地 before-implementation / completion gate</text>
+
+  <!-- Run lifecycle -->
+  <rect class="panel-amber" x="990" y="150" width="450" height="610"/>
+  <text class="section-title" x="1020" y="190">Task Run Lifecycle</text>
+  <text class="section-note" x="1020" y="216">每个用户目标一个 run；返修继续写当前 run</text>
+
+  <rect class="chip-amber" x="1020" y="248" width="390" height="76"/>
+  <text class="box-title" x="1040" y="282">Run decision</text>
+  <text class="box-text" x="1040" y="306">no-run / xs / standard / full</text>
+
+  <rect class="chip-amber" x="1020" y="344" width="390" height="92"/>
+  <text class="box-title" x="1040" y="378">Spec + Plan</text>
+  <text class="box-text" x="1040" y="404">workflow.md · spec.md · plan.md</text>
+  <text class="small" x="1040" y="422">非平凡任务先明确范围和验证</text>
+
+  <rect class="chip-amber" x="1020" y="456" width="390" height="94"/>
+  <text class="box-title" x="1040" y="490">Execute + Evidence</text>
+  <text class="box-text" x="1040" y="516">execution-log.md</text>
+  <text class="small" x="1040" y="534">命令、失败、跳过项、手动检查</text>
+
+  <rect class="chip-amber" x="1020" y="570" width="390" height="96"/>
+  <text class="box-title" x="1040" y="604">Review</text>
+  <text class="box-text" x="1040" y="630">code-reviewer subagent</text>
+  <text class="small" x="1040" y="648">code / frontend / backend quality review</text>
+
+  <rect class="chip-amber" x="1020" y="686" width="390" height="74"/>
+  <text class="box-title" x="1040" y="728">Evaluation</text>
+  <text class="box-text" x="1040" y="750">evaluation.md · residual risk · feedback</text>
+
+  <!-- Enforcement bottom -->
+  <rect class="panel-purple" x="210" y="820" width="1180" height="112"/>
+  <text class="section-title" x="240" y="858">Enforcement</text>
+  <text class="section-note" x="240" y="884">规则不是只写在 prompt 里；通过 hook、checker、scorecard 和 review evidence 收口</text>
+
+  <rect class="chip-purple" x="500" y="850" width="170" height="52"/>
+  <text class="box-title" x="524" y="882">Stop hook</text>
+
+  <rect class="chip-purple" x="700" y="850" width="180" height="52"/>
+  <text class="box-title" x="724" y="882">quality_check.py</text>
+
+  <rect class="chip-purple" x="910" y="850" width="160" height="52"/>
+  <text class="box-title" x="934" y="882">check_run.py</text>
+
+  <rect class="chip-purple" x="1100" y="850" width="230" height="52"/>
+  <text class="box-title" x="1124" y="882">Verified Completion</text>
+
+  <!-- Arrows -->
+  <path class="line" d="M 380 455 C 415 455, 430 455, 470 455"/>
+  <path class="line" d="M 900 455 C 935 455, 950 455, 990 455"/>
+  <path class="line" d="M 1215 760 C 1215 790, 1215 805, 1215 850"/>
+  <path class="line" d="M 670 876 L 700 876"/>
+  <path class="line" d="M 880 876 L 910 876"/>
+  <path class="line" d="M 1070 876 L 1100 876"/>
+
+  <!-- Feedback path -->
+  <path class="line-muted" d="M 1020 728 C 850 790, 705 790, 640 718"/>
+  <text class="small" x="694" y="800">review.md / evaluation.md 反馈</text>
+  <text class="small" x="694" y="820">用户确认后进入 Harness Maintenance</text>
+
+</svg>
