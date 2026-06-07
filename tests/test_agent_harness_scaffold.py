@@ -228,6 +228,21 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
             self.assertIn("Application code changes received code-quality review", gates)
             self.assertIn("Data loss", risk_matrix)
 
+    def test_code_reviewer_follows_active_run_language(self) -> None:
+        code_reviewer = (WORKFLOW_SKILLS / "code-reviewer" / "SKILL.md").read_text(encoding="utf-8")
+        reviewer_prompt = (WORKFLOW_SKILLS / "code-reviewer" / "prompt.md").read_text(encoding="utf-8")
+
+        for text in [code_reviewer, reviewer_prompt]:
+            self.assertIn("active run language", text)
+            self.assertIn("If the objective", text)
+            self.assertIn("Chinese", text)
+            self.assertIn("## 发现", text)
+            self.assertIn("## 剩余风险", text)
+            self.assertIn("严重程度", text)
+            self.assertIn("位置", text)
+            self.assertIn("必需操作", text)
+            self.assertIn("Do not keep English", text)
+
     def test_plugin_hooks_and_quality_script_are_present(self) -> None:
         hooks = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
         self.assertIn("SessionStart", hooks["hooks"])

@@ -29,6 +29,12 @@ Write or append:
 harness/runs/YYYY-MM-DD-short-task-name/review.md
 ```
 
+Follow the active run language:
+
+- If the user objective, active harness docs, or review brief are Chinese, write `review.md` in Chinese.
+- Do not keep English section headings or finding labels just because the reviewer prompt is written in English.
+- Keep code identifiers, commands, file paths, package names, framework names, API names, and severity names in their original language when that is clearer.
+
 Use:
 
 ```markdown
@@ -41,6 +47,20 @@ Use:
 ## Resolution
 
 ## Residual Risk
+```
+
+For a Chinese run, use:
+
+```markdown
+# Review
+
+## Review 范围
+
+## 发现
+
+## 处理结果
+
+## 剩余风险
 ```
 
 ## Review Procedure
@@ -82,6 +102,24 @@ Return:
 - File/line locations when possible
 - Required action
 - Residual risk if no fix is required
+
+Language:
+- Match the active run language. If the objective, spec, plan, or review brief is Chinese, return the review in Chinese.
+- Use Chinese section headings and finding labels for Chinese runs.
+- Keep code identifiers, commands, file paths, package names, framework names, API names, and severity names in their original language when useful.
+```
+
+For Chinese runs, return:
+
+```markdown
+## 发现
+- 严重程度：Critical | Important | Minor
+- 位置：`path/to/file:line`
+- 问题：
+- 必需操作：
+- 处理结果：pending
+
+## 剩余风险
 ```
 
 ## Stop Conditions
