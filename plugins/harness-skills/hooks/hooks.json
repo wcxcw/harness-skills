@@ -1,5 +1,4 @@
 {
-  "description": "Harness Skills hooks for lightweight context guidance and stop-time quality gates.",
   "hooks": {
     "SessionStart": [
       {

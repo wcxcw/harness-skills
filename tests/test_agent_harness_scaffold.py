@@ -245,6 +245,7 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
 
     def test_plugin_hooks_and_quality_script_are_present(self) -> None:
         hooks = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        self.assertEqual(set(hooks), {"hooks"})
         self.assertIn("SessionStart", hooks["hooks"])
         self.assertIn("Stop", hooks["hooks"])
         self.assertIn("harness_hook.py", json.dumps(hooks))
