@@ -33,6 +33,10 @@ codex plugin marketplace add wcxcw/harness-skills --ref main
 codex plugin add harness-skills@harness-skills
 ```
 
+本仓库的 `.agents/plugins/marketplace.json` 同时用于仓库内本地发现和 Git marketplace 发布。
+在本仓库开发时直接使用自动发现的本地来源，不要在同一项目中再次添加
+`wcxcw/harness-skills`；在其他项目中使用上面的命令安装远程来源。
+
 ## 主要入口
 
 | Skill | 用途 |
