@@ -10,6 +10,7 @@ from pathlib import Path
 
 
 SECTION_ALIASES = {
+    "alignment": ["Alignment", "需求共识", "对齐确认"],
     "objective": ["Objective", "Goal", "目标"],
     "scope": ["In Scope", "Scope", "范围内", "范围"],
     "non_goals": ["Out of Scope", "Non-goals", "Non Goals", "范围外", "非目标", "明确不做"],
@@ -43,6 +44,11 @@ EVIDENCE_MARKERS = [
     "跳过",
 ]
 
+ALIGNMENT_CONFIRMATION_PATTERNS = [
+    r"^\s*-\s*Confirmed by user\s*:\s*(?:yes|true)\s*$",
+    r"^\s*-\s*用户已确认\s*[：:]\s*(?:是|已确认|true)\s*$",
+]
+
 
 def read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
@@ -73,10 +79,34 @@ def has_evidence(text: str) -> bool:
     return any(marker.lower() in lowered for marker in EVIDENCE_MARKERS)
 
 
+def section_body(text: str, aliases: list[str]) -> str | None:
+    for alias in aliases:
+        heading = re.search(
+            rf"^##+\s+{re.escape(alias)}\s*$",
+            text,
+            flags=re.MULTILINE | re.IGNORECASE,
+        )
+        if not heading:
+            continue
+        next_heading = re.search(r"^##+\s+", text[heading.end() :], flags=re.MULTILINE)
+        end = heading.end() + next_heading.start() if next_heading else len(text)
+        return text[heading.end() : end]
+    return None
+
+
+def has_confirmed_alignment(text: str) -> bool:
+    alignment = section_body(text, SECTION_ALIASES["alignment"])
+    if alignment is None:
+        return False
+    return any(
+        re.search(pattern, alignment, flags=re.MULTILINE | re.IGNORECASE)
+        for pattern in ALIGNMENT_CONFIRMATION_PATTERNS
+    )
+
+
 def check_before_implementation(run_dir: Path, tier: str) -> list[str]:
     errors: list[str] = []
     workflow = run_dir / "workflow.md"
-    design = run_dir / "design.md"
     spec = run_dir / "spec.md"
     plan = run_dir / "plan.md"
 
@@ -88,8 +118,6 @@ def check_before_implementation(run_dir: Path, tier: str) -> list[str]:
 
     if not workflow.exists():
         errors.append("Missing workflow.md.")
-    if tier == "full" and not design.exists():
-        errors.append("Missing design.md.")
     if not spec.exists():
         errors.append("Missing spec.md.")
     if not plan.exists():
@@ -104,9 +132,11 @@ def check_before_implementation(run_dir: Path, tier: str) -> list[str]:
         errors.append(f"workflow.md is missing required section: {section}.")
     for section in missing_sections(
         spec_text,
-        ["objective", "scope", "non_goals", "acceptance", "verification", "open_questions"],
+        ["alignment", "objective", "scope", "non_goals", "acceptance", "verification", "open_questions"],
     ):
         errors.append(f"spec.md is missing required section: {section}.")
+    if not has_confirmed_alignment(spec_text):
+        errors.append("spec.md does not record user-confirmed alignment.")
     for section in missing_sections(plan_text, ["tasks", "verification"]):
         errors.append(f"plan.md is missing required section: {section}.")
 
@@ -164,7 +194,7 @@ def main() -> int:
         "--tier",
         choices=["xs", "standard", "full"],
         default="standard",
-        help="Run tier. xs requires minimal evidence; standard requires workflow/spec/plan; full also requires design and review.",
+        help="Run tier. xs requires minimal evidence; standard requires workflow/spec/plan; full also requires review.",
     )
     args = parser.parse_args()
 

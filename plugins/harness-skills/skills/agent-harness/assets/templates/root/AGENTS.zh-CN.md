@@ -24,6 +24,7 @@
 ## 核心规则
 
 - 产品、技术或范围决策不清楚时，先澄清再实现。
+- 没有 active run 且目标或重大决策不清楚时，邀请用户在创建 run 前显式调用 `$grilling`。Grilling 只进行对话、不创建文件；用户确认后，直接把共同理解记录到 `spec.md`。
 - Run 是否需要、分级和边界以 `harness/controls/gates.md` 为准。
 - 如果 gates 判定为 no-run 微小改动，直接修改，运行最小相关检查，并在回复中说明结果。
 - 如果需要 run，选择最小安全 tier，并保持一个用户目标对应一个 active run；同一目标后续修改追加到该 run。

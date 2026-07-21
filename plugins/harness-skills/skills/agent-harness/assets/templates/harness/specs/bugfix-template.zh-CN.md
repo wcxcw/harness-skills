@@ -1,8 +1,9 @@
 # 缺陷修复规格模板
 
-## 上下文来源
+## 对齐确认
 
 - 来源：[用户输入 | bug report | brownfield 审计 | 现有 spec]
+- 用户已确认：[是 | 否]
 - 初始化模式：[greenfield | brownfield | existing-harness]
 
 ## 问题

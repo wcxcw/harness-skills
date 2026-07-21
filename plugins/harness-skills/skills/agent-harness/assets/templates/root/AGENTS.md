@@ -24,6 +24,7 @@ Read or reuse these when orienting to the project or when the current task needs
 ## Core Rules
 
 - Clarify unclear product, technical, or scope decisions before implementation.
+- When the objective or material decisions are unclear and no run exists, invite the user to explicitly invoke `$grilling` before creating a run. Grilling stays conversational and creates no files; after confirmation, record the shared understanding directly in `spec.md`.
 - Run eligibility, tiers, and boundaries are defined in `harness/controls/gates.md`; use that file as the authority.
 - If gates classify the request as a no-run micro change, edit directly, run the smallest relevant check, and summarize the result.
 - If a run is warranted, use the smallest safe tier and keep one active run per user objective; append same-objective follow-ups to that run.

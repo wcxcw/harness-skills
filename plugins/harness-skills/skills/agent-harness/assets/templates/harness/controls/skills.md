@@ -6,7 +6,7 @@ This project harness is the source of truth for project facts, gates, commands, 
 
 | Harness stage | Required workflow skill | Compatible external skill pattern |
 | --- | --- | --- |
-| Intake | `brainstorming` | brainstorming |
+| Pre-run alignment | `$grilling` when explicitly invoked | grilling/interviewing without artifacts |
 | Spec | `writing-specs` | planning-oriented discovery |
 | Plan | `writing-plans` | writing-plans |
 | Context | `context-budget` | context-budget |
@@ -23,6 +23,7 @@ This project harness is the source of truth for project facts, gates, commands, 
 ## Rules
 
 - Use external skills only when they help satisfy the local spec, plan, gate, or verification requirement.
+- Keep pre-run grilling outside `workflow.md`; record its confirmed result in `spec.md` instead.
 - Do not treat an external skill as approval to bypass `harness/controls/gates.md`.
 - Record the skill or workflow used in `workflow.md`.
 - If an external skill conflicts with project commands, guardrails, or user instructions, follow the local harness and ask when the conflict is material.
@@ -33,7 +34,6 @@ Add a short note to `workflow.md`:
 
 ```text
 ## Skills Used
-- brainstorming
 - writing-specs
 - writing-plans
 

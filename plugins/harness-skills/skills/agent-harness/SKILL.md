@@ -13,7 +13,7 @@ This is an orchestration skill. Do not duplicate the full workflows of related s
 
 ## Operating Principles
 
-- Clarify before coding: turn vague requests into explicit goals, constraints, and success criteria.
+- Align before creating a run: when the request is vague, the user may explicitly invoke `$grilling` to resolve decisions without files or implementation actions.
 - Follow the user's language: if the user works in Chinese, generate harness files, run records, specs, plans, and explanations in Chinese unless the project already uses another language.
 - Confirm product shape before implementation: target audience, core workflow, information architecture, content/data sources, update model, and MVP quality bar must be explicit for product or content-driven projects.
 - Confirm blocking decisions before implementation: technology stack, runtime, data model, core architecture, external services, deployment target, and major UX/platform choices must be confirmed or explicitly deferred as non-coding decision tasks.
@@ -66,6 +66,11 @@ Use `xs`, `standard`, or `full` when the task needs an audit trail, touches
 project behavior, spans multiple concerns, requires a decision, or the user
 explicitly asks to run it through the harness.
 
+When the objective or material decisions are unclear, do not create the run
+yet. Ask the user to explicitly invoke `$grilling` or provide the missing
+decisions directly. Revisit run selection after shared understanding is
+confirmed.
+
 ### 1. Choose Initialization Mode
 
 Choose one mode before scaffolding or updating harness files:
@@ -81,18 +86,18 @@ For `existing-harness`, preserve existing harness content by default. Add missin
 Choose the harness language before writing files:
 
 - Use the user's main language for generated harness content.
-- If the user prompt is Chinese, use Chinese for `AGENTS.md`, `harness/context/*`, run records, `workflow.md`, `design.md`, `spec.md`, `plan.md`, `execution-log.md`, `review.md`, and `evaluation.md`.
+- If the user prompt is Chinese, use Chinese for `AGENTS.md`, `harness/context/*`, run records, `workflow.md`, `spec.md`, `plan.md`, `execution-log.md`, `review.md`, and `evaluation.md`.
 - Keep code identifiers, commands, file paths, package names, framework names, and API names in their original language.
 - For `brownfield`, prefer the existing project documentation language when it is consistent. If the user language and project language differ, use the user language for new run records and keep references to existing files unchanged.
 - When scaffolding Chinese files with the script, pass `--language zh-CN`. Use `--language en` only when the project or user clearly prefers English.
 
-### 3. Guided Initialization Gate
+### 3. Pre-Run Alignment Gate
 
-Use guided initialization before implementation when the project has only a short idea, the product shape is unclear, or blocking decisions are missing.
+Use pre-run alignment when the project has only a short idea, the product shape is unclear, or blocking decisions are missing.
 
-Use `brainstorming` for the actual clarifying questions and `design.md` output. Do not duplicate that workflow in this skill.
+`grilling` is explicitly user-invoked. When alignment is missing, recommend `$grilling` and stop before creating a run, scaffolding files, or writing application code. The user may instead provide the missing decisions directly.
 
-Do not write application code after asking the `brainstorming` questions. Wait for the user's answers, then update `project-brief.md`, create or update `workflow.md` and `design.md`, and proceed to spec only when the blocking decisions are answered or explicitly deferred as a non-coding decision task.
+During grilling, inspect the repository for facts, ask one decision question at a time with a recommended answer, and take no implementation action. After the user explicitly confirms shared understanding, bootstrap the Harness when needed, create the run, and let `writing-specs` record the confirmed decisions directly in `spec.md`.
 
 For content-driven products such as news, directories, dashboards, or curated feeds, this gate is required unless the user already provided content categories, source strategy, update cadence, ranking/filtering, page structure, and MVP quality bar.
 
@@ -105,7 +110,7 @@ Inspect the target project before writing harness files:
 - Build, test, lint, dev, and verification commands
 - Existing documentation, CI, tests, and conventions
 
-For `greenfield`, also capture the project idea, target user, success criteria, constraints, product shape, preferred stack if provided, core implementation direction, and unknown decisions. If the user only gave a one-sentence idea, use `brainstorming` to clarify target audience, content/data scope, core user experience, success criteria, constraints, technology stack, and core approach before writing the executable spec.
+For `greenfield`, also capture the project idea, target user, success criteria, constraints, product shape, preferred stack if provided, core implementation direction, and unknown decisions. If the user only gave a one-sentence idea, recommend explicit `$grilling` before creating a run; after confirmation, write the executable spec from that shared understanding.
 
 For content-driven products such as news, directories, dashboards, or curated feeds, clarify content categories, source strategy, update cadence, ranking/filtering, page structure, and MVP quality bar before implementation. Do not turn a broad content product idea into a generic demo without confirming what the user wants the experience to be.
 
@@ -170,17 +175,11 @@ Use this ownership model for team projects:
 
 If the project wants to keep most run records out of version control, recommend ignoring `harness/runs/*` while preserving `harness/runs/.gitkeep`, then force-add selected run directories when they matter.
 
-### 7. Refine
+### 7. Start From Confirmed Alignment
 
-For raw product ideas, vague project concepts, or early feature directions, use `brainstorming` before writing a spec. Save the one-page design in the active run directory when the user confirms:
+For raw product ideas, vague project concepts, or early feature directions, complete explicit `$grilling` before creating a run. Grilling stays conversational and creates no Harness artifacts.
 
-```text
-harness/runs/YYYY-MM-DD-short-task-name/design.md
-```
-
-The refined design should define the problem statement, recommended direction, key assumptions, MVP scope, not-doing list, and open questions.
-
-For `greenfield`, a one-sentence idea should normally produce `workflow.md`, `design.md`, and an executable `spec.md`. Do not silently choose product shape, content scope, information architecture, technology stack, or core implementation approach. If product, technology, or architecture decisions are missing, ask the user before planning implementation, or make choosing them the first non-coding task.
+Once the user confirms shared understanding, create the selected run tier and record the problem, scope, product decisions, technical decisions, acceptance criteria, and open questions directly in `spec.md`. If the user already supplied a clear and confirmed brief, skip grilling and proceed directly to the spec. Do not silently choose product shape, content scope, information architecture, technology stack, or core implementation approach.
 
 ### 8. Specify
 
@@ -190,7 +189,7 @@ For non-trivial tasks, use `writing-specs`. Save the resulting task contract in 
 harness/runs/YYYY-MM-DD-short-task-name/spec.md
 ```
 
-The spec must define objective, scope, non-goals, assumptions, acceptance criteria, verification, required evidence, context updates, and open questions. Do not use the spec step to generate the implementation plan.
+The spec must record the alignment source and explicit confirmation, then define objective, scope, non-goals, assumptions, product and technical decisions, acceptance criteria, verification, required evidence, context updates, and open questions. Do not use the spec step to generate the implementation plan.
 
 Before moving to planning, block on unresolved decisions that would materially affect implementation:
 
@@ -223,7 +222,7 @@ Do not proceed to execution if `spec.md` or `plan.md` contains unresolved blocki
 Implement against the active run only:
 
 - Read `AGENTS.md`
-- Read the active run's `workflow.md` and `design.md` when present
+- Read the active run's `workflow.md`
 - Read the active run's `spec.md` and `plan.md`
 - Load only the needed files under `harness/context/`; use targeted search or section reads for large context files
 - Check `harness/controls/gates.md`
@@ -275,7 +274,6 @@ Full:
 harness/runs/YYYY-MM-DD-short-task-name/
 ├── input.md
 ├── workflow.md
-├── design.md
 ├── spec.md
 ├── plan.md
 ├── execution-log.md
@@ -283,7 +281,7 @@ harness/runs/YYYY-MM-DD-short-task-name/
 └── evaluation.md
 ```
 
-Use `design.md` for new feature or product direction work. Legacy runs may still contain `idea.md`. Record changed files, commands run, verification results, review findings, unresolved risks, and whether each acceptance criterion passed.
+Legacy runs may still contain `design.md` or `idea.md`; new runs record confirmed decisions directly in `spec.md`. Record changed files, commands run, verification results, review findings, unresolved risks, and whether each acceptance criterion passed.
 
 ### 13. Improve
 
@@ -303,7 +301,7 @@ Update harness files, not unrelated application code, during this improvement ph
 
 Read `references/related-skills.md` when deciding how this skill composes with existing skills. In short:
 
-- Use bundled `brainstorming` for the Intake layer when a request is still exploratory.
+- Use bundled `grilling` before creating a run, only when the user explicitly invokes it to resolve an exploratory request.
 - Use bundled `writing-specs` for the Spec layer.
 - Use bundled `writing-plans` for the Plan layer.
 - Use bundled `context-budget` when project context or run history could become large.

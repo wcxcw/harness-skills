@@ -19,7 +19,7 @@ Create `plan.md` from an accepted spec. This workflow replaces the old `task-pla
 | --- | --- | --- |
 | `xs` | Usually skipped; explain direct execution in `evaluation.md` | No planning artifact gate |
 | `standard` | `plan.md` with `## Tasks` and `## Verification` | Required before `check_run.py --stage before-implementation` can pass |
-| `full` | `plan.md` mapped from `design.md` and `spec.md` | Required before implementation and review |
+| `full` | `plan.md` mapped from the confirmed decisions and acceptance criteria in `spec.md` | Required before implementation and review |
 
 ## Output
 
@@ -34,7 +34,7 @@ Update `workflow.md` with `writing-plans` under `## Skills Used`.
 ## Rules
 
 - Plan from `spec.md`, not memory.
-- Read `workflow.md`, `design.md` when present, `harness/controls/lifecycle.md`, `harness/controls/gates.md`, and relevant source files before planning.
+- Read `workflow.md`, `spec.md`, `harness/controls/lifecycle.md`, `harness/controls/gates.md`, and relevant source files before planning. Read legacy `design.md` only when the spec cites it.
 - Do not plan coding tasks around unresolved blocking decisions.
 - Split work into small tasks with dependencies, likely files, acceptance mapping, verification command, and evidence destination.
 - Add checkpoints after risky tasks.

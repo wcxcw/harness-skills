@@ -38,7 +38,8 @@ codex plugin add harness-skills@harness-skills
 | Skill | 用途 |
 | --- | --- |
 | [`agent-harness`](plugins/harness-skills/skills/agent-harness/SKILL.md) | 初始化、运行和维护项目级 harness 的主入口。 |
-| [`workflows`](plugins/harness-skills/skills/workflows/SKILL.md) | 闭环工作流集合：澄清、规格、计划、执行、调试、review、验证和收尾。 |
+| [`grilling`](plugins/harness-skills/skills/workflows/grilling/SKILL.md) | 用户显式调用的 run 前共识对齐；一次确认一个决策，不创建文件。 |
+| [`workflows`](plugins/harness-skills/skills/workflows/SKILL.md) | 闭环工作流集合：规格、计划、执行、调试、review、验证和收尾。 |
 | [`meta`](plugins/harness-skills/skills/meta/SKILL.md) | 维护和改进 Harness 自身 skills。 |
 
 ## 它会生成什么
@@ -73,10 +74,11 @@ python3 plugins/harness-skills/skills/agent-harness/scripts/init_harness.py --pr
 
 ## 工作闭环
 
-完整 run 的生命周期是：
+需求模糊时，可以先显式调用 `$grilling`；它在 run 外完成共识对齐，不创建文件。用户确认共同理解后，完整 run 从 spec 开始：
 
 ```text
-intake/design
+grilling（可选、run 外）
+  -> 用户确认共同理解
   -> spec
   -> plan
   -> before-implementation gate
@@ -92,8 +94,7 @@ intake/design
 | 文件 | 用途 |
 | --- | --- |
 | `workflow.md` | 记录使用过的 skills、生命周期决策和 gate 状态。 |
-| `design.md` | 收敛问题、目标用户、推荐方向、MVP、非目标和开放问题。 |
-| `spec.md` | 目标、范围、假设、验收标准、验证方式和所需证据。 |
+| `spec.md` | 共识来源、用户确认、目标、范围、产品/技术决策、验收标准、验证方式和所需证据。 |
 | `plan.md` | 任务顺序、依赖、可能修改的文件、验证方式和证据要求。 |
 | `execution-log.md` | 修改文件、执行命令、测试结果、失败信息和跳过的检查。 |
 | `review.md` | review 范围、发现、处理结果和剩余风险。 |
@@ -162,7 +163,6 @@ harness/runs/YYYY-MM-DD-short-task-name/
 harness/runs/YYYY-MM-DD-short-task-name/
 ├── input.md
 ├── workflow.md
-├── design.md
 ├── spec.md
 ├── plan.md
 ├── execution-log.md
@@ -180,13 +180,13 @@ Workflow skills 可以帮助 Agent 做事，但不能绕过项目本地 gate。
 
 | 模式 | 使用场景 | 默认行为 |
 | --- | --- | --- |
-| `greenfield` | 空项目或一句话项目想法 | 先澄清方向，再生成项目简介、规格和计划。 |
+| `greenfield` | 空项目或一句话项目想法 | 先用显式 `$grilling` 对齐共识，再生成项目简介、规格和计划。 |
 | `brownfield` | 已有源码、README、测试、CI 或依赖配置 | 先只读发现，再保守补充 harness 文件。 |
 | `existing-harness` | 已存在 `AGENTS.md` 或 `harness/` | 保留现有约定，补齐缺口，避免覆盖。 |
 
 ## 输出语言
 
-- 用户用中文描述项目时，生成的 `AGENTS.md`、`harness/context/*`、`workflow.md`、`design.md`、`spec.md`、`plan.md` 和 run 记录默认使用中文。
+- 用户用中文描述项目时，生成的 `AGENTS.md`、`harness/context/*`、`workflow.md`、`spec.md`、`plan.md` 和 run 记录默认使用中文。
 - 命令、路径、包名、框架名和 API 名称保持原文。
 - 老项目优先尊重已有文档语言；新增 run 记录可以跟随用户语言。
 

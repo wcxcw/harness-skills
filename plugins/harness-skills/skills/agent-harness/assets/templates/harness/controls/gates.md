@@ -3,6 +3,10 @@
 Gates turn harness guidance into checks. Agents should use these gates before implementation and before completion.
 Use `harness/controls/risk-matrix.md` when risk affects tier choice, review depth, or verification scope.
 
+## Pre-Run Alignment
+
+When the objective or material decisions are unclear, do not create a run yet. Invite the user to explicitly invoke `$grilling`, which asks one decision question at a time and creates no files. After the user confirms shared understanding, create the run and record that confirmation in `spec.md`.
+
 ## Tiers
 
 Run tiers apply only when a run is warranted. A no-run micro change is allowed
@@ -17,7 +21,7 @@ changes, or work requiring a design/product/technical decision.
 | --- | --- | --- |
 | `xs` | small changes that still need a run record, such as low-risk config/docs/code edits with verification evidence | `execution-log.md`, `evaluation.md` |
 | `standard` | normal feature work, contained bugfixes, and multi-file changes | `workflow.md`, `spec.md`, `plan.md`, `execution-log.md`, `evaluation.md` |
-| `full` | greenfield work, new product/feature direction, architecture/data/security/CI/dependency risk | `workflow.md`, `design.md`, `spec.md`, `plan.md`, `execution-log.md`, `review.md`, `evaluation.md` |
+| `full` | greenfield work, new product/feature direction, architecture/data/security/CI/dependency risk | `workflow.md`, `spec.md`, `plan.md`, `execution-log.md`, `review.md`, `evaluation.md` |
 
 ## Run Boundary
 
@@ -34,8 +38,8 @@ For `standard` and `full` runs, the active run must pass these checks before edi
 - `harness/runs/<run>/spec.md` exists.
 - `harness/runs/<run>/plan.md` exists.
 - `harness/runs/<run>/workflow.md` exists and records skills used plus gate status.
-- `harness/runs/<run>/design.md` exists for `full` runs.
-- `spec.md` contains objective, scope, non-goals, acceptance criteria, verification, and open questions.
+- `spec.md` contains alignment, objective, scope, non-goals, acceptance criteria, verification, and open questions.
+- `spec.md` records that the user explicitly confirmed shared understanding.
 - `plan.md` contains ordered tasks and verification.
 - `spec.md` and `plan.md` do not contain unresolved blocking markers such as `Needs decision` or `TBD`.
 

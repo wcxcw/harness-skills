@@ -6,7 +6,7 @@
 
 | Harness 阶段 | 必要 workflow skill | 可兼容的外部 skill 模式 |
 | --- | --- | --- |
-| Intake | `brainstorming` | brainstorming |
+| Run 前共识对齐 | 用户显式调用 `$grilling` | 不创建 artifact 的 grilling/interviewing |
 | Spec | `writing-specs` | planning-oriented discovery |
 | Plan | `writing-plans` | writing-plans |
 | Context | `context-budget` | context-budget |
@@ -23,6 +23,7 @@
 ## 规则
 
 - 只有当外部 skill 能帮助满足本地 spec、plan、gate 或验证要求时才使用。
+- Run 前的 grilling 不写入 `workflow.md`；将已确认的结果记录到 `spec.md`。
 - 不要把外部 skill 当成绕过 `harness/controls/gates.md` 的批准。
 - 当外部 skill 或工作流实质影响了任务，在 `workflow.md` 中记录。
 - 如果外部 skill 与项目命令、guardrails 或用户指令冲突，以本地 harness 为准；冲突重要时先询问。
@@ -33,7 +34,6 @@
 
 ```text
 ## Skills Used
-- brainstorming
 - writing-specs
 - writing-plans
 

@@ -2,12 +2,13 @@
 
 The harness lifecycle is the closed loop for agentic work. Workflow skills can help execute each stage, but local gates decide whether the run may continue.
 
+Before this lifecycle starts, the user may explicitly invoke `$grilling` to resolve an unclear idea. Grilling is conversational, creates no artifacts, and must finish with explicit shared-understanding confirmation before a run is created.
+
 ## Stages
 
 | Stage | Workflow skill | Required artifact | Gate |
 | --- | --- | --- | --- |
-| Intake | `brainstorming` | `workflow.md`, `design.md` | User-approved direction |
-| Spec | `writing-specs` | `spec.md` | No unresolved blocking decisions |
+| Spec | `writing-specs` | `workflow.md`, `spec.md` | User-confirmed alignment and no unresolved blocking decisions |
 | Plan | `writing-plans` | `plan.md` | Tasks map to acceptance criteria |
 | Preflight | `agent-harness` | Gate output | `check_run.py --stage before-implementation` passes |
 | Execute | `executing-plans`, `test-driven-development`, or `systematic-debugging` | `execution-log.md` | Verification evidence recorded |
@@ -62,7 +63,6 @@ harness/runs/YYYY-MM-DD-short-task-name/
 harness/runs/YYYY-MM-DD-short-task-name/
 ├── input.md
 ├── workflow.md
-├── design.md
 ├── spec.md
 ├── plan.md
 ├── execution-log.md
@@ -70,7 +70,7 @@ harness/runs/YYYY-MM-DD-short-task-name/
 └── evaluation.md
 ```
 
-Use `design.md` for new feature, greenfield, or product direction work. Narrow bugfixes may skip `design.md` when `spec.md` includes reproduction, expected behavior, and scope. Use `review.md` for `full` runs or when risk justifies review.
+New runs record confirmed product and technical decisions directly in `spec.md`. Legacy `design.md` files may still be read when referenced. Use `review.md` for `full` runs or when risk justifies review.
 
 ## Continuation Rule
 

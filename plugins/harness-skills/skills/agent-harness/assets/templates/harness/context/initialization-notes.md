@@ -36,9 +36,9 @@ Record how the Agent Harness was initialized and what still needs confirmation.
 - External services: [confirmed | none | Needs decision]
 - Deployment target: [confirmed | inferred | Needs decision]
 
-## Guided Initialization Questions
+## Pre-Run Alignment
 
-When the user only provides a one-sentence idea, use `brainstorming` before coding. Record the user's answers, unresolved decisions, and whether `workflow.md` and `design.md` were created.
+When the user only provides a one-sentence idea, recommend explicit `$grilling` before creating a run. Grilling creates no files; after the user confirms shared understanding, record the result directly in `spec.md`.
 
 ## Existing Project Constraints
 

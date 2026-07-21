@@ -1,8 +1,9 @@
 # Feature Spec Template
 
-## Context Source
+## Alignment
 
-- Source: [user input | design.md | project-brief.md | brownfield audit | existing spec]
+- Source: [grilling | user input | project-brief.md | brownfield audit | legacy design.md | existing spec]
+- Confirmed by user: [yes | no]
 - Initialization mode: [greenfield | brownfield | existing-harness]
 
 ## Goal

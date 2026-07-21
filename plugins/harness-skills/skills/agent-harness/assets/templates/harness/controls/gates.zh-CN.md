@@ -3,6 +3,10 @@
 门槛用于把 harness 建议变成可检查项。Agent 应在实现前和交付前使用这些门槛。
 当风险影响 tier、review 深度或验证范围时，使用 `harness/controls/risk-matrix.md`。
 
+## Run 前共识对齐
+
+目标或重大决策不清楚时，先不要创建 run。邀请用户显式调用 `$grilling`，一次确认一个决策且不创建文件。用户确认共同理解后，再创建 run，并在 `spec.md` 中记录该确认。
+
 ## 分级
 
 只有需要 run 时才选择 run tier。no-run 微小改动必须同时满足：请求明确、影响
@@ -14,7 +18,7 @@
 | --- | --- | --- |
 | `xs` | 仍需要 run 记录的小改动，例如低风险配置/文档/代码修改，并需要验证证据 | `execution-log.md`、`evaluation.md` |
 | `standard` | 普通功能、范围明确的 bugfix、多文件但风险可控的修改 | `workflow.md`、`spec.md`、`plan.md`、`execution-log.md`、`evaluation.md` |
-| `full` | greenfield、新产品/功能方向、架构/数据/安全/CI/依赖风险 | `workflow.md`、`design.md`、`spec.md`、`plan.md`、`execution-log.md`、`review.md`、`evaluation.md` |
+| `full` | greenfield、新产品/功能方向、架构/数据/安全/CI/依赖风险 | `workflow.md`、`spec.md`、`plan.md`、`execution-log.md`、`review.md`、`evaluation.md` |
 
 ## Run 边界
 
@@ -29,8 +33,8 @@
 - `harness/runs/<run>/spec.md` 存在。
 - `harness/runs/<run>/plan.md` 存在。
 - `harness/runs/<run>/workflow.md` 存在，并记录使用的 skills 和 gate 状态。
-- `full` run 的 `harness/runs/<run>/design.md` 存在。
-- `spec.md` 包含目标、范围、非目标、验收标准、验证方式和待确认问题。
+- `spec.md` 包含共识确认、目标、范围、非目标、验收标准、验证方式和待确认问题。
+- `spec.md` 记录用户已明确确认共同理解。
 - `plan.md` 包含有顺序的任务和验证方式。
 - `spec.md` 和 `plan.md` 不包含 `Needs decision`、`需要决策` 或 `TBD` 等阻塞标记。
 

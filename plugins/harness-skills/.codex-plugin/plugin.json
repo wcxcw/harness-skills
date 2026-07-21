@@ -1,7 +1,7 @@
 {
   "name": "harness-skills",
-  "version": "0.4.2",
-  "description": "Project-level Agent Harness scaffolding and closed-loop workflow skills for Codex.",
+  "version": "0.5.0",
+  "description": "Pre-run decision alignment and project-level Agent Harness workflows for Codex.",
   "author": {
     "name": "wcxcw",
     "url": "https://github.com/wcxcw"
@@ -12,6 +12,8 @@
   "keywords": [
     "agent-harness",
     "harness-engineering",
+    "decision-alignment",
+    "grilling",
     "workflow",
     "planning",
     "verification",
@@ -22,7 +24,7 @@
   "interface": {
     "displayName": "Harness Skills",
     "shortDescription": "Bootstrap project-level Agent Harness workflows for Codex.",
-    "longDescription": "Harness Skills initializes a controlled project workspace with context, specs, plans, guardrails, run records, local gates, review, verification, and evaluation feedback.",
+    "longDescription": "Harness Skills aligns unclear decisions before a run, then initializes a controlled project workspace with context, specs, plans, guardrails, run records, local gates, review, verification, and evaluation feedback.",
     "developerName": "wcxcw",
     "category": "Coding",
     "capabilities": [
@@ -31,6 +33,7 @@
       "Write"
     ],
     "defaultPrompt": [
+      "Use $grilling to challenge this idea before starting a Harness run.",
       "Initialize an Agent Harness for this project.",
       "Run this task through the project harness."
     ],

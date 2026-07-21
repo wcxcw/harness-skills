@@ -1,8 +1,9 @@
 # Bugfix Spec Template
 
-## Context Source
+## Alignment
 
 - Source: [user input | bug report | brownfield audit | existing spec]
+- Confirmed by user: [yes | no]
 - Initialization mode: [greenfield | brownfield | existing-harness]
 
 ## Problem

@@ -14,9 +14,12 @@ PLUGIN_ROOT = ROOT / "plugins" / "harness-skills"
 PLUGIN_MANIFEST = PLUGIN_ROOT / ".codex-plugin" / "plugin.json"
 INIT_SCRIPT = PLUGIN_ROOT / "skills" / "agent-harness" / "scripts" / "init_harness.py"
 WORKFLOW_SKILLS = PLUGIN_ROOT / "skills" / "workflows"
+GRILL_SKILL = WORKFLOW_SKILLS / "grilling" / "SKILL.md"
+GRILL_METADATA = WORKFLOW_SKILLS / "grilling" / "agents" / "openai.yaml"
 VENDOR_SUPERPOWERS = ROOT / "vendor" / "superpowers"
 QUALITY_CHECK = PLUGIN_ROOT / "scripts" / "quality_check.py"
 HOOKS_JSON = PLUGIN_ROOT / "hooks" / "hooks.json"
+PRE_RUN_WORKFLOWS = {"grilling"}
 OPERATIONAL_WORKFLOW_SECTIONS = [
     "## Gate Mapping",
     "## Stop Conditions",
@@ -83,7 +86,6 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
     def test_installed_workflows_are_harness_adaptations(self) -> None:
         local_artifacts = {
             "workflow.md",
-            "design.md",
             "spec.md",
             "plan.md",
             "execution-log.md",
@@ -91,6 +93,8 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
             "evaluation.md",
         }
         for skill_file in WORKFLOW_SKILLS.glob("**/SKILL.md"):
+            if skill_file.parent.name in PRE_RUN_WORKFLOWS:
+                continue
             text = skill_file.read_text(encoding="utf-8")
             self.assertNotIn("docs/superpowers", text, skill_file)
             self.assertNotIn("superpowers:", text, skill_file)
@@ -107,12 +111,51 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
         workflow_skill_files = sorted(WORKFLOW_SKILLS.glob("*/SKILL.md"))
         self.assertTrue(workflow_skill_files)
         for skill_file in workflow_skill_files:
+            if skill_file.parent.name in PRE_RUN_WORKFLOWS:
+                continue
             text = skill_file.read_text(encoding="utf-8")
             for section in OPERATIONAL_WORKFLOW_SECTIONS:
                 self.assertIn(section, text, f"{skill_file} missing {section}")
             for tier in ["`xs`", "`standard`", "`full`"]:
                 self.assertIn(tier, text, f"{skill_file} missing tier {tier}")
             self.assertIn("check_run.py", text, f"{skill_file} missing local checker mapping")
+
+    def test_grilling_is_manual_pre_run_alignment_without_artifacts(self) -> None:
+        self.assertTrue(GRILL_SKILL.exists())
+        self.assertTrue(GRILL_METADATA.exists())
+
+        grill = GRILL_SKILL.read_text(encoding="utf-8")
+        metadata = GRILL_METADATA.read_text(encoding="utf-8")
+        workflows = (WORKFLOW_SKILLS / "SKILL.md").read_text(encoding="utf-8")
+        agent_harness = (PLUGIN_ROOT / "skills" / "agent-harness" / "SKILL.md").read_text(encoding="utf-8")
+        writing_specs = (WORKFLOW_SKILLS / "writing-specs" / "SKILL.md").read_text(encoding="utf-8")
+
+        self.assertIn("explicitly invokes", grill)
+        self.assertIn("one question at a time", grill)
+        self.assertIn("recommended answer", grill)
+        self.assertIn("explore the repository", grill.lower())
+        self.assertIn("Do not create or update Harness artifacts", grill)
+        self.assertIn("shared understanding", grill)
+        for artifact in [
+            "workflow.md",
+            "design.md",
+            "spec.md",
+            "plan.md",
+            "execution-log.md",
+            "review.md",
+            "evaluation.md",
+        ]:
+            self.assertNotIn(artifact, grill)
+
+        self.assertIn("allow_implicit_invocation: false", metadata)
+        self.assertIn("$grilling", metadata)
+        self.assertLess(workflows.index("`grilling/SKILL.md`"), workflows.index("`writing-specs/SKILL.md`"))
+        self.assertIn("before creating a run", agent_harness)
+        self.assertIn("`grilling`", agent_harness)
+        self.assertFalse((WORKFLOW_SKILLS / "brainstorming").exists())
+        self.assertNotIn("brainstorming/SKILL.md", workflows)
+        self.assertNotIn("`brainstorming`", agent_harness)
+        self.assertIn("confirmed shared understanding", writing_specs)
 
     def test_core_profile_includes_gates_skills_and_checker(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -253,6 +296,7 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
         self.assertTrue(QUALITY_CHECK.exists())
         hook_script = (PLUGIN_ROOT / "scripts" / "harness_hook.py").read_text(encoding="utf-8")
         self.assertIn("reuse it within the same", hook_script)
+        self.assertIn("explicitly invoke $grilling", hook_script)
 
     def test_quality_check_blocks_missing_code_quality_review_for_code_changes(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -318,11 +362,15 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
             self.assertIn("when maintaining it, keep it to a short project summary", en_agents)
             self.assertIn("reuse an already-loaded `project-brief.md`", en_agents)
             self.assertIn("Prefer targeted search or section reads", en_agents)
+            self.assertIn("explicitly invoke `$grilling`", en_agents)
+            self.assertIn("before creating a run", en_agents)
             self.assertIn("不要批量读取 `harness/context/*` 或 `harness/runs/*`", zh_agents)
             self.assertIn("1. `harness/context/project-brief.md`", zh_agents)
             self.assertIn("维护或更新该文件时，只保留短项目摘要", zh_agents)
             self.assertIn("应复用已加载内容", zh_agents)
             self.assertIn("按章节读取", zh_agents)
+            self.assertIn("显式调用 `$grilling`", zh_agents)
+            self.assertIn("创建 run 前", zh_agents)
             self.assertIn("Load context on demand", agent_harness)
 
     def test_run_boundary_guidance_reuses_active_run_for_followups(self) -> None:
@@ -472,7 +520,6 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
                 """# Workflow
 
 ## Skills Used
-- brainstorming
 - writing-specs
 - writing-plans
 
@@ -485,8 +532,13 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
             (run_dir / "spec.md").write_text(
                 """# Spec
 
+## Alignment
+- Source: user-provided brief
+- Confirmed by user: no
+
 ## Objective
 Ship a test change.
+- Confirmed by user: yes
 
 ## In Scope
 - Test scope.
@@ -533,12 +585,69 @@ No findings.
                 encoding="utf-8",
             )
 
+            unconfirmed = subprocess.run(
+                [sys.executable, str(checker), str(run_dir), "--stage", "before-implementation"],
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotEqual(unconfirmed.returncode, 0)
+            self.assertIn("user-confirmed alignment", unconfirmed.stdout)
+            spec_path = run_dir / "spec.md"
+            spec_path.write_text(
+                spec_path.read_text(encoding="utf-8").replace(
+                    "- Confirmed by user: no",
+                    "- Confirmed by user: yes",
+                ),
+                encoding="utf-8",
+            )
+
             passed = subprocess.run(
                 [sys.executable, str(checker), str(run_dir), "--stage", "all"],
                 capture_output=True,
                 text=True,
             )
             self.assertEqual(passed.returncode, 0, passed.stdout + passed.stderr)
+
+    def test_generated_checker_accepts_chinese_alignment_confirmation(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp) / "project"
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(INIT_SCRIPT),
+                    "--project",
+                    str(project),
+                    "--profile",
+                    "core",
+                    "--language",
+                    "zh-CN",
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            run_dir = project / "harness" / "runs" / "2026-06-03-zh-alignment"
+            run_dir.mkdir(parents=True)
+            (run_dir / "workflow.md").write_text(
+                "# 工作流\n\n## 使用的 Skills\n- writing-specs\n- writing-plans\n\n## 门槛\n- 实现前：待检查\n",
+                encoding="utf-8",
+            )
+            (run_dir / "spec.md").write_text(
+                "# 规格\n\n## 对齐确认\n- 来源：grilling\n- 用户已确认：是\n\n## 目标\n完成测试。\n\n## 范围内\n- 测试。\n\n## 非目标\n- 其他修改。\n\n## 验收标准\n- 检查通过。\n\n## 验证\n- 运行检查。\n\n## 待确认问题\n无。\n",
+                encoding="utf-8",
+            )
+            (run_dir / "plan.md").write_text(
+                "# 计划\n\n## 任务\n- 执行修改。\n\n## 验证\n- 运行检查。\n",
+                encoding="utf-8",
+            )
+
+            checker = project / "harness" / "scripts" / "check_run.py"
+            result = subprocess.run(
+                [sys.executable, str(checker), str(run_dir), "--stage", "before-implementation"],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_xs_tier_requires_only_completion_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -608,7 +717,6 @@ No findings.
                 """# Workflow
 
 ## Skills Used
-- brainstorming
 - writing-specs
 - writing-plans
 - executing-plans
@@ -622,16 +730,12 @@ No findings.
 """,
                 encoding="utf-8",
             )
-            (run_dir / "design.md").write_text(
-                """# Design
-
-## Problem
-The harness needs a closed-loop run contract.
-""",
-                encoding="utf-8",
-            )
             (run_dir / "spec.md").write_text(
                 """# Spec
+
+## Alignment
+- Source: grilling
+- Confirmed by user: yes
 
 ## Objective
 Prove a closed-loop run can pass local gates.

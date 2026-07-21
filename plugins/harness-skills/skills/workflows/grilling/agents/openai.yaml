@@ -1,0 +1,6 @@
+interface:
+  display_name: "Grilling"
+  short_description: "Clarify decisions before starting a Harness run."
+  default_prompt: "Use $grilling to question my idea one decision at a time before taking action."
+policy:
+  allow_implicit_invocation: false

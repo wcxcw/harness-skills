@@ -2,16 +2,15 @@
 
 Use this reference when operating `agent-harness` with the bundled closed-loop workflows.
 
-## brainstorming
+## grilling
 
-Layer: Intake / Design
+Layer: Pre-run Alignment
 
 Expected output:
 
-- `harness/runs/<run>/workflow.md`
-- `harness/runs/<run>/design.md`
+- Confirmed shared understanding in the conversation; no Harness artifacts
 
-Use when a request starts as a raw idea, product concept, or vague feature direction.
+Use only when the user explicitly invokes `$grilling` to stress-test a raw idea, product concept, decision, or vague feature direction before creating a run.
 
 ## writing-specs
 
@@ -21,7 +20,7 @@ Expected output:
 
 - `harness/runs/<run>/spec.md`
 
-Use when the definition of done, scope, acceptance criteria, or required evidence is not explicit.
+Use after alignment is confirmed, or when the user's request is already explicit enough to record the task contract directly.
 
 ## writing-plans
 

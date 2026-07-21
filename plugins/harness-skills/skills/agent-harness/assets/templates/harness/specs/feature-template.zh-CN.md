@@ -1,8 +1,9 @@
 # 功能规格模板
 
-## 上下文来源
+## 对齐确认
 
-- 来源：[用户输入 | design.md | project-brief.md | brownfield 审计 | 现有 spec]
+- 来源：[grilling | 用户输入 | project-brief.md | brownfield 审计 | 旧 design.md | 现有 spec]
+- 用户已确认：[是 | 否]
 - 初始化模式：[greenfield | brownfield | existing-harness]
 
 ## 目标

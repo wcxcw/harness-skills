@@ -2,12 +2,13 @@
 
 Harness 生命周期是 agentic work 的完整闭环。Workflow skills 可以辅助执行每个阶段，但是否允许继续由本地 gate 决定。
 
+进入此生命周期之前，用户可以显式调用 `$grilling` 澄清模糊想法。Grilling 只进行对话、不创建 artifact，并且必须在创建 run 前由用户明确确认共同理解。
+
 ## 阶段
 
 | 阶段 | Workflow skill | 必要 artifact | Gate |
 | --- | --- | --- | --- |
-| Intake | `brainstorming` | `workflow.md`、`design.md` | 方向已获用户确认 |
-| Spec | `writing-specs` | `spec.md` | 没有未解决的阻塞决策 |
+| Spec | `writing-specs` | `workflow.md`、`spec.md` | 用户已确认共识且没有未解决的阻塞决策 |
 | Plan | `writing-plans` | `plan.md` | 任务映射到验收标准 |
 | Preflight | `agent-harness` | Gate output | `check_run.py --stage before-implementation` 通过 |
 | Execute | `executing-plans`、`test-driven-development` 或 `systematic-debugging` | `execution-log.md` | 验证证据已记录 |
@@ -57,7 +58,6 @@ harness/runs/YYYY-MM-DD-short-task-name/
 harness/runs/YYYY-MM-DD-short-task-name/
 ├── input.md
 ├── workflow.md
-├── design.md
 ├── spec.md
 ├── plan.md
 ├── execution-log.md
@@ -65,7 +65,7 @@ harness/runs/YYYY-MM-DD-short-task-name/
 └── evaluation.md
 ```
 
-新功能、greenfield 或产品方向使用 `design.md`。狭窄 bugfix 如果 `spec.md` 已包含复现、期望行为和范围，可以跳过 `design.md`。`full` run 或风险足够高时使用 `review.md`。
+新 run 直接在 `spec.md` 中记录已确认的产品和技术决策。旧 run 的 `design.md` 被引用时仍可读取。`full` run 或风险足够高时使用 `review.md`。
 
 ## 继续规则
 

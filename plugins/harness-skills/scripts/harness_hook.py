@@ -50,7 +50,7 @@ def latest_run(root: Path) -> Path | None:
 
 
 def infer_tier(run_dir: Path) -> str:
-    if (run_dir / "design.md").exists() and (run_dir / "review.md").exists():
+    if (run_dir / "review.md").exists():
         return "full"
     if (run_dir / "workflow.md").exists() and (run_dir / "spec.md").exists() and (run_dir / "plan.md").exists():
         return "standard"
@@ -83,7 +83,9 @@ def session_start() -> None:
                     "Harness Skills hook active. For harness projects, use project-brief for "
                     "first orientation or when context may be stale; reuse it within the same "
                     "session when already loaded. Avoid bulk-reading harness/context or completed "
-                    "runs, and run stop-time gates before claiming completion."
+                    "runs. Before creating a run for an unclear objective, invite the user to "
+                    "explicitly invoke $grilling; it creates no files, and its confirmed result "
+                    "feeds spec.md directly. Run stop-time gates before claiming completion."
                 ),
             },
         }
