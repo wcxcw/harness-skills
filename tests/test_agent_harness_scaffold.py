@@ -274,6 +274,7 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
     def test_code_reviewer_follows_active_run_language(self) -> None:
         code_reviewer = (WORKFLOW_SKILLS / "code-reviewer" / "SKILL.md").read_text(encoding="utf-8")
         reviewer_prompt = (WORKFLOW_SKILLS / "code-reviewer" / "prompt.md").read_text(encoding="utf-8")
+        review_coordinator = (WORKFLOW_SKILLS / "requesting-code-review" / "SKILL.md").read_text(encoding="utf-8")
 
         for text in [code_reviewer, reviewer_prompt]:
             self.assertIn("active run language", text)
@@ -285,6 +286,23 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
             self.assertIn("位置", text)
             self.assertIn("必需操作", text)
             self.assertIn("Do not keep English", text)
+
+        self.assertIn("owns the complete `review.md`", code_reviewer)
+        self.assertIn("structured review contribution only", reviewer_prompt)
+        self.assertIn("## Review Scope", review_coordinator)
+        self.assertIn("## Review 范围", review_coordinator)
+        self.assertIn("## Findings", review_coordinator)
+        self.assertIn("## 发现", review_coordinator)
+        self.assertIn("## Resolution", review_coordinator)
+        self.assertIn("## 处理结果", review_coordinator)
+        self.assertIn("## Residual Risk", review_coordinator)
+        self.assertIn("## 剩余风险", review_coordinator)
+        self.assertIn("do not add a duplicate `## Review` sentinel", review_coordinator)
+
+        for skill_name in ["code-quality-review", "frontend-quality-review", "backend-quality-review"]:
+            quality_review = (WORKFLOW_SKILLS / skill_name / "SKILL.md").read_text(encoding="utf-8")
+            self.assertIn("`requesting-code-review` merges it", quality_review)
+            self.assertIn("### ", quality_review)
 
     def test_plugin_hooks_and_quality_script_are_present(self) -> None:
         hooks = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
@@ -331,6 +349,77 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
             )
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("no code-quality review or skip reason", result.stdout)
+
+    def test_quality_check_detects_and_resolves_chinese_review_findings(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp) / "project"
+            run_dir = project / "harness" / "runs" / "2026-07-26-chinese-review"
+            run_dir.mkdir(parents=True)
+            review = run_dir / "review.md"
+            review.write_text(
+                """# Review
+
+## 发现
+- 严重程度：Important
+- 位置：`src/export.py:10`
+- 问题：导出失败未被报告。
+- 必需操作：补充错误处理。
+- 处理结果：pending
+""",
+                encoding="utf-8",
+            )
+
+            unresolved = subprocess.run(
+                [sys.executable, str(QUALITY_CHECK), "--project", str(project), "--run", str(run_dir), "--strict"],
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotEqual(unresolved.returncode, 0)
+            self.assertIn("unresolved Critical or Important finding", unresolved.stdout)
+
+            review.write_text(
+                review.read_text(encoding="utf-8").replace("处理结果：pending", "处理结果：已修复"),
+                encoding="utf-8",
+            )
+            resolved = subprocess.run(
+                [sys.executable, str(QUALITY_CHECK), "--project", str(project), "--run", str(run_dir), "--strict"],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(resolved.returncode, 0, resolved.stdout + resolved.stderr)
+
+    def test_quality_check_treats_only_comment_markers_as_temporary_work(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp) / "project"
+            project.mkdir()
+            script = project / "check.py"
+            script.write_text("MARKERS = []\n", encoding="utf-8")
+            subprocess.run(["git", "init"], cwd=project, check=True, capture_output=True, text=True)
+            subprocess.run(["git", "add", "."], cwd=project, check=True, capture_output=True, text=True)
+            subprocess.run(
+                ["git", "-c", "user.email=test@example.com", "-c", "user.name=Test", "commit", "-m", "init"],
+                cwd=project,
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+
+            script.write_text('MARKERS = ["TODO:", "FIXME"]\n', encoding="utf-8")
+            schema_literals = subprocess.run(
+                [sys.executable, str(QUALITY_CHECK), "--project", str(project)],
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotIn("Temporary marker remains", schema_literals.stdout)
+
+            temporary_comment = "# " + "TODO remove temporary fallback\n"
+            script.write_text('MARKERS = ["TODO:"]\n' + temporary_comment, encoding="utf-8")
+            comment_marker = subprocess.run(
+                [sys.executable, str(QUALITY_CHECK), "--project", str(project)],
+                capture_output=True,
+                text=True,
+            )
+            self.assertIn("Temporary marker remains", comment_marker.stdout)
 
     def test_generated_agents_uses_selective_context_loading(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -485,6 +574,48 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn("invalid choice", result.stderr)
 
+    def test_scaffold_can_update_only_the_local_checker(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp) / "project"
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(INIT_SCRIPT),
+                    "--project",
+                    str(project),
+                    "--profile",
+                    "core",
+                    "--language",
+                    "en",
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            agents = project / "AGENTS.md"
+            checker = project / "harness" / "scripts" / "check_run.py"
+            agents.write_text("project-specific instructions\n", encoding="utf-8")
+            checker.write_text("# stale checker\n", encoding="utf-8")
+
+            updated = subprocess.run(
+                [
+                    sys.executable,
+                    str(INIT_SCRIPT),
+                    "--project",
+                    str(project),
+                    "--update-checker",
+                    "--language",
+                    "en",
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(agents.read_text(encoding="utf-8"), "project-specific instructions\n")
+            self.assertNotIn("stale checker", checker.read_text(encoding="utf-8"))
+            self.assertIn("Updated Agent Harness checker", updated.stdout)
+
     def test_generated_checker_enforces_run_gates(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             project = Path(tmp) / "project"
@@ -575,8 +706,17 @@ None.
             (run_dir / "review.md").write_text(
                 """# Review
 
-## Review
+## Review Scope
+Test scope.
+
+## Findings
 No findings.
+
+## Resolution
+No action required.
+
+## Residual Risk
+None.
 """,
                 encoding="utf-8",
             )
@@ -648,6 +788,115 @@ No findings.
                 text=True,
             )
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_generated_checker_enforces_bilingual_review_schema(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp) / "project"
+            run_dir = project / "harness" / "runs" / "2026-07-26-review-schema"
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(INIT_SCRIPT),
+                    "--project",
+                    str(project),
+                    "--profile",
+                    "core",
+                    "--language",
+                    "en",
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            run_dir.mkdir(parents=True)
+            (run_dir / "execution-log.md").write_text(
+                "Command: python -m unittest\nResult: passed\n",
+                encoding="utf-8",
+            )
+            (run_dir / "evaluation.md").write_text(
+                "Acceptance: passed\nVerification: passed\nRisk: none\n",
+                encoding="utf-8",
+            )
+            checker = project / "harness" / "scripts" / "check_run.py"
+            review_documents = [
+                """# Review
+
+## Review Scope
+Changed files and acceptance criteria.
+
+## Findings
+No findings.
+
+## Resolution
+No action required.
+
+## Residual Risk
+None.
+""",
+                """# Review
+
+## Review 范围
+变更文件与验收标准。
+
+## 发现
+无发现。
+
+## 处理结果
+无需处理。
+
+## 剩余风险
+无。
+""",
+            ]
+
+            for review_text in review_documents:
+                with self.subTest(review_text=review_text):
+                    (run_dir / "review.md").write_text(review_text, encoding="utf-8")
+                    result = subprocess.run(
+                        [
+                            sys.executable,
+                            str(checker),
+                            str(run_dir),
+                            "--stage",
+                            "before-completion",
+                            "--tier",
+                            "full",
+                        ],
+                        capture_output=True,
+                        text=True,
+                    )
+                    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+            required_blocks = {
+                "review_scope": "## Review Scope\nChanged files and acceptance criteria.\n\n",
+                "findings": "## Findings\nNo findings.\n\n",
+                "resolution": "## Resolution\nNo action required.\n\n",
+                "residual_risk": "## Residual Risk\nNone.\n",
+            }
+            for section, block in required_blocks.items():
+                with self.subTest(missing_section=section):
+                    (run_dir / "review.md").write_text(
+                        review_documents[0].replace(block, ""),
+                        encoding="utf-8",
+                    )
+                    missing_section = subprocess.run(
+                        [
+                            sys.executable,
+                            str(checker),
+                            str(run_dir),
+                            "--stage",
+                            "before-completion",
+                            "--tier",
+                            "full",
+                        ],
+                        capture_output=True,
+                        text=True,
+                    )
+                    self.assertNotEqual(missing_section.returncode, 0)
+                    self.assertIn(
+                        f"review.md is missing required section: {section}",
+                        missing_section.stdout,
+                    )
 
     def test_xs_tier_requires_only_completion_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -775,8 +1024,17 @@ None.
             (run_dir / "review.md").write_text(
                 """# Review
 
-## Review
+## Review Scope
+Closed-loop lifecycle artifacts.
+
+## Findings
 No findings.
+
+## Resolution
+No action required.
+
+## Residual Risk
+None.
 """,
                 encoding="utf-8",
             )

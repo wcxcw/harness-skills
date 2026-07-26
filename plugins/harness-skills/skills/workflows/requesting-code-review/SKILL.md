@@ -11,6 +11,7 @@ Use this skill after implementation and before final completion. This skill is t
 
 - Owns `review.md` for `full` tier runs and any run with meaningful implementation risk.
 - `full` tier runs require `review.md` before `check_run.py --stage before-completion` can pass.
+- The coordinator assembles reviewer contributions into the complete semantic schema below; reviewer subagents do not own the file structure.
 - Review findings must be fixed or explicitly accepted as residual risk before final verification.
 
 ## Gate Mapping
@@ -47,6 +48,9 @@ harness/runs/YYYY-MM-DD-short-task-name/review.md
 
 ## Required Sections
 
+Use these semantic sections in this order. The local checker accepts the canonical
+English and Chinese headings; do not add a duplicate `## Review` sentinel.
+
 ```markdown
 # Review
 
@@ -59,17 +63,33 @@ harness/runs/YYYY-MM-DD-short-task-name/review.md
 ## Residual Risk
 ```
 
+For a Chinese run:
+
+```markdown
+# Review
+
+## Review 范围
+
+## 发现
+
+## 处理结果
+
+## 剩余风险
+```
+
 ## Review Procedure
 
 1. Identify the review base: user request, `spec.md`, `plan.md`, and relevant diff.
 2. Classify the changed surface and risk using `Review Routing` and `harness/controls/risk-matrix.md` when present.
-3. Use `code-reviewer/SKILL.md` as the dedicated reviewer role when the platform supports subagents, or as the local focused review checklist otherwise.
+3. Use `code-reviewer/SKILL.md` as the dedicated reviewer role when the platform supports subagents, or as the local focused review checklist otherwise. Treat its response as a contribution, not a complete `review.md`.
 4. Add only the applicable quality review dimensions: `code-quality-review`, `frontend-quality-review`, and/or `backend-quality-review`.
 5. Review the change as a fresh reader. Do not rely on implementation intent.
 6. Prioritize correctness, regressions, missing tests, security, data loss, concurrency, accessibility, maintainability, logging/observability, and scope creep.
 7. Record findings by severity with file and line when possible.
 8. Fix Critical and Important findings before continuing, or record why the user accepted the risk.
-9. Re-run relevant verification and append evidence to `execution-log.md`.
+9. Assemble or update all four required semantic sections in `review.md`; never write only the raw subagent response.
+10. Immediately run `check_run.py --stage before-completion` for the active tier so schema errors are found before the Stop hook.
+11. Re-run relevant verification and append evidence to `execution-log.md`.
 
 If no findings exist, state that explicitly and record remaining test gaps.
 
@@ -106,5 +126,7 @@ If no findings exist, state that explicitly and record remaining test gaps.
 - Reviewing only style when behavior changed.
 - Running every review skill for every task instead of routing by surface and risk.
 - Accepting "no findings" without checking tests and acceptance criteria.
+- Writing a raw subagent response directly to `review.md` without assembling all required semantic sections.
+- Adding a meaningless `## Review` heading solely to satisfy a checker.
 - Treating review as final verification.
 - Deferring important findings without recording residual risk.

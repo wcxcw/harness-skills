@@ -35,6 +35,10 @@ SIDE_EFFECT_HINTS = re.compile(
     re.I,
 )
 LOG_HINTS = re.compile(r"\b(log|logger|logging|tracer|trace|span|metrics|telemetry)\b", re.I)
+TEMPORARY_COMMENT_HINTS = re.compile(
+    r"(?:#|//|/\*+|\*|--|<!--)\s*(?:TODO|FIXME|HACK)\b",
+    re.I,
+)
 
 
 @dataclass
@@ -93,7 +97,12 @@ def is_backend(path: Path) -> bool:
 
 def review_resolution_ok(block: str) -> bool:
     lowered = block.lower()
-    return "resolution: fixed" in lowered or "resolution: accepted" in lowered or "accepted risk" in lowered or "用户明确接受" in lowered
+    return (
+        bool(re.search(r"resolution\s*:\s*(?:fixed|accepted)\b", lowered))
+        or bool(re.search(r"处理结果\s*[：:]\s*(?:fixed|accepted|已修复|已接受|已处理)", block, flags=re.I))
+        or "accepted risk" in lowered
+        or "用户明确接受" in lowered
+    )
 
 
 def unresolved_review_findings(run_dir: Path | None) -> list[Finding]:
@@ -104,7 +113,13 @@ def unresolved_review_findings(run_dir: Path | None) -> list[Finding]:
         return []
     text = read_text(review)
     findings: list[Finding] = []
-    matches = list(re.finditer(r"Severity:\s*(Critical|Important)", text, flags=re.I))
+    matches = list(
+        re.finditer(
+            r"(?:Severity|严重程度)\s*[：:]\s*(Critical|Important)",
+            text,
+            flags=re.I,
+        )
+    )
     for index, match in enumerate(matches):
         end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
         block = text[match.start() : end]
@@ -190,7 +205,7 @@ def file_findings(root: Path, files: list[Path]) -> list[Finding]:
                     action="Add safe diagnostic logging where operationally relevant, or record why logging is not applicable.",
                 )
             )
-        if re.search(r"\bTODO|FIXME|HACK\b", text):
+        if TEMPORARY_COMMENT_HINTS.search(text):
             findings.append(
                 Finding(
                     severity="Minor",

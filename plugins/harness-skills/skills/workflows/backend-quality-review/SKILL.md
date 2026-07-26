@@ -9,7 +9,7 @@ Use this skill for backend, API, service, worker, persistence, CLI, or integrati
 
 ## Gate Contract
 
-- Owns backend-specific maintainability and operability findings in `review.md`.
+- Owns a backend-specific review contribution; `requesting-code-review` merges it into the complete `review.md`.
 - Composes with `code-quality-review`; use this skill for server-side boundary, logging, error handling, and data-safety checks.
 - Critical and Important findings must be fixed, accepted by the user, or recorded as residual risk before completion.
 
@@ -23,24 +23,22 @@ Use this skill for backend, API, service, worker, persistence, CLI, or integrati
 
 ## Output
 
-Append to:
+Return a contribution for:
 
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/review.md
 ```
 
-Use:
+Use a third-level dimension heading for placement under the canonical
+`## Findings` section. Record command evidence in `execution-log.md`.
 
 ```markdown
-## Backend Quality Review
-
-## Findings
-
-## Verification Evidence
-
-## Resolution
-
-## Residual Risk
+### Backend Quality Review
+- Severity: Critical | Important | Minor
+- Location:
+- Issue:
+- Required action:
+- Proposed resolution: pending
 ```
 
 ## Review Procedure
@@ -51,7 +49,7 @@ Use:
 4. Check logging/observability for external calls, state changes, background jobs, failures, and operationally important branches.
 5. Check comments for non-obvious business rules, invariants, edge cases, or migration constraints.
 6. Run relevant backend checks from `harness/tools/commands.md` and record command evidence.
-7. Record findings, fixes, skipped checks, and residual risk.
+7. Return findings to the coordinator; record verification and skipped checks in `execution-log.md`, and merge fixes and residual risk into the canonical review sections.
 
 ## Quality Baseline
 
@@ -72,16 +70,14 @@ Use:
 ## Evidence Examples
 
 ```markdown
-## Backend Quality Review
-
-## Findings
+### Backend Quality Review
 - Severity: Important
 - Location: `src/orders/service.ts:88`
 - Issue: Payment provider errors are caught and returned as generic success state; no log preserves provider error context.
 - Required action: log structured failure context and return an explicit error path.
-- Resolution: fixed
+- Proposed resolution: fixed
 
-## Verification Evidence
+Execution evidence:
 - Command: npm test -- orders
 - Result: passed
 ```
@@ -91,4 +87,5 @@ Use:
 - Assuming backend code is acceptable because the UI happy path works.
 - Adding comments everywhere while leaving business rules and failure modes unexplained.
 - Logging secrets or sensitive payloads instead of safe diagnostic context.
+- Adding competing top-level review sections instead of returning a dimension contribution.
 - Letting handlers grow into mixed validation, persistence, integration, and formatting modules.

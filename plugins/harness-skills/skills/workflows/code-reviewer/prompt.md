@@ -6,6 +6,10 @@ Use only the supplied objective, spec, plan, diff/file list, and verification ev
 
 Match the active run language. If the objective, spec, plan, review brief, or existing harness docs are Chinese, return the review in Chinese. Do not keep English headings or finding labels just because this prompt is written in English. Keep code identifiers, commands, file paths, package names, framework names, API names, and severity names in their original language when that is clearer.
 
+Return a structured review contribution only. Do not write, overwrite, or claim to
+have completed `review.md`. The review coordinator owns the complete document and
+will merge your contribution into its canonical semantic sections.
+
 Return findings first, ordered by severity:
 
 - Critical: must fix before completion.

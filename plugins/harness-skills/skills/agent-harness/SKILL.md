@@ -149,6 +149,7 @@ Use `scripts/init_harness.py` for deterministic scaffolding when creating the st
 - `--language zh-CN`: Chinese harness templates.
 - `--language en`: English harness templates.
 - `--language auto` (default): follows process locale; prefer explicit `zh-CN` when the user prompt is Chinese.
+- `--update-checker`: refresh only `harness/scripts/check_run.py` in an existing Harness after gate-schema updates; all other project files are preserved.
 
 Do not use `--force` for existing projects unless the user explicitly confirms overwriting harness files.
 

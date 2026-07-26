@@ -9,7 +9,7 @@ Use this skill for UI, frontend, browser, or client-side application changes aft
 
 ## Gate Contract
 
-- Owns frontend-specific maintainability and UX findings in `review.md`.
+- Owns a frontend-specific review contribution; `requesting-code-review` merges it into the complete `review.md`.
 - Composes with `code-quality-review`; do not duplicate generic findings when a frontend-specific finding is clearer.
 - Requires browser or DOM verification when the changed UI can be exercised locally.
 
@@ -23,24 +23,23 @@ Use this skill for UI, frontend, browser, or client-side application changes aft
 
 ## Output
 
-Append to:
+Return a contribution for:
 
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/review.md
 ```
 
-Use:
+Use a third-level dimension heading for placement under the canonical
+`## Findings` section. Record browser commands and manual evidence in
+`execution-log.md`, not as another top-level review section.
 
 ```markdown
-## Frontend Quality Review
-
-## Findings
-
-## Browser Evidence
-
-## Resolution
-
-## Residual Risk
+### Frontend Quality Review
+- Severity: Critical | Important | Minor
+- Location:
+- Issue:
+- Required action:
+- Proposed resolution: pending
 ```
 
 ## Review Procedure
@@ -50,7 +49,7 @@ Use:
 3. Split meaningful UI parts into components, stateful logic into composables/hooks/stores, and server calls into existing API/data helpers when the project has those patterns.
 4. Check responsive behavior, text overflow, loading/error/empty states, keyboard and accessibility basics, and visual regressions.
 5. Run the smallest relevant frontend checks from `harness/tools/commands.md`, such as lint, typecheck, build, tests, or browser verification.
-6. Record findings, browser evidence, skipped checks, and residual risk.
+6. Return findings to the coordinator; record browser evidence and skipped checks in `execution-log.md`, and merge accepted residual risk into the canonical `## Residual Risk` section.
 
 ## Quality Baseline
 
@@ -70,16 +69,14 @@ Use:
 ## Evidence Examples
 
 ```markdown
-## Frontend Quality Review
-
-## Findings
+### Frontend Quality Review
 - Severity: Important
 - Location: `src/App.vue:42`
 - Issue: API loading, filtering state, and card rendering are all implemented in the root shell.
 - Required action: move data access into `useItems` and extract the list/card components.
-- Resolution: fixed
+- Proposed resolution: fixed
 
-## Browser Evidence
+Execution evidence:
 - Command: npm run build
 - Manual: checked 390px and 1440px viewports
 ```
@@ -89,4 +86,5 @@ Use:
 - Shipping UI after only reading code when a local browser check is possible.
 - Treating `App.vue` or a route file as the default place for all feature logic.
 - Ignoring mobile overflow, loading states, or error states because the happy path works.
+- Adding competing top-level review sections instead of returning a dimension contribution.
 - Adding decorative UI that conflicts with the project's established design system.

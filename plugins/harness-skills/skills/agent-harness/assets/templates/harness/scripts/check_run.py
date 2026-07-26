@@ -20,7 +20,10 @@ SECTION_ALIASES = {
     "tasks": ["Tasks", "任务"],
     "skills_used": ["Skills Used", "使用的 Skills", "使用的 Skill"],
     "gates": ["Gates", "门槛"],
-    "review": ["Review", "Code Review", "Review 结果", "代码 Review"],
+    "review_scope": ["Review Scope", "Review 范围", "评审范围", "审查范围"],
+    "findings": ["Findings", "Review Findings", "发现", "评审发现", "审查发现"],
+    "resolution": ["Resolution", "Resolutions", "处理结果", "解决情况", "处置结果"],
+    "residual_risk": ["Residual Risk", "Residual Risks", "剩余风险", "残余风险"],
 }
 
 BLOCKING_MARKERS = [
@@ -171,8 +174,11 @@ def check_before_completion(run_dir: Path, tier: str) -> list[str]:
         review_text = read(review)
         if not review_text.strip():
             errors.append("review.md is empty.")
-        if not has_section(review_text, SECTION_ALIASES["review"]):
-            errors.append("review.md is missing required section: review.")
+        for section in missing_sections(
+            review_text,
+            ["review_scope", "findings", "resolution", "residual_risk"],
+        ):
+            errors.append(f"review.md is missing required section: {section}.")
     if not evaluation_text.strip():
         errors.append("evaluation.md is empty.")
     if not has_evidence(evaluation_text):

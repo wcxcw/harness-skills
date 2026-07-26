@@ -9,7 +9,7 @@ Use this skill after implementation and before final verification when a task ch
 
 ## Gate Contract
 
-- Owns maintainability findings in `review.md` or a clearly labeled `Code Quality Review` section.
+- Owns a maintainability review contribution; `requesting-code-review` merges it into the complete `review.md`.
 - Uses `harness/context/coding-conventions.md` when present, but reads it only when the task changes code or the current review needs project-specific conventions.
 - Critical and Important code-quality findings must be fixed, accepted by the user, or recorded as residual risk before completion.
 
@@ -23,22 +23,22 @@ Use this skill after implementation and before final verification when a task ch
 
 ## Output
 
-Append to the active run's review artifact:
+Return a contribution for the active run's review coordinator:
 
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/review.md
 ```
 
-Recommended section:
+Use a third-level dimension heading so the coordinator can place it under the
+canonical `## Findings` section without creating competing top-level sections:
 
 ```markdown
-## Code Quality Review
-
-## Findings
-
-## Resolution
-
-## Residual Risk
+### Code Quality Review
+- Severity: Critical | Important | Minor
+- Location:
+- Issue:
+- Required action:
+- Proposed resolution: pending
 ```
 
 ## Review Procedure
@@ -48,7 +48,7 @@ Recommended section:
 3. Check whether the implementation preserves local module boundaries and existing abstractions.
 4. Check whether complexity matches the task size and whether large files, mixed responsibilities, or speculative abstractions were introduced.
 5. Check error handling, logging/observability, comments for non-obvious business rules, and testability.
-6. Record findings with severity and file location when possible.
+6. Return findings with severity and file location when possible; the coordinator records them under `## Findings`.
 7. Fix Critical and Important findings or record the user-accepted residual risk.
 8. Re-run relevant verification and append evidence to `execution-log.md`.
 
@@ -71,22 +71,18 @@ Recommended section:
 ## Evidence Examples
 
 ```markdown
-## Code Quality Review
-
-## Findings
+### Code Quality Review
 - Severity: Important
 - Location: `src/App.vue:1`
 - Issue: Root component now owns routing, API calls, filtering state, and modal behavior.
 - Required action: split feature state/API calls into composables and extract repeated UI into components.
-- Resolution: fixed
-
-## Residual Risk
-None.
+- Proposed resolution: fixed
 ```
 
 ## Anti-Patterns
 
 - Treating "the feature works" as sufficient when the implementation is hard to maintain.
 - Calling every maintainability issue "style" and deferring it without risk recording.
+- Adding competing `## Findings`, `## Resolution`, or `## Residual Risk` headings instead of returning a dimension contribution.
 - Adding broad abstractions that the current spec does not need.
 - Adding comments that describe obvious syntax instead of clarifying decisions.

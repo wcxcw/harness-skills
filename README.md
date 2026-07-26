@@ -180,6 +180,16 @@ harness/runs/YYYY-MM-DD-short-task-name/
 
 Workflow skills 可以帮助 Agent 做事，但不能绕过项目本地 gate。
 
+插件升级后，如果只需把新的 gate Schema 同步到一个已经初始化的项目，使用：
+
+```bash
+python3 plugins/harness-skills/skills/agent-harness/scripts/init_harness.py \
+  --project /path/to/project \
+  --update-checker
+```
+
+该选项只刷新 `harness/scripts/check_run.py`，不会覆盖项目的 `AGENTS.md`、context、controls 或其他本地约定。
+
 ## 初始化模式
 
 | 模式 | 使用场景 | 默认行为 |

@@ -49,7 +49,7 @@ python3 harness/scripts/check_run.py harness/runs/<run> --stage before-implement
 声称完成前，当前 run 必须通过这些检查：
 
 - `execution-log.md` 存在。
-- `full` run 的 `review.md` 存在，并记录 review 发现或“无”。
+- `full` run 的 `review.md` 存在，并包含 `Review 范围`、`发现`、`处理结果`、`剩余风险` 四个语义章节（也接受对应的规范英文标题）。
 - `evaluation.md` 存在。
 - `execution-log.md` 记录已执行的命令或手动检查及其结果。
 - 应用代码变更已执行代码质量 review；适用时执行前端/后端质量 review，或已记录跳过原因。

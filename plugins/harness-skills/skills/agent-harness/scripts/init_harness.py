@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Initialize a project-level Agent Harness from bundled templates."""
+"""Initialize a project-level Agent Harness from bundled templates.
+
+This is a one-shot CLI that reports actions on stdout; application logging is
+not applicable.
+"""
 
 from __future__ import annotations
 
@@ -85,6 +89,11 @@ def main() -> int:
     parser.add_argument("--project", default=".", help="Project root to scaffold into.")
     parser.add_argument("--force", action="store_true", help="Overwrite existing files.")
     parser.add_argument(
+        "--update-checker",
+        action="store_true",
+        help="Refresh only harness/scripts/check_run.py and preserve every other project file.",
+    )
+    parser.add_argument(
         "--profile",
         choices=["core"],
         default="core",
@@ -106,6 +115,17 @@ def main() -> int:
 
     if not templates.exists():
         raise SystemExit(f"Template directory not found: {templates}")
+
+    if args.update_checker:
+        [checker] = copy_files(
+            templates / "harness",
+            project / "harness",
+            ["scripts/check_run.py"],
+            force=True,
+            language=language,
+        )
+        print(f"Updated Agent Harness checker: {checker.relative_to(project)}")
+        return 0
 
     written = copy_tree(templates / "root", project, args.force, language)
     harness_templates = templates / "harness"

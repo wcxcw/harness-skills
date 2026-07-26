@@ -9,7 +9,7 @@ Use this skill when a run needs a dedicated code-review role. Prefer dispatching
 
 ## Gate Contract
 
-- Owns independent review findings in `review.md`.
+- Owns an independent structured review contribution; `requesting-code-review` owns the complete `review.md`.
 - Reviews the accepted spec, plan, relevant diff, and verification evidence, not the implementer's intent.
 - Critical and Important findings must be fixed, accepted by the user, or recorded as residual risk before completion.
 
@@ -23,43 +23,34 @@ Use this skill when a run needs a dedicated code-review role. Prefer dispatching
 
 ## Output
 
-Write or append:
+Return a structured contribution to the review coordinator. Do not overwrite or
+append directly to:
 
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/review.md
 ```
 
+The `requesting-code-review` coordinator merges the contribution into the
+canonical `Review Scope`, `Findings`, `Resolution`, and `Residual Risk` semantic
+sections, then runs the local checker.
+
 Follow the active run language:
 
-- If the user objective, active harness docs, or review brief are Chinese, write `review.md` in Chinese.
+- If the user objective, active harness docs, or review brief are Chinese, write the contribution in Chinese.
 - Do not keep English section headings or finding labels just because the reviewer prompt is written in English.
 - Keep code identifiers, commands, file paths, package names, framework names, API names, and severity names in their original language when that is clearer.
 
-Use:
+Return:
 
 ```markdown
-# Review
-
-## Review Scope
-
 ## Findings
-
-## Resolution
-
 ## Residual Risk
 ```
 
 For a Chinese run, use:
 
 ```markdown
-# Review
-
-## Review 范围
-
 ## 发现
-
-## 处理结果
-
 ## 剩余风险
 ```
 
@@ -71,7 +62,7 @@ For a Chinese run, use:
 4. Use `code-quality-review`, `frontend-quality-review`, or `backend-quality-review` findings when those surfaces apply.
 5. Record findings by severity with file and line where possible.
 6. Require fixes for Critical and Important findings unless the user explicitly accepts the risk.
-7. After fixes, verify and update `execution-log.md`.
+7. Return the structured contribution to the coordinator. The coordinator owns assembly of `review.md`, resolution updates, verification, and the local gate.
 
 ## Subagent Brief Template
 
@@ -107,6 +98,7 @@ Language:
 - Match the active run language. If the objective, spec, plan, or review brief is Chinese, return the review in Chinese.
 - Use Chinese section headings and finding labels for Chinese runs.
 - Keep code identifiers, commands, file paths, package names, framework names, API names, and severity names in their original language when useful.
+- Return only the structured contribution. Do not write or overwrite `review.md`; the coordinator assembles the complete semantic schema.
 ```
 
 For Chinese runs, return:
@@ -144,5 +136,6 @@ For Chinese runs, return:
 
 - Reviewing from the implementer's stated intent instead of the diff and requirements.
 - Sending the whole session transcript to a reviewer when a focused brief is enough.
+- Treating a reviewer contribution as a complete `review.md`.
 - Treating review as a style pass only.
 - Accepting "no findings" without checking verification evidence.

@@ -54,7 +54,7 @@ python3 harness/scripts/check_run.py harness/runs/<run> --stage before-implement
 The active run must pass these checks before claiming completion:
 
 - `execution-log.md` exists.
-- `review.md` exists and records review findings or "none" for `full` runs.
+- `review.md` exists for `full` runs and contains the semantic sections `Review Scope`, `Findings`, `Resolution`, and `Residual Risk` (or their documented Chinese aliases).
 - `evaluation.md` exists.
 - `execution-log.md` records commands or manual checks and their results.
 - Application code changes received code-quality review, frontend/backend quality review when applicable, or the skip reason is recorded.
