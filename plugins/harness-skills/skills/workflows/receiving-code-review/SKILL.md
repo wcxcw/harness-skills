@@ -33,14 +33,15 @@ harness/runs/YYYY-MM-DD-short-task-name/evaluation.md
 
 ## Review Procedure
 
-1. Read the full feedback before editing.
-2. Restate unclear items as technical requirements or ask the user for clarification.
-3. Verify each item against the codebase, existing tests, accepted spec, and local conventions.
-4. Reject or defer incorrect suggestions only with technical reasoning and recorded residual risk when needed.
-5. Fix valid findings one at a time, from blocking issues to simple fixes to complex refactors.
-6. Run the smallest relevant check after each meaningful fix or batch of tightly related fixes.
-7. Update `review.md` with resolution status and append verification evidence to `execution-log.md`.
-8. Re-run `check_run.py --stage before-completion` when the active run exists and the checker is available.
+1. Set the active run phase to `reviewing` before processing feedback so interim responses are not treated as completion attempts.
+2. Read the full feedback before editing.
+3. Restate unclear items as technical requirements or ask the user for clarification.
+4. Verify each item against the codebase, existing tests, accepted spec, and local conventions.
+5. Reject or defer incorrect suggestions only with technical reasoning and recorded residual risk when needed.
+6. Fix valid findings one at a time, from blocking issues to simple fixes to complex refactors.
+7. Run the smallest relevant check after each meaningful fix or batch of tightly related fixes.
+8. Update `review.md` with resolution status and append verification evidence to `execution-log.md`.
+9. Re-run `check_run.py --stage before-completion` when the active run exists and the checker is available.
 
 ## Response Pattern
 

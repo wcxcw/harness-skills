@@ -11,6 +11,7 @@ Use this skill after implementation and review.
 
 - Owns the final evidence check across `execution-log.md`, `review.md`, and `evaluation.md`.
 - Must run `python3 harness/scripts/check_run.py harness/runs/<run> --stage before-completion --tier xs|standard|full` when the checker exists.
+- This explicit workflow gate is authoritative; it does not discover a run from filesystem recency or rely on the Stop hook to decide when verification begins.
 - Completion claims require fresh evidence from this run, not assumptions from earlier attempts.
 
 ## Gate Mapping
@@ -29,6 +30,7 @@ Use this skill after implementation and review.
 - Record skipped checks and reasons.
 - Read command output and exit codes before reporting pass/fail.
 - Run `python3 harness/scripts/check_run.py harness/runs/<run> --stage before-completion --tier xs|standard|full` when available.
+- Leave the run in `active` or `reviewing` during progress updates. `finishing-run` sets `verifying` only after final artifacts and this explicit gate pass.
 - Do not claim completion while verification is missing or failing unless the risk is explicitly documented and accepted.
 
 ## Evidence Checklist

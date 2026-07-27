@@ -61,6 +61,7 @@ The active run must pass these checks before claiming completion:
 - Critical and Important review findings are fixed, explicitly accepted by the user, or recorded as residual risk.
 - `evaluation.md` records acceptance status, residual risk, and harness feedback.
 - Skipped verification is explicitly explained.
+- The Stop hook is only a final safety recheck for a same-session run explicitly marked `verifying`; it does not scan the latest historical run.
 
 Recommended local check:
 

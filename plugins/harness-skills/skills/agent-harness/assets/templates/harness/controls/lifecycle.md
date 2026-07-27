@@ -43,6 +43,7 @@ explicitly starts a new task.
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/
 ├── execution-log.md
+├── run-state.json
 └── evaluation.md
 ```
 
@@ -54,6 +55,7 @@ harness/runs/YYYY-MM-DD-short-task-name/
 ├── spec.md
 ├── plan.md
 ├── execution-log.md
+├── run-state.json
 └── evaluation.md
 ```
 
@@ -67,10 +69,21 @@ harness/runs/YYYY-MM-DD-short-task-name/
 ├── plan.md
 ├── execution-log.md
 ├── review.md
+├── run-state.json
 └── evaluation.md
 ```
 
 New runs record confirmed product and technical decisions directly in `spec.md`. Legacy `design.md` files may still be read when referenced. Use `review.md` for `full` runs or when risk justifies review.
+
+## Run State
+
+Each controlled run uses `run-state.json` with an explicit tier and lifecycle
+status: `active`, `reviewing`, `verifying`, or `closed`. Active phases are
+bound to a hash of the current session ID. Set `verifying` only immediately
+before a final completion response, after explicit gates pass. The Stop hook
+checks only a same-session `verifying` run and changes it to `closed` on
+success. It must not select a run by directory mtime, artifact presence, or
+historical recency.
 
 ## Continuation Rule
 

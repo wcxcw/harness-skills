@@ -38,6 +38,7 @@ active run，并把新的证据追加到已有 artifact。
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/
 ├── execution-log.md
+├── run-state.json
 └── evaluation.md
 ```
 
@@ -49,6 +50,7 @@ harness/runs/YYYY-MM-DD-short-task-name/
 ├── spec.md
 ├── plan.md
 ├── execution-log.md
+├── run-state.json
 └── evaluation.md
 ```
 
@@ -62,10 +64,19 @@ harness/runs/YYYY-MM-DD-short-task-name/
 ├── plan.md
 ├── execution-log.md
 ├── review.md
+├── run-state.json
 └── evaluation.md
 ```
 
 新 run 直接在 `spec.md` 中记录已确认的产品和技术决策。旧 run 的 `design.md` 被引用时仍可读取。`full` run 或风险足够高时使用 `review.md`。
+
+## Run 状态
+
+每个受控 run 使用 `run-state.json` 明确记录 tier 和生命周期状态：
+`active`、`reviewing`、`verifying` 或 `closed`。活动阶段绑定当前 session ID
+的哈希。只有显式 gate 已通过、即将发送最终完成回复时才能设置
+`verifying`。Stop hook 只检查同一 session 的 `verifying` run，并在复查
+通过后改为 `closed`；禁止按目录 mtime、artifact 是否存在或历史新旧选择 run。
 
 ## 继续规则
 

@@ -23,6 +23,7 @@ This is an orchestration skill. Do not duplicate the full workflows of related s
 - Gate continuation locally: pass project-local gates before implementation and completion, using the smallest safe tier (`xs`, `standard`, or `full`).
 - Load context on demand: do not bulk-read `harness/context/*` or completed runs; use targeted search or section reads.
 - Keep run boundaries tied to user objectives: follow-up corrections, test fixes, verification additions, and small adjustments for the same objective stay in the active run.
+- Track run lifecycle explicitly in `run-state.json`; never infer the active run from directory modification time or artifact presence.
 - Code quality is a completion gate: application code changes must preserve maintainable structure, local conventions, error handling, logging/observability where relevant, and useful comments for non-obvious rules.
 - Evidence before completion: do not claim completion without commands, checks, or a documented reason verification was skipped.
 - Keep scope small: prefer the simplest change that satisfies the spec; avoid unrelated refactors or speculative abstractions.
@@ -182,6 +183,16 @@ For raw product ideas, vague project concepts, or early feature directions, comp
 
 Once the user confirms shared understanding, create the selected run tier and record the problem, scope, product decisions, technical decisions, acceptance criteria, and open questions directly in `spec.md`. If the user already supplied a clear and confirmed brief, skip grilling and proceed directly to the spec. Do not silently choose product shape, content scope, information architecture, technology stack, or core implementation approach.
 
+After creating or explicitly resuming a run, bind it to the current session:
+
+```text
+python3 harness/scripts/check_run.py harness/runs/<run> --tier <xs|standard|full> --set-phase active
+```
+
+This writes `run-state.json` with a hashed session identifier. If no run is
+created or resumed, do not create state merely because another run is the most
+recent directory on disk.
+
 ### 8. Specify
 
 For non-trivial tasks, use `writing-specs`. Save the resulting task contract in the active run directory:
@@ -231,6 +242,7 @@ Implement against the active run only:
 - Run `python3 harness/scripts/check_run.py harness/runs/<run> --stage before-implementation --tier <xs|standard|full>` when an active run exists and the checker is available
 - Keep code changes scoped to the current spec
 - For user-requested corrections to the same objective, update the active run's `plan.md`, `execution-log.md`, or `evaluation.md` instead of creating a new run
+- When resuming implementation after review or a failed gate, set the current run phase back to `active`
 - For direct micro changes with no active run, skip run artifacts and rely on the smallest relevant verification plus the final response summary
 
 ### 11. Verify
@@ -238,6 +250,23 @@ Implement against the active run only:
 Run commands from `harness/tools/commands.md` and record results in `execution-log.md`.
 
 Before claiming completion, run `python3 harness/scripts/check_run.py harness/runs/<run> --stage before-completion --tier <xs|standard|full>` when an active run exists and the checker is available. If the checker cannot be run, record the reason in `execution-log.md`.
+
+After `finishing-run` has finalized `evaluation.md` and the explicit completion
+gate passes, mark the current session as ready for the Stop-hook safety check:
+
+```text
+python3 harness/scripts/check_run.py harness/runs/<run> --tier <xs|standard|full> --set-phase verifying
+```
+
+Set `verifying` only immediately before the final completion response. The Stop
+hook re-runs the completion and quality gates for that session and changes the
+state to `closed` on success. Pure conversation, `active`, `reviewing`, closed,
+legacy stateless, and other-session runs are not Stop-gated. On platforms
+without the Harness Stop hook, set `closed` explicitly after the final gate:
+
+```text
+python3 harness/scripts/check_run.py harness/runs/<run> --tier <xs|standard|full> --set-phase closed
+```
 
 ### 12. Record
 
@@ -255,6 +284,7 @@ XS:
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/
 ├── execution-log.md
+├── run-state.json
 └── evaluation.md
 ```
 
@@ -266,6 +296,7 @@ harness/runs/YYYY-MM-DD-short-task-name/
 ├── spec.md
 ├── plan.md
 ├── execution-log.md
+├── run-state.json
 └── evaluation.md
 ```
 
@@ -279,6 +310,7 @@ harness/runs/YYYY-MM-DD-short-task-name/
 ├── plan.md
 ├── execution-log.md
 ├── review.md
+├── run-state.json
 └── evaluation.md
 ```
 

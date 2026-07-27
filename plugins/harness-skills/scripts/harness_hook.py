@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import subprocess
@@ -30,31 +31,67 @@ def project_root(payload: dict) -> Path:
     return Path.cwd().resolve()
 
 
-def latest_run(root: Path) -> Path | None:
+SESSION_PAYLOAD_KEYS = ("session_id", "sessionId", "thread_id", "threadId", "conversation_id", "conversationId")
+SESSION_ENV_KEYS = ("CODEX_THREAD_ID", "CLAUDE_SESSION_ID")
+RUN_TIERS = {"xs", "standard", "full"}
+
+
+def current_session_id(payload: dict) -> str | None:
+    for key in SESSION_PAYLOAD_KEYS:
+        value = payload.get(key)
+        if isinstance(value, str) and value:
+            return value
+    for key in SESSION_ENV_KEYS:
+        value = os.environ.get(key)
+        if value:
+            return value
+    return None
+
+
+def session_hash(session_id: str) -> str:
+    return hashlib.sha256(session_id.encode("utf-8")).hexdigest()
+
+
+def verifying_runs(root: Path, expected_session_hash: str) -> list[tuple[Path, str]]:
     runs_dir = root / "harness" / "runs"
     if not runs_dir.is_dir():
-        return None
-    candidates = [
-        path
-        for path in runs_dir.iterdir()
-        if path.is_dir() and not path.name.startswith(".")
-    ]
-    candidates = [
-        path
-        for path in candidates
-        if any((path / name).exists() for name in ("execution-log.md", "evaluation.md", "spec.md", "plan.md"))
-    ]
-    if not candidates:
-        return None
-    return max(candidates, key=lambda path: path.stat().st_mtime)
+        return []
+    matches: list[tuple[Path, str]] = []
+    for run_dir in runs_dir.iterdir():
+        state_path = run_dir / "run-state.json"
+        if not run_dir.is_dir() or not state_path.exists():
+            continue
+        try:
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        tier = state.get("tier")
+        if (
+            state.get("schema_version") == 1
+            and state.get("run") == run_dir.name
+            and state.get("status") == "verifying"
+            and state.get("session_hash") == expected_session_hash
+            and tier in RUN_TIERS
+        ):
+            matches.append((run_dir, tier))
+    return sorted(matches, key=lambda item: item[0].name)
 
 
-def infer_tier(run_dir: Path) -> str:
-    if (run_dir / "review.md").exists():
-        return "full"
-    if (run_dir / "workflow.md").exists() and (run_dir / "spec.md").exists() and (run_dir / "plan.md").exists():
-        return "standard"
-    return "xs"
+def close_run(run_dir: Path, tier: str) -> str | None:
+    state = {
+        "schema_version": 1,
+        "run": run_dir.name,
+        "tier": tier,
+        "status": "closed",
+    }
+    state_path = run_dir / "run-state.json"
+    temporary = run_dir / ".run-state.json.tmp"
+    try:
+        temporary.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        temporary.replace(state_path)
+    except OSError as exc:
+        return f"Could not close Harness run `{run_dir}`: {exc}"
+    return None
 
 
 def run_command(command: list[str], cwd: Path) -> tuple[int, str]:
@@ -85,7 +122,8 @@ def session_start() -> None:
                     "session when already loaded. Avoid bulk-reading harness/context or completed "
                     "runs. Before creating a run for an unclear objective, invite the user to "
                     "explicitly invoke $grilling; it creates no files, and its confirmed result "
-                    "feeds spec.md directly. Run stop-time gates before claiming completion."
+                    "feeds spec.md directly. Stop-time completion gates apply only to a run that "
+                    "this session explicitly marks as verifying."
                 ),
             },
         }
@@ -102,41 +140,64 @@ def stop(payload: dict) -> None:
         emit({"continue": True})
         return
 
-    reasons: list[str] = []
-    run_dir = latest_run(root)
-    checker = root / "harness" / "scripts" / "check_run.py"
-    if run_dir and checker.exists():
-        tier = infer_tier(run_dir)
-        code, output = run_command(
-            [
-                sys.executable,
-                str(checker),
-                str(run_dir),
-                "--stage",
-                "before-completion",
-                "--tier",
-                tier,
-            ],
-            root,
-        )
-        if code != 0:
-            reasons.append(
-                f"Harness completion gate failed for `{run_dir.relative_to(root)}` ({tier}).\n{output}"
-            )
+    session_id = current_session_id(payload)
+    if session_id is None:
+        emit({"continue": True})
+        return
 
+    reasons: list[str] = []
+    runs = verifying_runs(root, session_hash(session_id))
+    if not runs:
+        emit({"continue": True})
+        return
+
+    checker = root / "harness" / "scripts" / "check_run.py"
+    if not checker.exists():
+        reasons.append("Harness completion gate cannot run because `harness/scripts/check_run.py` is missing.")
     plugin_root = Path(
         os.environ.get("CLAUDE_PLUGIN_ROOT")
         or os.environ.get("CODEX_PLUGIN_ROOT")
         or Path(__file__).resolve().parents[1]
     )
     quality_check = plugin_root / "scripts" / "quality_check.py"
-    if quality_check.exists():
-        command = [sys.executable, str(quality_check), "--project", str(root)]
-        if run_dir:
-            command += ["--run", str(run_dir), "--strict"]
-        code, output = run_command(command, root)
-        if code != 0:
-            reasons.append(output or "Harness quality gate failed.")
+    for run_dir, tier in runs:
+        if checker.exists():
+            code, output = run_command(
+                [
+                    sys.executable,
+                    str(checker),
+                    str(run_dir),
+                    "--stage",
+                    "before-completion",
+                    "--tier",
+                    tier,
+                ],
+                root,
+            )
+            if code != 0:
+                reasons.append(
+                    f"Harness completion gate failed for `{run_dir.relative_to(root)}` ({tier}).\n{output}"
+                )
+
+        if quality_check.exists():
+            command = [
+                sys.executable,
+                str(quality_check),
+                "--project",
+                str(root),
+                "--run",
+                str(run_dir),
+                "--strict",
+            ]
+            code, output = run_command(command, root)
+            if code != 0:
+                reasons.append(output or "Harness quality gate failed.")
+
+    if not reasons:
+        for run_dir, tier in runs:
+            error = close_run(run_dir, tier)
+            if error:
+                reasons.append(error)
 
     if reasons:
         emit(

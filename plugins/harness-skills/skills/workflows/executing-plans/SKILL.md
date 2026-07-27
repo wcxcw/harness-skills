@@ -23,6 +23,7 @@ Use this skill after `check_run.py --stage before-implementation` passes.
 
 ## Rules
 
+- Bind a newly created or explicitly resumed run to the current session with `check_run.py <run> --tier <tier> --set-phase active`; never select a run by directory mtime.
 - Read `AGENTS.md`, `harness/controls/`, `harness/guardrails/`, `spec.md`, and `plan.md`.
 - Execute one plan task at a time in plan order unless the plan explicitly permits parallel work.
 - Keep changes scoped to the task and spec.
@@ -32,6 +33,7 @@ Use this skill after `check_run.py --stage before-implementation` passes.
 - After each task, mark the task status in `plan.md` or record the checkpoint in `execution-log.md`.
 - If implementation diverges from the plan, record the reason and update `plan.md` before continuing.
 - If the user requests a correction to the same objective, continue the active run and append the new attempt, changed files, commands, and outcome to `execution-log.md` instead of creating a new run.
+- After a review or gate failure, set the phase back to `active` before continuing implementation so interim responses are not treated as completion attempts.
 
 ## Execution Log Format
 

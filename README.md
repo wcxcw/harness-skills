@@ -180,6 +180,11 @@ harness/runs/YYYY-MM-DD-short-task-name/
 
 Workflow skills 可以帮助 Agent 做事，但不能绕过项目本地 gate。
 
+Run 生命周期由各 run 目录内的 `run-state.json` 显式记录。Stop hook
+只复查当前 session 标记为 `verifying` 的 run；纯交流、`active`、
+`reviewing`、`closed`、旧版无状态 run 和其他 session 的 run 都不会触发
+completion gate。禁止再按 run 目录修改时间推断当前任务。
+
 插件升级后，如果只需把新的 gate Schema 同步到一个已经初始化的项目，使用：
 
 ```bash

@@ -4,6 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -52,9 +55,47 @@ ALIGNMENT_CONFIRMATION_PATTERNS = [
     r"^\s*-\s*用户已确认\s*[：:]\s*(?:是|已确认|true)\s*$",
 ]
 
+RUN_PHASES = ("active", "reviewing", "verifying", "closed")
+SESSION_ENV_KEYS = ("CODEX_THREAD_ID", "CLAUDE_SESSION_ID")
+
 
 def read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
+
+
+def current_session_id() -> str | None:
+    for key in SESSION_ENV_KEYS:
+        value = os.environ.get(key)
+        if value:
+            return value
+    return None
+
+
+def session_hash(session_id: str) -> str:
+    return hashlib.sha256(session_id.encode("utf-8")).hexdigest()
+
+
+def set_run_phase(run_dir: Path, tier: str, phase: str) -> str | None:
+    state = {
+        "schema_version": 1,
+        "run": run_dir.name,
+        "tier": tier,
+        "status": phase,
+    }
+    if phase != "closed":
+        session_id = current_session_id()
+        if session_id is None:
+            return "No session ID is available; expected CODEX_THREAD_ID or CLAUDE_SESSION_ID."
+        state["session_hash"] = session_hash(session_id)
+
+    state_path = run_dir / "run-state.json"
+    temporary = run_dir / ".run-state.json.tmp"
+    try:
+        temporary.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        temporary.replace(state_path)
+    except OSError as exc:
+        return f"Could not update run state: {exc}"
+    return None
 
 
 def has_section(text: str, aliases: list[str]) -> bool:
@@ -202,12 +243,25 @@ def main() -> int:
         default="standard",
         help="Run tier. xs requires minimal evidence; standard requires workflow/spec/plan; full also requires review.",
     )
+    parser.add_argument(
+        "--set-phase",
+        choices=RUN_PHASES,
+        help="Record the current session's run phase without executing a gate.",
+    )
     args = parser.parse_args()
 
     run_dir = Path(args.run_dir)
     if not run_dir.exists() or not run_dir.is_dir():
         print(f"ERROR: run directory not found: {run_dir}", file=sys.stderr)
         return 1
+
+    if args.set_phase:
+        error = set_run_phase(run_dir, args.tier, args.set_phase)
+        if error:
+            print(f"ERROR: {error}", file=sys.stderr)
+            return 1
+        print(f"Harness run phase set: {run_dir} ({args.tier}, {args.set_phase})")
+        return 0
 
     errors: list[str] = []
     if args.stage in {"before-implementation", "all"}:

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -19,6 +20,7 @@ GRILL_METADATA = WORKFLOW_SKILLS / "grilling" / "agents" / "openai.yaml"
 VENDOR_SUPERPOWERS = ROOT / "vendor" / "superpowers"
 QUALITY_CHECK = PLUGIN_ROOT / "scripts" / "quality_check.py"
 HOOKS_JSON = PLUGIN_ROOT / "hooks" / "hooks.json"
+HARNESS_HOOK = PLUGIN_ROOT / "scripts" / "harness_hook.py"
 PRE_RUN_WORKFLOWS = {"grilling"}
 OPERATIONAL_WORKFLOW_SECTIONS = [
     "## Gate Mapping",
@@ -315,6 +317,149 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
         hook_script = (PLUGIN_ROOT / "scripts" / "harness_hook.py").read_text(encoding="utf-8")
         self.assertIn("reuse it within the same", hook_script)
         self.assertIn("explicitly invoke $grilling", hook_script)
+        self.assertIn("verifying_runs", hook_script)
+        self.assertNotIn("latest_run", hook_script)
+        self.assertNotIn("infer_tier", hook_script)
+
+    def test_workflows_define_session_scoped_run_lifecycle(self) -> None:
+        agent_harness = (PLUGIN_ROOT / "skills" / "agent-harness" / "SKILL.md").read_text(encoding="utf-8")
+        executing = (WORKFLOW_SKILLS / "executing-plans" / "SKILL.md").read_text(encoding="utf-8")
+        requesting_review = (WORKFLOW_SKILLS / "requesting-code-review" / "SKILL.md").read_text(encoding="utf-8")
+        receiving_review = (WORKFLOW_SKILLS / "receiving-code-review" / "SKILL.md").read_text(encoding="utf-8")
+        finishing = (WORKFLOW_SKILLS / "finishing-run" / "SKILL.md").read_text(encoding="utf-8")
+
+        self.assertIn("run-state.json", agent_harness)
+        self.assertIn("--set-phase active", agent_harness)
+        self.assertIn("--set-phase verifying", agent_harness)
+        self.assertIn("--set-phase closed", agent_harness)
+        self.assertIn("--set-phase active", executing)
+        self.assertIn("--set-phase reviewing", requesting_review)
+        self.assertIn("phase to `reviewing`", receiving_review)
+        self.assertIn("--set-phase verifying", finishing)
+        self.assertIn("session-scoped Stop hook", finishing)
+
+    def test_stop_hook_only_gates_current_session_when_verifying(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp) / "project"
+            run_dir = project / "harness" / "runs" / "2026-07-27-session-gate"
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(INIT_SCRIPT),
+                    "--project",
+                    str(project),
+                    "--profile",
+                    "core",
+                    "--language",
+                    "en",
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            run_dir.mkdir(parents=True)
+            (run_dir / "execution-log.md").write_text("Command: tests\nResult: passed\n", encoding="utf-8")
+            (run_dir / "evaluation.md").write_text(
+                "Acceptance: passed\nVerification: passed\nRisk: none\n",
+                encoding="utf-8",
+            )
+            (run_dir / "review.md").write_text("# Review\n\n## Review Scope\nScope only.\n", encoding="utf-8")
+            checker = project / "harness" / "scripts" / "check_run.py"
+
+            def run_hook(session_id: str) -> dict:
+                completed = subprocess.run(
+                    [sys.executable, str(HARNESS_HOOK), "Stop"],
+                    input=json.dumps({"cwd": str(project), "session_id": session_id}),
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                    env={**os.environ, "CODEX_PLUGIN_ROOT": str(PLUGIN_ROOT)},
+                )
+                return json.loads(completed.stdout)
+
+            def set_phase(phase: str, session_id: str = "session-a", tier: str = "full") -> None:
+                subprocess.run(
+                    [
+                        sys.executable,
+                        str(checker),
+                        str(run_dir),
+                        "--tier",
+                        tier,
+                        "--set-phase",
+                        phase,
+                    ],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                    env={**os.environ, "CODEX_THREAD_ID": session_id},
+                )
+
+            self.assertEqual(run_hook("session-a"), {"continue": True})
+
+            no_session_env = {
+                key: value
+                for key, value in os.environ.items()
+                if key not in {"CODEX_THREAD_ID", "CLAUDE_SESSION_ID"}
+            }
+            no_session = subprocess.run(
+                [
+                    sys.executable,
+                    str(checker),
+                    str(run_dir),
+                    "--tier",
+                    "full",
+                    "--set-phase",
+                    "active",
+                ],
+                capture_output=True,
+                text=True,
+                env=no_session_env,
+            )
+            self.assertNotEqual(no_session.returncode, 0)
+            self.assertIn("No session ID is available", no_session.stderr)
+
+            set_phase("active")
+            self.assertEqual(run_hook("session-a"), {"continue": True})
+
+            set_phase("reviewing")
+            self.assertEqual(run_hook("session-a"), {"continue": True})
+
+            set_phase("verifying")
+            self.assertEqual(run_hook("session-b"), {"continue": True})
+            blocked = run_hook("session-a")
+            self.assertEqual(blocked["decision"], "block")
+            self.assertIn("missing required section: findings", blocked["reason"])
+
+            (run_dir / "review.md").write_text(
+                """# Review
+
+## Review Scope
+Current run behavior.
+
+## Findings
+None.
+
+## Resolution
+No action required.
+
+## Residual Risk
+None.
+""",
+                encoding="utf-8",
+            )
+            passed = run_hook("session-a")
+            self.assertEqual(passed, {"continue": True})
+            state = json.loads((run_dir / "run-state.json").read_text(encoding="utf-8"))
+            self.assertEqual(state["status"], "closed")
+            self.assertNotIn("session_hash", state)
+            self.assertEqual(run_hook("session-a"), {"continue": True})
+
+            (run_dir / "review.md").write_text("# Review\n\n## Review Scope\nScope only.\n", encoding="utf-8")
+            set_phase("verifying", tier="standard")
+            self.assertEqual(run_hook("session-a"), {"continue": True})
+            state = json.loads((run_dir / "run-state.json").read_text(encoding="utf-8"))
+            self.assertEqual(state["tier"], "standard")
+            self.assertEqual(state["status"], "closed")
 
     def test_quality_check_blocks_missing_code_quality_review_for_code_changes(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -614,6 +759,7 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
 
             self.assertEqual(agents.read_text(encoding="utf-8"), "project-specific instructions\n")
             self.assertNotIn("stale checker", checker.read_text(encoding="utf-8"))
+            self.assertIn("--set-phase", checker.read_text(encoding="utf-8"))
             self.assertIn("Updated Agent Harness checker", updated.stdout)
 
     def test_generated_checker_enforces_run_gates(self) -> None:

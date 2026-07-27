@@ -80,16 +80,17 @@ For a Chinese run:
 ## Review Procedure
 
 1. Identify the review base: user request, `spec.md`, `plan.md`, and relevant diff.
-2. Classify the changed surface and risk using `Review Routing` and `harness/controls/risk-matrix.md` when present.
-3. Use `code-reviewer/SKILL.md` as the dedicated reviewer role when the platform supports subagents, or as the local focused review checklist otherwise. Treat its response as a contribution, not a complete `review.md`.
-4. Add only the applicable quality review dimensions: `code-quality-review`, `frontend-quality-review`, and/or `backend-quality-review`.
-5. Review the change as a fresh reader. Do not rely on implementation intent.
-6. Prioritize correctness, regressions, missing tests, security, data loss, concurrency, accessibility, maintainability, logging/observability, and scope creep.
-7. Record findings by severity with file and line when possible.
-8. Fix Critical and Important findings before continuing, or record why the user accepted the risk.
-9. Assemble or update all four required semantic sections in `review.md`; never write only the raw subagent response.
-10. Immediately run `check_run.py --stage before-completion` for the active tier so schema errors are found before the Stop hook.
-11. Re-run relevant verification and append evidence to `execution-log.md`.
+2. Set the run phase to `reviewing` with `check_run.py <run> --tier <tier> --set-phase reviewing`.
+3. Classify the changed surface and risk using `Review Routing` and `harness/controls/risk-matrix.md` when present.
+4. Use `code-reviewer/SKILL.md` as the dedicated reviewer role when the platform supports subagents, or as the local focused review checklist otherwise. Treat its response as a contribution, not a complete `review.md`.
+5. Add only the applicable quality review dimensions: `code-quality-review`, `frontend-quality-review`, and/or `backend-quality-review`.
+6. Review the change as a fresh reader. Do not rely on implementation intent.
+7. Prioritize correctness, regressions, missing tests, security, data loss, concurrency, accessibility, maintainability, logging/observability, and scope creep.
+8. Record findings by severity with file and line when possible.
+9. Fix Critical and Important findings before continuing, or record why the user accepted the risk.
+10. Assemble or update all four required semantic sections in `review.md`; never write only the raw subagent response.
+11. Immediately run `check_run.py --stage before-completion` for the active tier so schema errors are found before the Stop hook.
+12. Re-run relevant verification and append evidence to `execution-log.md`.
 
 If no findings exist, state that explicitly and record remaining test gaps.
 

@@ -56,6 +56,7 @@ python3 harness/scripts/check_run.py harness/runs/<run> --stage before-implement
 - Critical 和 Important review 发现已修复、被用户明确接受，或记录为残留风险。
 - `evaluation.md` 记录验收状态、残留风险和 harness 反馈。
 - 跳过的验证必须说明原因。
+- Stop hook 只兜底复查当前 session 显式标记为 `verifying` 的 run，不扫描最近的历史 run。
 
 推荐本地检查：
 
