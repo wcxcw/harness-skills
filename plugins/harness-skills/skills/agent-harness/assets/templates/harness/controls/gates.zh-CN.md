@@ -18,7 +18,9 @@
 | --- | --- | --- |
 | `xs` | 仍需要 run 记录的小改动，例如低风险配置/文档/代码修改，并需要验证证据 | `execution-log.md`、`evaluation.md` |
 | `standard` | 普通功能、范围明确的 bugfix、多文件但风险可控的修改 | `workflow.md`、`spec.md`、`plan.md`、`execution-log.md`、`evaluation.md` |
-| `full` | greenfield、新产品/功能方向、架构/数据/安全/CI/依赖风险 | `workflow.md`、`spec.md`、`plan.md`、`execution-log.md`、`review.md`、`evaluation.md` |
+| `full` | greenfield、新产品/功能方向、架构/数据/安全/CI/依赖风险 | `input.md`、`workflow.md`、`spec.md`、`plan.md`、`execution-log.md`、`review.md`、`evaluation.md` |
+
+支持会话绑定时，各 tier 还会记录 `run-state.json`。上表是工作流要求；检查器不会自动验证全部所列文件或内容真实性。
 
 ## Run 边界
 

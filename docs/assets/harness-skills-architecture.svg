@@ -99,7 +99,7 @@
   <!-- Run lifecycle -->
   <rect class="panel-amber" x="990" y="150" width="450" height="610"/>
   <text class="section-title" x="1020" y="190">Task Run Lifecycle</text>
-  <text class="section-note" x="1020" y="216">每个用户目标一个 run；返修继续写当前 run</text>
+  <text class="section-note" x="1020" y="216">需要 run 时按目标记录；返修继续写当前 run</text>
 
   <rect class="chip-amber" x="1020" y="248" width="390" height="76"/>
   <text class="box-title" x="1040" y="282">Run decision</text>
@@ -108,7 +108,7 @@
   <rect class="chip-amber" x="1020" y="344" width="390" height="92"/>
   <text class="box-title" x="1040" y="378">Spec + Plan</text>
   <text class="box-text" x="1040" y="404">workflow.md · spec.md · plan.md</text>
-  <text class="small" x="1040" y="422">非平凡任务先明确范围和验证</text>
+  <text class="small" x="1040" y="422">standard / full；xs 按需使用</text>
 
   <rect class="chip-amber" x="1020" y="456" width="390" height="94"/>
   <text class="box-title" x="1040" y="490">Execute + Evidence</text>
@@ -117,7 +117,7 @@
 
   <rect class="chip-amber" x="1020" y="570" width="390" height="96"/>
   <text class="box-title" x="1040" y="604">Review</text>
-  <text class="box-text" x="1040" y="630">code-reviewer subagent</text>
+  <text class="box-text" x="1040" y="630">按改动范围和风险选择审查</text>
   <text class="small" x="1040" y="648">code / frontend / backend quality review</text>
 
   <rect class="chip-amber" x="1020" y="686" width="390" height="74"/>
@@ -127,19 +127,19 @@
   <!-- Enforcement bottom -->
   <rect class="panel-purple" x="210" y="820" width="1180" height="112"/>
   <text class="section-title" x="240" y="858">Enforcement</text>
-  <text class="section-note" x="240" y="884">规则不是只写在 prompt 里；通过 hook、checker、scorecard 和 review evidence 收口</text>
+  <text class="small" x="240" y="920">结构检查与真实验证配合；hook 按配置和信任状态启用</text>
 
   <rect class="chip-purple" x="500" y="850" width="170" height="52"/>
   <text class="box-title" x="524" y="882">Stop hook</text>
 
   <rect class="chip-purple" x="700" y="850" width="180" height="52"/>
-  <text class="box-title" x="724" y="882">quality_check.py</text>
+  <text class="box-title" x="724" y="882">check_run.py</text>
 
   <rect class="chip-purple" x="910" y="850" width="160" height="52"/>
-  <text class="box-title" x="934" y="882">check_run.py</text>
+  <text class="box-title" x="925" y="882">quality_check.py</text>
 
   <rect class="chip-purple" x="1100" y="850" width="230" height="52"/>
-  <text class="box-title" x="1124" y="882">Verified Completion</text>
+  <text class="box-title" x="1124" y="882">Review Evidence</text>
 
   <!-- Arrows -->
   <path class="line" d="M 380 455 C 415 455, 430 455, 470 455"/>
@@ -152,6 +152,6 @@
   <!-- Feedback path -->
   <path class="line-muted" d="M 1020 728 C 850 790, 705 790, 640 718"/>
   <text class="small" x="694" y="800">review.md / evaluation.md 反馈</text>
-  <text class="small" x="694" y="820">用户确认后进入 Harness Maintenance</text>
+  <text class="small" x="694" y="820">授权范围内进入 Harness Maintenance</text>
 
 </svg>

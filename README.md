@@ -17,7 +17,7 @@ harness
 
 - 新项目只有一句话想法，需要先澄清再进入实现。
 - 老项目希望补一套 Agent 可读的 `AGENTS.md` 和 `harness/` 工作区。
-- 团队希望 Agent 的每次任务都有 spec、plan、执行证据和评估记录。
+- 团队希望按任务风险保留适当的规格、计划和验证记录。
 - 你不想只靠 Agent 口头说“完成了”，而是希望用本地 checker 检查关键 gate。
 - 你希望简单任务轻量走，复杂任务完整闭环走。
 
@@ -166,6 +166,7 @@ no-run 直接修改必须同时满足微小改动条件：请求明确、影响�
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/
 ├── execution-log.md
+├── run-state.json
 └── evaluation.md
 ```
 
@@ -179,6 +180,7 @@ harness/runs/YYYY-MM-DD-short-task-name/
 ├── spec.md
 ├── plan.md
 ├── execution-log.md
+├── run-state.json
 └── evaluation.md
 ```
 
@@ -194,8 +196,11 @@ harness/runs/YYYY-MM-DD-short-task-name/
 ├── plan.md
 ├── execution-log.md
 ├── review.md
+├── run-state.json
 └── evaluation.md
 ```
+
+`run-state.json` 在支持会话绑定时生成；各 tier 的工作流要求和检查器实际验证范围并不完全相同，具体以项目本地 gate 为准。
 
 ## 本地 Gate
 
@@ -231,7 +236,7 @@ python3 plugins/harness-skills/skills/agent-harness/scripts/init_harness.py \
 
 | 模式 | 使用场景 | 默认行为 |
 | --- | --- | --- |
-| `greenfield` | 空项目或一句话项目想法 | 先用显式 `$grilling` 对齐共识，再生成项目简介、规格和计划。 |
+| `greenfield` | 空项目或一句话项目想法 | 需求或关键决策不清时邀请显式调用 `$grilling`，再按需要生成项目简介、规格和计划。 |
 | `brownfield` | 已有源码、README、测试、CI 或依赖配置 | 先只读发现，再保守补充 harness 文件。 |
 | `existing-harness` | 已识别的项目 Harness | 保留现有约定，补齐缺口，避免覆盖。 |
 

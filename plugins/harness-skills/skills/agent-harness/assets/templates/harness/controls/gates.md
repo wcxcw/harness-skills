@@ -21,7 +21,9 @@ changes, or work requiring a design/product/technical decision.
 | --- | --- | --- |
 | `xs` | small changes that still need a run record, such as low-risk config/docs/code edits with verification evidence | `execution-log.md`, `evaluation.md` |
 | `standard` | normal feature work, contained bugfixes, and multi-file changes | `workflow.md`, `spec.md`, `plan.md`, `execution-log.md`, `evaluation.md` |
-| `full` | greenfield work, new product/feature direction, architecture/data/security/CI/dependency risk | `workflow.md`, `spec.md`, `plan.md`, `execution-log.md`, `review.md`, `evaluation.md` |
+| `full` | greenfield work, new product/feature direction, architecture/data/security/CI/dependency risk | `input.md`, `workflow.md`, `spec.md`, `plan.md`, `execution-log.md`, `review.md`, `evaluation.md` |
+
+Each tier also records `run-state.json` when session binding is supported. This is the workflow contract; the checker does not verify every listed artifact or the truth of its contents.
 
 ## Run Boundary
 

@@ -8,7 +8,7 @@ The pre-run `grilling` skill is adapted from Matt Pocock's MIT-licensed `grillin
 
 Upstream attribution:
 
-- See `../../vendor/superpowers/NOTICE.md`
+- Superpowers: https://github.com/obra/superpowers (the repository's `vendor/superpowers/NOTICE.md` records the bundled source snapshot)
 - Matt Pocock Skills: https://github.com/mattpocock/skills
 - Upstream grilling skill: https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md
 

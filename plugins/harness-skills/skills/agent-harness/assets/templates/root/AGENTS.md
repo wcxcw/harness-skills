@@ -30,7 +30,7 @@ Read or reuse these when orienting to the project or when the current task needs
 - If a run is warranted, use the smallest safe tier and keep one active run per user objective; append same-objective follow-ups to that run.
 - Bind a created or explicitly resumed run to the current session with `check_run.py <run> --tier <tier> --set-phase active`; never infer it from the most recently modified run directory.
 - Create artifacts required by the selected tier: `xs` needs `execution-log.md` and `evaluation.md`; `standard` and `full` also require `workflow.md`, `spec.md`, and `plan.md`.
-- For application code changes, run code-quality review before final verification; use frontend/backend quality review when the changed surface applies.
+- For application code changes, run code-quality review before final verification; use frontend/backend quality review when applicable, unless the task is a no-run micro change or the skip reason is recorded as allowed by the gates.
 - Record commands, manual checks, failures, skipped checks, and residual risk in the active run.
 - Before implementation and completion, use `harness/scripts/check_run.py` when an active run exists.
 - Only after final artifacts and the explicit completion gate pass, set the run phase to `verifying`; the session-scoped Stop hook closes it after a fresh recheck.

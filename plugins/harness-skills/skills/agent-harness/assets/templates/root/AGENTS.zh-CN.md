@@ -30,7 +30,7 @@
 - 如果需要 run，选择最小安全 tier，并保持一个用户目标对应一个 active run；同一目标后续修改追加到该 run。
 - 新建或显式恢复 run 后，使用 `check_run.py <run> --tier <tier> --set-phase active` 绑定当前会话；禁止按最近修改的 run 目录推断。
 - 按所选 tier 创建必要记录：`xs` 需要 `execution-log.md` 和 `evaluation.md`；`standard` 与 `full` 还需要 `workflow.md`、`spec.md` 和 `plan.md`。
-- 应用代码变更在最终验证前必须执行代码质量 review；涉及前端或后端时使用对应质量 review。
+- 应用代码变更在最终验证前应执行代码质量 review；涉及前端或后端时使用对应质量 review。no-run 微小改动或 gates 允许并记录跳过原因的情况除外。
 - 命令、手动检查、失败、跳过原因和残留风险都要写入当前 run。
 - 存在 active run 时，实现前和完成前使用 `harness/scripts/check_run.py`。
 - 只有最终 artifact 和显式 completion gate 均通过后，才把 run phase 设为 `verifying`；session-scoped Stop hook 复查通过后将其关闭。
