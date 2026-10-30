@@ -7,6 +7,8 @@ description: Process code review feedback rigorously, verify each finding agains
 
 Use this skill when the user, another reviewer, or a review workflow provides feedback on completed changes.
 
+Without an active run, verify and address feedback directly and report results without creating a run solely for this skill. With an `xs` run, record resolution and evidence in its existing artifacts; do not require `review.md`.
+
 ## Gate Contract
 
 - Owns review feedback resolution in `review.md`, `execution-log.md`, and `evaluation.md`.
@@ -19,7 +21,7 @@ Use this skill when the user, another reviewer, or a review workflow provides fe
 | --- | --- | --- |
 | `xs` | Append fix evidence to `execution-log.md` and risk note to `evaluation.md` | Required before completion when feedback affects acceptance |
 | `standard` | Update `review.md` Resolution plus `execution-log.md` verification | Required before completion when review findings exist |
-| `full` | Resolve every `review.md` finding or record explicit accepted residual risk | Required before `check_run.py --stage before-completion` can pass |
+| `full` | Resolve every `review.md` finding or record explicit accepted residual risk | Workflow requirement; the checker does not establish whether each finding is resolved |
 
 ## Output
 
@@ -33,20 +35,20 @@ harness/runs/YYYY-MM-DD-short-task-name/evaluation.md
 
 ## Review Procedure
 
-1. Set the active run phase to `reviewing` before processing feedback so interim responses are not treated as completion attempts.
+1. When an active run exists, set its phase to `reviewing` before processing feedback so interim responses are not treated as completion attempts.
 2. Read the full feedback before editing.
 3. Restate unclear items as technical requirements or ask the user for clarification.
 4. Verify each item against the codebase, existing tests, accepted spec, and local conventions.
 5. Reject or defer incorrect suggestions only with technical reasoning and recorded residual risk when needed.
 6. Fix valid findings one at a time, from blocking issues to simple fixes to complex refactors.
 7. Run the smallest relevant check after each meaningful fix or batch of tightly related fixes.
-8. Update `review.md` with resolution status and append verification evidence to `execution-log.md`.
-9. Re-run `check_run.py --stage before-completion` when the active run exists and the checker is available.
+8. When a run exists, update its `review.md` if present or required, and append verification evidence to `execution-log.md`.
+9. After an evaluation draft exists, re-run `check_run.py --stage before-completion` when the active run exists and the checker is available; before then, defer the completion gate to final verification.
 
 ## Response Pattern
 
 - Prefer technical acknowledgement or direct action over performative agreement.
-- Ask before implementing ambiguous multi-item feedback.
+- Clarify blocking ambiguity and continue independently on well-understood feedback.
 - Push back when a suggestion breaks accepted scope, project conventions, compatibility, or user decisions.
 - Keep review fixes within the same run unless the user changes the objective or expands scope materially.
 
@@ -71,5 +73,5 @@ harness/runs/YYYY-MM-DD-short-task-name/evaluation.md
 
 - Creating a new run for every review fix to the same objective.
 - Blindly implementing external feedback without checking local code.
-- Partially implementing a multi-item review when some items are unclear.
+- Treating ambiguous feedback as authorization for an unsupported change.
 - Marking findings fixed without verification evidence.

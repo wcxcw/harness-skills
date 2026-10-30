@@ -13,8 +13,9 @@ Before this lifecycle starts, the user may explicitly invoke `$grilling` to reso
 | Preflight | `agent-harness` | Gate output | `check_run.py --stage before-implementation` passes |
 | Execute | `executing-plans`, `test-driven-development`, or `systematic-debugging` | `execution-log.md` | Verification evidence recorded |
 | Review | `requesting-code-review` | `review.md` | Review findings addressed or documented |
-| Verify | `verification-before-completion` | `execution-log.md` | Commands/manual checks recorded |
-| Finish | `finishing-run` | `evaluation.md` | `check_run.py --stage before-completion` passes |
+| Evaluation draft | `finishing-run` | `evaluation.md` | Acceptance, verification, review, and risk prepared |
+| Verify | `verification-before-completion` | `execution-log.md`, `evaluation.md` | Commands/manual checks recorded; completion gate passes |
+| Finish | `finishing-run` | `evaluation.md` | Evidence finalized, gate rerun and run marked verifying |
 | Improve | `agent-harness` or `writing-skills` | Harness update proposal | Feedback captured before canonical changes |
 
 ## Run Artifact Contract

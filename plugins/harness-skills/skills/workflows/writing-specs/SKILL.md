@@ -34,8 +34,8 @@ Update `workflow.md` with `writing-specs` under `## Skills Used`.
 ## Rules
 
 - Start from the confirmed `$grilling` summary, an explicit user brief, or a legacy `design.md` when present.
-- Read `workflow.md`, `harness/controls/lifecycle.md`, and `harness/controls/gates.md` before setting the run tier.
-- Record the alignment source and explicit user confirmation in `## Alignment`.
+- Read `workflow.md` and `harness/controls/gates.md` before setting the run tier; consult `harness/controls/lifecycle.md` when present.
+- Record the alignment source and user-confirmed scope in `## Alignment`. A sufficiently clear direct user instruction is confirmation for the scope it specifies; cite that instruction and do not ask for redundant confirmation. Ask only for missing blocking decisions or when the applicable workflow requires it.
 - Define objective, scope, non-goals, assumptions, acceptance criteria, verification, and evidence.
 - Mark unresolved product or technical decisions as `Needs decision`.
 - Do not convert unresolved blocking decisions into assumptions to keep moving.
@@ -78,12 +78,12 @@ Update `workflow.md` with `writing-specs` under `## Skills Used`.
 ## Open Questions
 ```
 
-Before handing off, `Alignment` must record explicit user confirmation, and `Product Decisions`, `Technical Decisions`, and `Open Questions` must not contain unresolved blockers unless the next plan task is explicitly a non-coding decision task.
+Before handing off, `Alignment` must record the user's confirmation or sufficiently clear direct instruction as its source; do not claim confirmation for decisions the user did not make. `Product Decisions`, `Technical Decisions`, and `Open Questions` must not contain unresolved blockers unless the next plan task is explicitly a non-coding decision task.
 
 ## Stop Conditions
 
 - `Objective`, `In Scope`, `Out of Scope`, acceptance, or verification cannot be stated concretely.
-- Shared understanding has not been explicitly confirmed; stop and recommend `$grilling` rather than guessing.
+- The user request and available evidence do not resolve a blocking decision; ask for the missing decision or recommend `$grilling` rather than guessing.
 - Any required decision is still `Needs decision` and the next task is not a decision task.
 - Acceptance criteria cannot be checked by command, artifact inspection, or explicit manual verification.
 - The user is asking to implement before scope is stable.

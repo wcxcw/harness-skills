@@ -9,7 +9,7 @@ Use this skill for bug reports, failing tests, regressions, or unexplained runti
 
 ## Gate Contract
 
-- Owns debugging evidence in `execution-log.md` and the bug contract inside `spec.md`.
+- Owns debugging evidence in `execution-log.md` and, when required by the tier, the bug contract inside `spec.md`.
 - The fix cannot be complete until `check_run.py --stage before-completion` passes for the selected tier or the unresolved risk is documented in `evaluation.md`.
 - Local gates decide continuation; a plausible root cause is not enough.
 
@@ -25,11 +25,11 @@ Use this skill for bug reports, failing tests, regressions, or unexplained runti
 
 1. Read the full error, stack trace, failing output, or bug report. Record the exact symptom.
 2. Reproduce the issue or record why reproduction is not possible.
-3. Capture observed behavior, expected behavior, scope, and acceptance criteria in `spec.md`.
+3. Capture observed behavior, expected behavior, scope, and acceptance criteria in `spec.md` when present or required; for `xs`, record the relevant facts in `execution-log.md`.
 4. Inspect recent changes, similar working code, configuration, and data flow before proposing a fix.
 5. State one root-cause hypothesis and the evidence for it.
 6. Test the hypothesis with the smallest diagnostic change or command.
-7. Add a regression test or equivalent manual check before applying the fix.
+7. When practical and valuable, add a regression test or equivalent manual check before applying the fix.
 8. Apply the smallest fix that addresses the root cause.
 9. Verify the original issue and adjacent behavior.
 10. Record commands, failures, hypothesis changes, and final evidence in `execution-log.md`; record residual risk in `evaluation.md`.
@@ -37,9 +37,9 @@ Use this skill for bug reports, failing tests, regressions, or unexplained runti
 
 ## Stop Conditions
 
-- If reproduction is impossible, stop and request or gather more evidence.
+- If reproduction is impossible, gather available evidence and continue independent analysis; ask for missing information only when it blocks further progress. Do not claim the issue is fixed without sufficient verification.
 - If three fix attempts fail, stop and reassess the architecture or premise before adding another patch.
-- If a fix requires broad refactoring, update `spec.md` and `plan.md` before continuing.
+- If a fix requires broad refactoring, reassess the tier and update the required `spec.md` and `plan.md` before continuing.
 
 ## Evidence Examples
 
@@ -55,7 +55,7 @@ Use this skill for bug reports, failing tests, regressions, or unexplained runti
 
 ## Anti-Patterns
 
-- Proposing a fix before reproduction or root-cause evidence.
+- Presenting an unverified hypothesis as a confirmed root cause or claiming a fix without evidence.
 - Changing multiple variables in one diagnostic step.
 - Treating a symptom patch as root-cause resolution.
 - Trying a fourth fix after three failures without reassessing the design.

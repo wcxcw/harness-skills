@@ -1,4 +1,4 @@
 interface:
-  display_name: "Agent Harness"
-  short_description: "Create, operate, and maintain project-level Agent Harness workflows."
-  default_prompt: "Initialize an Agent Harness for this project."
+  display_name: "Manage Project Harness"
+  short_description: "Initialize, run, and maintain a project harness."
+  default_prompt: "Use $agent-harness to help with my project harness."

@@ -49,31 +49,77 @@ class Finding:
     action: str
 
 
-def run_git(root: Path, args: list[str]) -> list[str]:
+def run_git(root: Path, args: list[str]) -> str | None:
     try:
         completed = subprocess.run(
             ["git", *args],
             cwd=root,
             check=False,
             text=True,
+            errors="surrogateescape",
             capture_output=True,
             timeout=10,
         )
     except (OSError, subprocess.TimeoutExpired):
-        return []
+        return None
     if completed.returncode != 0:
-        return []
-    return [line.strip() for line in completed.stdout.splitlines() if line.strip()]
+        return None
+    return completed.stdout
 
 
-def changed_files(root: Path) -> list[Path]:
-    names = set(run_git(root, ["diff", "--name-only", "HEAD"]))
-    names.update(run_git(root, ["diff", "--name-only", "--cached"]))
-    return [
+def changed_files(root: Path, run_dir: Path | None) -> tuple[list[Path], dict[Path, str], str | None]:
+    if run_git(root, ["rev-parse", "--show-toplevel"]) is None:
+        return [], {}, "Git change detection is unavailable; code files were not scanned."
+    baseline = None
+    state_path = run_dir / "run-state.json" if run_dir else None
+    if state_path and state_path.exists():
+        try:
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+            candidate = state.get("git_base") if isinstance(state, dict) else None
+            if isinstance(candidate, str) and re.fullmatch(r"[0-9a-f]{40,64}", candidate):
+                baseline = candidate
+        except (OSError, json.JSONDecodeError):
+            pass
+    head = run_git(root, ["rev-parse", "--verify", "HEAD"])
+    warning = None
+    if baseline:
+        diff = run_git(root, ["diff", "--no-renames", "--name-only", "-z", "--relative", baseline, "--"])
+        if diff is None:
+            return [], {}, "The run's Git baseline cannot be compared; code files were not scanned."
+    elif head is not None:
+        diff = run_git(root, ["diff", "--no-renames", "--name-only", "-z", "--relative", "HEAD", "--"])
+        warning = "No run baseline is available; committed changes are not included."
+    else:
+        diff = run_git(root, ["diff", "--no-renames", "--name-only", "-z", "--cached", "--relative", "--"])
+        warning = "No Git HEAD or run baseline is available; committed changes are not included."
+    untracked = run_git(root, ["ls-files", "--others", "--exclude-standard", "-z", "--"])
+    staged = run_git(root, ["diff", "--no-renames", "--cached", "--name-only", "-z", "--relative", "--"])
+    working = run_git(root, ["diff", "--no-renames", "--name-only", "-z", "--relative", "--"])
+    staged_base = run_git(root, ["diff", "--no-renames", "--cached", "--name-only", "-z", "--relative", baseline, "--"]) if baseline else staged
+    if any(value is None for value in (diff, untracked, staged, working, staged_base)):
+        return [], {}, "Git change detection failed; code files were not scanned."
+    index_changed = set(staged.split("\0")) | set(staged_base.split("\0"))
+    working_changed = set(working.split("\0"))
+    names = set(diff.split("\0")) | set(untracked.split("\0")) | index_changed | working_changed
+    staged_contents = {}
+    # A separate index read is only useful when its content differs from the
+    # working tree. Committed baseline changes otherwise need no git show.
+    for name in sorted(working_changed & names):
+        if not name or (root / name).suffix not in CODE_EXTENSIONS:
+            continue
+        # git show uses a project-relative index path, even when the project
+        # sits in a subdirectory of the repository.
+        content = run_git(root, ["show", f":./{name}"])
+        if content is not None:
+            staged_contents[root / name] = content
+        elif (root / name).is_file():
+            warning = (warning + " " if warning else "") + f"Staged content for {name} could not be read."
+    files = [
         root / name
         for name in sorted(names)
-        if (root / name).is_file() and (root / name).suffix in CODE_EXTENSIONS
+        if name and (root / name).suffix in CODE_EXTENSIONS
     ]
+    return files, staged_contents, warning
 
 
 def read_text(path: Path) -> str:
@@ -169,58 +215,70 @@ def quality_review_missing(run_dir: Path | None, files: list[Path]) -> list[Find
     ]
 
 
-def file_findings(root: Path, files: list[Path]) -> list[Finding]:
+def file_findings(root: Path, files: list[Path], staged_contents: dict[Path, str]) -> list[Finding]:
     findings: list[Finding] = []
     for path in files:
-        text = read_text(path)
-        rel = path.relative_to(root)
-        lines = text.splitlines()
-        if path.name in {"App.vue", "App.tsx", "App.jsx", "App.ts", "App.js"}:
-            has_data_access = bool(re.search(r"\b(fetch|axios|useQuery|graphql|client\.)\b", text, re.I))
-            has_state = bool(re.search(r"\b(ref|reactive|useState|useReducer|createStore|computed)\b", text))
-            if len(lines) > 300 or (len(lines) > 180 and has_data_access and has_state):
-                findings.append(
-                    Finding(
-                        severity="Important",
-                        location=f"{rel}:1",
-                        issue="Root app component appears to own too much feature logic.",
-                        action="Move data access/stateful logic into composables/hooks/stores and extract focused components.",
-                    )
-                )
-        if is_frontend(path) and len(lines) > 450:
-            findings.append(
-                Finding(
-                    severity="Minor",
-                    location=f"{rel}:1",
-                    issue="Large frontend file may be hard to review and test.",
-                    action="Check whether component, state, and data access responsibilities can be split.",
-                )
-            )
-        if is_backend(path) and SIDE_EFFECT_HINTS.search(text) and not LOG_HINTS.search(text):
-            findings.append(
-                Finding(
-                    severity="Important",
-                    location=f"{rel}:1",
-                    issue="Backend or integration path has side-effect/external-call hints but no logging or observability marker.",
-                    action="Add safe diagnostic logging where operationally relevant, or record why logging is not applicable.",
-                )
-            )
-        if TEMPORARY_COMMENT_HINTS.search(text):
-            findings.append(
-                Finding(
-                    severity="Minor",
-                    location=f"{rel}:1",
-                    issue="Temporary marker remains in changed code.",
-                    action="Resolve it or record why it is acceptable for this task.",
-                )
-            )
+        worktree_text = read_text(path) if path.is_file() else None
+        versions = [(worktree_text, "")] if worktree_text is not None else []
+        staged_text = staged_contents.get(path)
+        if staged_text is not None and staged_text != worktree_text:
+            versions.append((staged_text, " (staged)"))
+        for text, suffix in versions:
+            findings.extend(file_version_findings(root, path, text, suffix))
     return findings
 
 
-def render_text(findings: list[Finding]) -> str:
+def file_version_findings(root: Path, path: Path, text: str, suffix: str) -> list[Finding]:
+    findings: list[Finding] = []
+    rel = str(path.relative_to(root)) + suffix
+    lines = text.splitlines()
+    if path.name in {"App.vue", "App.tsx", "App.jsx", "App.ts", "App.js"}:
+        has_data_access = bool(re.search(r"\b(fetch|axios|useQuery|graphql|client\.)\b", text, re.I))
+        has_state = bool(re.search(r"\b(ref|reactive|useState|useReducer|createStore|computed)\b", text))
+        if len(lines) > 300 or (len(lines) > 180 and has_data_access and has_state):
+            findings.append(
+                Finding(
+                    severity="Minor",
+                    location=f"{rel}:1",
+                    issue="Root app component appears to own too much feature logic.",
+                    action="Review whether responsibilities should be split; this heuristic is advisory.",
+                )
+            )
+    if is_frontend(path) and len(lines) > 450:
+        findings.append(
+            Finding(
+                severity="Minor",
+                location=f"{rel}:1",
+                issue="Large frontend file may be hard to review and test.",
+                action="Check whether component, state, and data access responsibilities can be split.",
+            )
+        )
+    if is_backend(path) and SIDE_EFFECT_HINTS.search(text) and not LOG_HINTS.search(text):
+        findings.append(
+            Finding(
+                severity="Minor",
+                location=f"{rel}:1",
+                issue="Backend or integration path has side-effect/external-call hints but no logging or observability marker.",
+                action="Review whether safe diagnostic logging is appropriate; this heuristic is advisory.",
+            )
+        )
+    if TEMPORARY_COMMENT_HINTS.search(text):
+        findings.append(
+            Finding(
+                severity="Minor",
+                location=f"{rel}:1",
+                issue="Temporary marker remains in changed code.",
+                action="Resolve it or record why it is acceptable for this task.",
+            )
+        )
+    return findings
+
+
+def render_text(findings: list[Finding], blocking: set[str]) -> str:
     if not findings:
         return "Harness quality check passed."
-    lines = ["Harness quality check failed:"]
+    status = "failed" if any(finding.severity in blocking for finding in findings) else "completed with warnings"
+    lines = [f"Harness quality check {status}:"]
     for finding in findings:
         lines.extend(
             [
@@ -243,12 +301,16 @@ def main() -> int:
 
     root = Path(args.project).resolve()
     run_dir = Path(args.run).resolve() if args.run else None
-    files = changed_files(root)
+    files, staged_contents, scan_warning = changed_files(root, run_dir)
     findings = []
-    findings.extend(file_findings(root, files))
+    if scan_warning:
+        findings.append(Finding("Minor", str(root), scan_warning, "Review the missing coverage manually."))
+    findings.extend(file_findings(root, files, staged_contents))
     findings.extend(unresolved_review_findings(run_dir))
-    findings.extend(quality_review_missing(run_dir, files))
+    application_files = [path for path in files if path.relative_to(root).parts[:2] != ("harness", "scripts")]
+    findings.extend(quality_review_missing(run_dir, application_files))
 
+    blocking = {"Critical", "Important"} if args.strict else {"Critical"}
     if args.json:
         print(
             json.dumps(
@@ -258,9 +320,8 @@ def main() -> int:
             )
         )
     else:
-        print(render_text(findings))
+        print(render_text(findings, blocking))
 
-    blocking = {"Critical", "Important"} if args.strict else {"Critical"}
     return 1 if any(finding.severity in blocking for finding in findings) else 0
 
 

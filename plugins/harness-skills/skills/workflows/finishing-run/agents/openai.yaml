@@ -1,0 +1,3 @@
+interface:
+  display_name: "Finishing Run"
+  short_description: "Close a run with evaluation and feedback."

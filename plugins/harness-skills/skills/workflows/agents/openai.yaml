@@ -1,0 +1,3 @@
+interface:
+  display_name: "Workflows"
+  short_description: "Choose workflows for a project harness task."

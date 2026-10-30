@@ -34,7 +34,7 @@ Update `workflow.md` with `writing-plans` under `## Skills Used`.
 ## Rules
 
 - Plan from `spec.md`, not memory.
-- Read `workflow.md`, `spec.md`, `harness/controls/lifecycle.md`, `harness/controls/gates.md`, and relevant source files before planning. Read legacy `design.md` only when the spec cites it.
+- Read `workflow.md`, `spec.md`, `harness/controls/gates.md`, and relevant source files before planning. Consult `harness/controls/lifecycle.md` when present; read legacy `design.md` only when the spec cites it.
 - Do not plan coding tasks around unresolved blocking decisions.
 - Split work into small tasks with dependencies, likely files, acceptance mapping, verification command, and evidence destination.
 - Add checkpoints after risky tasks.

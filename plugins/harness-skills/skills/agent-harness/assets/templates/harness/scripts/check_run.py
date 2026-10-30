@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -37,19 +38,6 @@ BLOCKING_MARKERS = [
     "TODO:",
 ]
 
-EVIDENCE_MARKERS = [
-    "command",
-    "manual",
-    "passed",
-    "failed",
-    "skipped",
-    "命令",
-    "手动",
-    "通过",
-    "失败",
-    "跳过",
-]
-
 ALIGNMENT_CONFIRMATION_PATTERNS = [
     r"^\s*-\s*Confirmed by user\s*:\s*(?:yes|true)\s*$",
     r"^\s*-\s*用户已确认\s*[：:]\s*(?:是|已确认|true)\s*$",
@@ -76,19 +64,42 @@ def session_hash(session_id: str) -> str:
 
 
 def set_run_phase(run_dir: Path, tier: str, phase: str) -> str | None:
+    state_path = run_dir / "run-state.json"
+    previous = {}
+    try:
+        if state_path.exists():
+            previous = json.loads(state_path.read_text(encoding="utf-8"))
+            if not isinstance(previous, dict):
+                previous = {}
+    except (OSError, json.JSONDecodeError):
+        previous = {}
     state = {
         "schema_version": 1,
         "run": run_dir.name,
         "tier": tier,
         "status": phase,
     }
+    # The first active transition captures HEAD before implementation. Preserve it
+    # through reviewing, verifying, and explicit closure, including resumptions.
+    if isinstance(previous.get("git_base"), str):
+        state["git_base"] = previous["git_base"]
+    elif phase == "active":
+        project = run_dir.resolve().parent.parent.parent
+        try:
+            git = subprocess.run(
+                ["git", "rev-parse", "--verify", "HEAD"], cwd=project,
+                capture_output=True, text=True, timeout=5, check=False,
+            )
+            if git.returncode == 0 and git.stdout.strip():
+                state["git_base"] = git.stdout.strip()
+        except (OSError, subprocess.TimeoutExpired):
+            pass
     if phase != "closed":
         session_id = current_session_id()
         if session_id is None:
             return "No session ID is available; expected CODEX_THREAD_ID or CLAUDE_SESSION_ID."
         state["session_hash"] = session_hash(session_id)
 
-    state_path = run_dir / "run-state.json"
     temporary = run_dir / ".run-state.json.tmp"
     try:
         temporary.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -113,14 +124,39 @@ def missing_sections(text: str, names: list[str]) -> list[str]:
 def contains_blocking_marker(text: str) -> list[str]:
     found = []
     for marker in BLOCKING_MARKERS:
-        if marker.lower() in text.lower():
+        # A decision marker must begin an item, not merely be mentioned in a
+        # task such as "Fix the TODO: comment in foo.py".
+        pattern = rf"^[ \t]*(?:[-*][ \t]*)?(?:\[ \][ \t]*)?{re.escape(marker)}(?=$|[ \t：:])"
+        if re.search(pattern, text, re.IGNORECASE | re.MULTILINE):
             found.append(marker)
     return found
 
 
-def has_evidence(text: str) -> bool:
-    lowered = text.lower()
-    return any(marker.lower() in lowered for marker in EVIDENCE_MARKERS)
+def has_field(text: str, names: str) -> bool:
+    """Recognize a labelled nonempty field or a populated Markdown section.
+
+    This is a structural check, not a judgment of correctness or test success.
+    """
+    pattern = rf"^[ \t]*(?:[-*][ \t]*)?(?:\*\*)?(?:{names})(?:\*\*)?[ \t]*[：:][ \t]*(\S.*)$"
+    if re.search(pattern, text, re.IGNORECASE | re.MULTILINE):
+        return True
+    nested = rf"^[ \t]*(?:[-*]\s*)?(?:\*\*)?(?:{names})(?:\*\*)?[ \t]*[：:][ \t]*\n[ \t]+(?:[-*][ \t]*)?\S.*$"
+    if re.search(nested, text, re.IGNORECASE | re.MULTILINE):
+        return True
+    heading = re.search(rf"^##+\s+(?:{names})\s*$", text, re.IGNORECASE | re.MULTILINE)
+    if not heading:
+        return False
+    body = text[heading.end():]
+    next_heading = re.search(r"^##+\s+", body, re.MULTILINE)
+    return bool((body[:next_heading.start()] if next_heading else body).strip())
+
+
+def has_inline_verification_result(text: str) -> bool:
+    """Accept concise records such as `- 命令：...；通过。`."""
+    label = r"(?:(?:red|green|refactor|final)\s+)?(?:commands?|manual(?:\s+checks?)?)|命令|手动(?:检查|验证)?"
+    result = r"(?:passed|failed|skipped)\b|通过|失败|跳过"
+    pattern = rf"^[ \t]*(?:[-*][ \t]*)?(?:{label})[ \t]*[：:][ \t]*\S[^\n]*?(?:[；;，,]|=>)[ \t]*(?:结果[：:]\s*)?(?:{result})"
+    return bool(re.search(pattern, text, re.IGNORECASE | re.MULTILINE))
 
 
 def section_body(text: str, aliases: list[str]) -> str | None:
@@ -209,8 +245,10 @@ def check_before_completion(run_dir: Path, tier: str) -> list[str]:
     evaluation_text = read(evaluation)
     if not execution_text.strip():
         errors.append("execution-log.md is empty.")
-    if not has_evidence(execution_text):
-        errors.append("execution-log.md does not appear to record command or manual verification evidence.")
+    if not has_field(execution_text, r"(?:(?:red|green|refactor|final)\s+)?(?:commands?|manual(?:\s+checks?)?)|命令|手动(?:检查|验证)?"):
+        errors.append("execution-log.md needs a labelled command or manual check with details.")
+    if not has_field(execution_text, r"(?:(?:red|green|refactor|final)\s+)?(?:result|outcome)|结果|验证结果|检查结果") and not has_inline_verification_result(execution_text):
+        errors.append("execution-log.md needs a labelled verification result with details.")
     if tier == "full":
         review_text = read(review)
         if not review_text.strip():
@@ -222,8 +260,8 @@ def check_before_completion(run_dir: Path, tier: str) -> list[str]:
             errors.append(f"review.md is missing required section: {section}.")
     if not evaluation_text.strip():
         errors.append("evaluation.md is empty.")
-    if not has_evidence(evaluation_text):
-        errors.append("evaluation.md does not appear to record acceptance, verification, or risk evidence.")
+    if not has_field(evaluation_text, r"acceptance(?:\s+status)?|verification(?:\s+(?:status|results?))?|risk|residual\s+risks?|验收(?:状态|结果|情况)?|验证(?:状态|结果|情况)?|风险|剩余风险|残余风险"):
+        errors.append("evaluation.md needs a labelled acceptance, verification, or risk summary.")
 
     return errors
 
@@ -275,7 +313,7 @@ def main() -> int:
             print(f"- {error}")
         return 1
 
-    print(f"Harness gate passed: {run_dir} ({args.stage})")
+    print(f"Harness gate passed: {run_dir} ({args.stage}); structure checked, evidence and results still require review.")
     return 0
 
 

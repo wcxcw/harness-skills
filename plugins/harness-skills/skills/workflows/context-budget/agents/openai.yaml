@@ -1,0 +1,3 @@
+interface:
+  display_name: "Context Budget"
+  short_description: "Select relevant project context for a task."

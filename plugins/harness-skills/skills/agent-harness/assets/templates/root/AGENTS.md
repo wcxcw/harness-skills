@@ -29,11 +29,11 @@ Read or reuse these when orienting to the project or when the current task needs
 - If gates classify the request as a no-run micro change, edit directly, run the smallest relevant check, and summarize the result.
 - If a run is warranted, use the smallest safe tier and keep one active run per user objective; append same-objective follow-ups to that run.
 - Bind a created or explicitly resumed run to the current session with `check_run.py <run> --tier <tier> --set-phase active`; never infer it from the most recently modified run directory.
-- For non-trivial work, create a run with `spec.md`, `plan.md`, `execution-log.md`, and `evaluation.md`.
+- Create artifacts required by the selected tier: `xs` needs `execution-log.md` and `evaluation.md`; `standard` and `full` also require `workflow.md`, `spec.md`, and `plan.md`.
 - For application code changes, run code-quality review before final verification; use frontend/backend quality review when the changed surface applies.
 - Record commands, manual checks, failures, skipped checks, and residual risk in the active run.
 - Before implementation and completion, use `harness/scripts/check_run.py` when an active run exists.
 - Only after final artifacts and the explicit completion gate pass, set the run phase to `verifying`; the session-scoped Stop hook closes it after a fresh recheck.
 - Do not invent project commands. Record unknown commands in `harness/tools/commands.md`.
-- Keep changes scoped to the accepted spec and plan.
+- Keep changes within the user's objective and any spec and plan required by the selected tier.
 - Do not bypass `harness/guardrails/boundaries.md`.

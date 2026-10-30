@@ -1,6 +1,6 @@
 {
-  "name": "harness-skills",
-  "version": "0.5.0",
+  "name": "harness",
+  "version": "0.6.0",
   "description": "Pre-run decision alignment and project-level Agent Harness workflows for Codex.",
   "author": {
     "name": "wcxcw",
@@ -22,9 +22,9 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Harness Skills",
+    "displayName": "Harness",
     "shortDescription": "Bootstrap project-level Agent Harness workflows for Codex.",
-    "longDescription": "Harness Skills aligns unclear decisions before a run, then initializes a controlled project workspace with context, specs, plans, guardrails, run records, local gates, review, verification, and evaluation feedback.",
+    "longDescription": "Harness aligns unclear decisions before a run, then initializes a controlled project workspace with context, specs, plans, guardrails, run records, local gates, review, verification, and evaluation feedback.",
     "developerName": "wcxcw",
     "category": "Coding",
     "capabilities": [

@@ -7,6 +7,8 @@ description: Review frontend changes for component boundaries, state/data separa
 
 Use this skill for UI, frontend, browser, or client-side application changes after implementation and before completion.
 
+Without an active run, review and report directly, including actual browser evidence or why it was skipped; do not create run artifacts solely for this skill. Apply the gate contract below only when a run exists.
+
 ## Gate Contract
 
 - Owns a frontend-specific review contribution; `requesting-code-review` merges it into the complete `review.md`.
@@ -19,7 +21,7 @@ Use this skill for UI, frontend, browser, or client-side application changes aft
 | --- | --- | --- |
 | `xs` | Usually skipped for one explicit style token or copy edit; record the targeted check in `execution-log.md` | No review artifact gate |
 | `standard` | Frontend review notes in `review.md` for feature UI, state, routing, or multi-file frontend work | Important findings block completion until resolved or accepted |
-| `full` | Frontend review plus browser evidence and resolution in `review.md`/`execution-log.md` | Required before `check_run.py --stage before-completion` can pass |
+| `full` | Frontend review plus browser evidence and resolution in `review.md`/`execution-log.md` | Workflow requirement; `check_run.py` does not verify browser behavior or the frontend review itself |
 
 ## Output
 

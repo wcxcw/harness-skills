@@ -14,7 +14,7 @@ This project harness is the source of truth for project facts, gates, commands, 
 | Implementation | `executing-plans` | test-driven-development when practical |
 | Debugging | `systematic-debugging` | systematic-debugging |
 | Review | `requesting-code-review` | requesting-code-review |
-| Reviewer role | `code-reviewer` | code reviewer subagent |
+| Reviewer role | `code-reviewer` | focused code review |
 | Quality Review | `code-quality-review`, `frontend-quality-review`, `backend-quality-review` | coding standards, frontend/backend patterns |
 | Review Resolution | `receiving-code-review` | receiving-code-review |
 | Completion | `verification-before-completion`, `finishing-run` | verification-before-completion |
@@ -25,12 +25,12 @@ This project harness is the source of truth for project facts, gates, commands, 
 - Use external skills only when they help satisfy the local spec, plan, gate, or verification requirement.
 - Keep pre-run grilling outside `workflow.md`; record its confirmed result in `spec.md` instead.
 - Do not treat an external skill as approval to bypass `harness/controls/gates.md`.
-- Record the skill or workflow used in `workflow.md`.
+- Record the skill or workflow used in `workflow.md` when that file is required or present; for `xs`, use `execution-log.md` if relevant.
 - If an external skill conflicts with project commands, guardrails, or user instructions, follow the local harness and ask when the conflict is material.
 
 ## Recommended Run Note
 
-Add a short note to `workflow.md`:
+When `workflow.md` is required or present, add a short note:
 
 ```text
 ## Skills Used

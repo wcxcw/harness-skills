@@ -88,9 +88,9 @@ Layer: Review / Dedicated Reviewer Role
 
 Expected output:
 
-- Independent findings in `review.md`
+- Findings and review scope in `review.md`
 
-Use as a subagent reviewer when the platform supports subagents, or as a focused local review checklist otherwise.
+Use for a focused review when risk warrants it. Record whether the review was independent or a self-review.
 
 ## code-quality-review
 

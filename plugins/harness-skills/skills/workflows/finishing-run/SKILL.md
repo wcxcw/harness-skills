@@ -5,7 +5,7 @@ description: Close an active harness run with `evaluation.md`, residual risk, an
 
 # Finishing Run
 
-Use this skill at the end of a run, after verification.
+Use this skill at the end of a run in two steps: draft the evaluation after implementation and review, then finalize it after verification. The draft must exist before the completion gate runs.
 
 ## Gate Contract
 
@@ -48,7 +48,9 @@ harness/runs/YYYY-MM-DD-short-task-name/evaluation.md
 
 If the run exposed missing commands, stale context, unclear gates, or weak skills, record the proposed harness update. Update canonical harness files only when the workflow or user explicitly allows it.
 
-Before final response, run `python3 harness/scripts/check_run.py harness/runs/<run> --stage before-completion --tier <xs|standard|full>` when available and record the result in `evaluation.md`.
+First create `evaluation.md` with the acceptance, current verification evidence, review status, residual risk, and feedback. Mark unfinished verification as pending; do not claim it passed. Next run `verification-before-completion` to check the final task evidence and completion gate. Update the evaluation with the actual verification and gate result; when this update changes final evidence, rerun the gate against the updated artifact.
+
+Before final response, run `python3 harness/scripts/check_run.py harness/runs/<run> --stage before-completion --tier <xs|standard|full>` when available and record the result in `evaluation.md`. The local checker checks recorded evidence structure; passing it does not independently establish that behavior works or that review was independent.
 
 After all run artifacts are final and that command passes, immediately run:
 

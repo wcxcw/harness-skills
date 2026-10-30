@@ -7,6 +7,8 @@ description: Review backend, API, service, worker, persistence, and integration 
 
 Use this skill for backend, API, service, worker, persistence, CLI, or integration changes after implementation and before completion.
 
+Without an active run, review and report directly, including verification and skipped checks; do not create run artifacts solely for this skill. Apply the gate contract below only when a run exists.
+
 ## Gate Contract
 
 - Owns a backend-specific review contribution; `requesting-code-review` merges it into the complete `review.md`.
@@ -19,7 +21,7 @@ Use this skill for backend, API, service, worker, persistence, CLI, or integrati
 | --- | --- | --- |
 | `xs` | Usually skipped for tiny docs/config edits; record reason in `evaluation.md` when backend code changed but review is skipped | Skipped review becomes residual risk |
 | `standard` | Backend review notes in `review.md` for API/service/data changes | Important findings block completion until resolved or accepted |
-| `full` | Backend review plus verification evidence and resolution | Required before `check_run.py --stage before-completion` can pass |
+| `full` | Backend review plus verification evidence and resolution | Workflow requirement; `check_run.py` does not verify the backend review itself |
 
 ## Output
 

@@ -5,11 +5,11 @@ description: Verify required evidence before claiming completion and make skippe
 
 # Verification Before Completion
 
-Use this skill after implementation and review.
+Use this skill after implementation and applicable review, once `finishing-run` has created an initial `evaluation.md`. After verification, return to `finishing-run` to finalize the evaluation and phase.
 
 ## Gate Contract
 
-- Owns the final evidence check across `execution-log.md`, `review.md`, and `evaluation.md`.
+- Owns the final evidence check across `execution-log.md`, `evaluation.md`, and any applicable `review.md`.
 - Must run `python3 harness/scripts/check_run.py harness/runs/<run> --stage before-completion --tier xs|standard|full` when the checker exists.
 - This explicit workflow gate is authoritative; it does not discover a run from filesystem recency or rely on the Stop hook to decide when verification begins.
 - Completion claims require fresh evidence from this run, not assumptions from earlier attempts.
@@ -24,20 +24,21 @@ Use this skill after implementation and review.
 
 ## Rules
 
-- Read `spec.md`, `plan.md`, `execution-log.md`, and `review.md`.
+- Read `execution-log.md` and the evaluation draft. For `standard` and `full`, read `spec.md` and `plan.md`; read `review.md` when it exists or is required by the tier. For `xs`, use the user request and do not require absent optional artifacts.
 - Run approved commands from `harness/tools/commands.md`.
-- Confirm each acceptance criterion has evidence.
+- Confirm each applicable acceptance criterion, including those in the user request for `xs`, has evidence.
 - Record skipped checks and reasons.
 - Read command output and exit codes before reporting pass/fail.
 - Run `python3 harness/scripts/check_run.py harness/runs/<run> --stage before-completion --tier xs|standard|full` when available.
+- Judge command results and behavior directly: the local checker validates its recorded structure, not semantic correctness, independence, or actual execution.
 - Leave the run in `active` or `reviewing` during progress updates. `finishing-run` sets `verifying` only after final artifacts and this explicit gate pass.
 - Do not claim completion while verification is missing or failing unless the risk is explicitly documented and accepted.
 
 ## Evidence Checklist
 
-- Every acceptance criterion in `spec.md` has a matching command or manual check.
-- Every task verification in `plan.md` is represented in `execution-log.md`.
-- Every review finding in `review.md` is fixed, accepted, or deferred with a reason.
+- Every applicable acceptance criterion has a matching command or manual check.
+- Every task verification in `plan.md`, when present, is represented in `execution-log.md`.
+- Every review finding in `review.md`, when present, is fixed, accepted, or deferred with a reason.
 - `evaluation.md` summarizes acceptance, verification, review status, and residual risk.
 - The final local gate passed, or the failure is explicitly documented and not presented as complete.
 

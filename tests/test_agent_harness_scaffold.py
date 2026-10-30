@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -46,9 +47,12 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
 
     def test_git_marketplace_manifest_points_to_plugin_wrapper(self) -> None:
         marketplace = json.loads(MARKETPLACE_MANIFEST.read_text(encoding="utf-8"))
-        self.assertEqual(marketplace["name"], "harness-skills")
+        self.assertEqual(marketplace["name"], "harness")
         [plugin] = marketplace["plugins"]
-        self.assertEqual(plugin["name"], "harness-skills")
+        self.assertEqual(plugin["name"], "harness")
+        manifest = json.loads(PLUGIN_MANIFEST.read_text(encoding="utf-8"))
+        self.assertEqual(manifest["name"], plugin["name"])
+        self.assertEqual(manifest["interface"]["displayName"], "Harness")
         self.assertEqual(plugin["source"], {"source": "local", "path": "./plugins/harness-skills"})
         self.assertEqual(plugin["policy"]["installation"], "AVAILABLE")
         plugin_path = (ROOT / plugin["source"]["path"]).resolve()
@@ -64,6 +68,21 @@ class AgentHarnessScaffoldTest(unittest.TestCase):
         self.assertFalse((ROOT / ".claude-plugin").exists())
         self.assertTrue(plugin_skills.is_dir())
         self.assertFalse(plugin_skills.is_symlink())
+
+    def test_skills_have_consistent_display_metadata(self) -> None:
+        display_names = []
+        for skill in (PLUGIN_ROOT / "skills").glob("**/SKILL.md"):
+            metadata = skill.parent / "agents" / "openai.yaml"
+            self.assertTrue(metadata.is_file(), f"Missing display metadata: {skill}")
+            content = metadata.read_text(encoding="utf-8")
+            display = re.search(r'^  display_name: "([^"]+)"$', content, re.MULTILINE)
+            description = re.search(r'^  short_description: "([^"]+)"$', content, re.MULTILINE)
+            self.assertIsNotNone(display, metadata)
+            self.assertIsNotNone(description, metadata)
+            name = display.group(1)
+            self.assertFalse(name.startswith(("Harness:", "Harness Skills:")), metadata)
+            display_names.append(name)
+        self.assertEqual(len(display_names), len(set(display_names)))
 
     def test_vendor_superpowers_curated_subset_is_present(self) -> None:
         expected = {
@@ -448,7 +467,8 @@ None.
                 encoding="utf-8",
             )
             passed = run_hook("session-a")
-            self.assertEqual(passed, {"continue": True})
+            self.assertTrue(passed["continue"])
+            self.assertIn("Git change detection is unavailable", passed["systemMessage"])
             state = json.loads((run_dir / "run-state.json").read_text(encoding="utf-8"))
             self.assertEqual(state["status"], "closed")
             self.assertNotIn("session_hash", state)
@@ -456,7 +476,9 @@ None.
 
             (run_dir / "review.md").write_text("# Review\n\n## Review Scope\nScope only.\n", encoding="utf-8")
             set_phase("verifying", tier="standard")
-            self.assertEqual(run_hook("session-a"), {"continue": True})
+            passed = run_hook("session-a")
+            self.assertTrue(passed["continue"])
+            self.assertIn("Git change detection is unavailable", passed["systemMessage"])
             state = json.loads((run_dir / "run-state.json").read_text(encoding="utf-8"))
             self.assertEqual(state["tier"], "standard")
             self.assertEqual(state["status"], "closed")

@@ -1,15 +1,15 @@
 ---
 name: code-reviewer
-description: Specialized code-review role for Harness runs; use as a subagent prompt when the platform supports subagents, or as a focused local review checklist otherwise.
+description: Review Harness run changes for correctness, regressions, risks, and verification gaps.
 ---
 
 # Code Reviewer
 
-Use this skill when a run needs a dedicated code-review role. Prefer dispatching it as a subagent when the platform supports subagents and the review scope can be described without sharing the full session history.
+Use this skill when a run needs a focused code review. Review independently when an independent reviewer actually performs the review; otherwise record it as self-review.
 
 ## Gate Contract
 
-- Owns an independent structured review contribution; `requesting-code-review` owns the complete `review.md`.
+- Owns a structured review contribution; `requesting-code-review` owns the complete `review.md`.
 - Reviews the accepted spec, plan, relevant diff, and verification evidence, not the implementer's intent.
 - Critical and Important findings must be fixed, accepted by the user, or recorded as residual risk before completion.
 
@@ -18,8 +18,8 @@ Use this skill when a run needs a dedicated code-review role. Prefer dispatching
 | Tier | Required output | Gate effect |
 | --- | --- | --- |
 | `xs` | Usually skipped; use only when a small code change has meaningful risk | Findings become residual risk if not resolved |
-| `standard` | Independent findings in `review.md` when implementation risk justifies review | Important findings block completion until resolved or accepted |
-| `full` | Independent code review in `review.md` plus resolution status | Required before `check_run.py --stage before-completion` can pass |
+| `standard` | Findings in `review.md` when implementation risk justifies review | Important findings require resolution or acceptance |
+| `full` | Review in `review.md` plus resolution status | `check_run.py` requires review sections; reviewer independence is not mechanically checked |
 
 ## Output
 
@@ -56,15 +56,15 @@ For a Chinese run, use:
 
 ## Review Procedure
 
-1. Identify review scope from the user request, active `spec.md`, `plan.md`, changed files, and `execution-log.md`.
-2. If using a subagent, pass only the review brief, relevant file list, diff/base information, and acceptance criteria.
+1. Identify review scope from the user request, changed files, `execution-log.md`, and any applicable `spec.md` and `plan.md`.
+2. For a separate reviewer, provide the review brief, relevant file list, diff/base information, and acceptance criteria.
 3. Review correctness, regressions, security/auth, data loss, API contracts, accessibility, logging/observability, maintainability, and missing tests.
 4. Use `code-quality-review`, `frontend-quality-review`, or `backend-quality-review` findings when those surfaces apply.
 5. Record findings by severity with file and line where possible.
 6. Require fixes for Critical and Important findings unless the user explicitly accepts the risk.
 7. Return the structured contribution to the coordinator. The coordinator owns assembly of `review.md`, resolution updates, verification, and the local gate.
 
-## Subagent Brief Template
+## Review Brief Template
 
 ```markdown
 You are the Harness code-reviewer.
@@ -117,7 +117,7 @@ For Chinese runs, return:
 ## Stop Conditions
 
 - The review scope, diff, or acceptance criteria are unavailable.
-- The reviewer cannot map changed behavior to `spec.md` or `plan.md`.
+- The reviewer cannot map changed behavior to the user request or applicable `spec.md` and `plan.md`.
 - Critical or Important findings remain unresolved and unaccepted.
 - Verification evidence is missing after review-driven fixes.
 

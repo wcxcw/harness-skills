@@ -39,7 +39,7 @@ For `standard` and `full` runs, the active run must pass these checks before edi
 - `harness/runs/<run>/plan.md` exists.
 - `harness/runs/<run>/workflow.md` exists and records skills used plus gate status.
 - `spec.md` contains alignment, objective, scope, non-goals, acceptance criteria, verification, and open questions.
-- `spec.md` records that the user explicitly confirmed shared understanding.
+- `spec.md` records alignment and its source. A clear user request can establish alignment for the decisions it actually specifies; record that source without asking for duplicate confirmation. Resolve material unanswered decisions before implementation.
 - `plan.md` contains ordered tasks and verification.
 - `spec.md` and `plan.md` do not contain unresolved blocking markers such as `Needs decision` or `TBD`.
 

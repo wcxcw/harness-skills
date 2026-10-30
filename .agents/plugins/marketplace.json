@@ -1,11 +1,11 @@
 {
-  "name": "harness-skills",
+  "name": "harness",
   "interface": {
-    "displayName": "Harness Skills"
+    "displayName": "Harness"
   },
   "plugins": [
     {
-      "name": "harness-skills",
+      "name": "harness",
       "source": {
         "source": "local",
         "path": "./plugins/harness-skills"

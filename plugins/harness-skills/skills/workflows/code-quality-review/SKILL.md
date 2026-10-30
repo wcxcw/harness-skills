@@ -7,6 +7,8 @@ description: Review completed code changes for maintainability, structure, obser
 
 Use this skill after implementation and before final verification when a task changes application code. It complements correctness review by checking whether the implementation is maintainable in this repository.
 
+Without an active run, review the available changes and report findings directly; do not create run artifacts solely for this skill. Apply the gate contract below only when a run exists.
+
 ## Gate Contract
 
 - Owns a maintainability review contribution; `requesting-code-review` merges it into the complete `review.md`.
@@ -19,7 +21,7 @@ Use this skill after implementation and before final verification when a task ch
 | --- | --- | --- |
 | `xs` | Usually skipped for documentation/config-only work; record reason in `evaluation.md` when code changed but review is skipped | Skipped review becomes residual risk |
 | `standard` | Code-quality notes in `review.md` when application code changed | Important findings block completion until resolved or accepted |
-| `full` | Code-quality review in `review.md` plus resolution | Required before `check_run.py --stage before-completion` can pass |
+| `full` | Code-quality review in `review.md` plus resolution | Workflow requirement; `check_run.py` validates required review structure, not review quality |
 
 ## Output
 
@@ -43,7 +45,7 @@ canonical `## Findings` section without creating competing top-level sections:
 
 ## Review Procedure
 
-1. Identify changed files from the diff, `plan.md`, and `execution-log.md`.
+1. Identify changed files from the diff and available `plan.md` and `execution-log.md`; do not require a plan for `xs`.
 2. Read the smallest needed project conventions, usually `harness/context/coding-conventions.md` plus nearby existing code patterns.
 3. Check whether the implementation preserves local module boundaries and existing abstractions.
 4. Check whether complexity matches the task size and whether large files, mixed responsibilities, or speculative abstractions were introduced.
@@ -64,7 +66,7 @@ canonical `## Findings` section without creating competing top-level sections:
 ## Stop Conditions
 
 - Project conventions or changed files are unavailable.
-- The diff cannot be mapped back to the accepted spec or plan.
+- The diff cannot be mapped back to the user request or the applicable spec or plan.
 - Critical or Important findings remain unresolved and unaccepted.
 - Verification evidence for the fixed findings is missing.
 

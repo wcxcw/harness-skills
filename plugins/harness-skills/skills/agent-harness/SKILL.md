@@ -78,9 +78,9 @@ Choose one mode before scaffolding or updating harness files:
 
 - `greenfield`: Use when the project is empty, has no source or manifest files, or the user describes a new project from a short idea.
 - `brownfield`: Use when the project already has source code, manifests, tests, CI, README, or other implementation history.
-- `existing-harness`: Use when `AGENTS.md` or `harness/` already exists.
+- `existing-harness`: Use when discovery confirms an existing project Harness. An `AGENTS.md` or directory named `harness/` alone does not establish ownership or compatibility.
 
-For `existing-harness`, preserve existing harness content by default. Add missing files, refresh stale placeholders, and propose larger rewrites only when the user asks.
+For `existing-harness`, preserve existing harness content by default. Add missing files, refresh stale placeholders, and propose larger rewrites only when the user asks. If `harness/` exists but its role is unclear, inspect it before scaffolding; do not write into or replace an unrelated directory. If it is intentionally the project Harness but automatic detection cannot identify it, use `--adopt-existing` only after confirming that purpose from project evidence or the user's request.
 
 ### 2. Choose Output Language
 
@@ -115,9 +115,15 @@ For `greenfield`, also capture the project idea, target user, success criteria, 
 
 For content-driven products such as news, directories, dashboards, or curated feeds, clarify content categories, source strategy, update cadence, ranking/filtering, page structure, and MVP quality bar before implementation. Do not turn a broad content product idea into a generic demo without confirming what the user wants the experience to be.
 
-For `brownfield`, use read-only discovery first. Prefer existing project facts over generic templates, reference existing documentation and configuration, and do not replace established conventions unless the user explicitly asks.
+For `brownfield`, use read-only discovery first. Prefer existing project facts over generic templates, reference existing documentation and configuration, and do not replace established conventions unless the user explicitly asks. Inspect only task-relevant manifests, lockfiles, README, CI, scripts and existing harness files; a monorepo may require different working directories and commands for each component.
 
-If a command is unknown, mark it as `Unknown` or `Not applicable` in `harness/tools/commands.md`; do not invent commands.
+When useful, run `python3 <agent-harness-skill-dir>/scripts/discover_project.py --project <project-root>` for a read-only JSON inventory of common manifests, package script names and CI files. Resolve the script relative to this SKILL.md. It does not execute commands, install dependencies, or verify safety; its bounded scan and exclusions can miss project files. Inspect the actual relevant files before deciding which commands to run, and report any discovery errors or coverage gaps that affect the task.
+
+Record command purpose, exact working directory, source and side effects in `harness/tools/commands.md`. Distinguish `Discovered` (explicit in a repository file or provided by the user), `Inferred` (plausible but not confirmed), `Verified` (executed in a stated environment with result and date), `Failed`, `Unknown`, and `Not applicable` (evidence shows it is not relevant). A documented command is not automatically verified in the current environment. Preserve a project's existing status vocabulary, such as `Confirmed`, without treating it as fresh execution evidence.
+
+Do not invent commands or run `Unknown` or `Inferred` commands. Verify relevant commands only when appropriate for the task and permissions, using the least disruptive useful check. First inspect command and script behavior and prerequisites; do not execute commands solely because they appear in a manifest. Installation, server startup, migrations, deployment, external calls or tests may mutate data, access a network or consume credentials. Respect the user's authorization, project rules and sandbox; record skipped checks and their reason. A failed or skipped attempt is not `Verified`.
+
+For behavior changes choose actual feedback where available: relevant tests and build checks, browser interaction and console errors for UI, API responses and errors for services, or output and exit codes for CLI tasks. Prefer existing project tools; do not require installing a new stack merely to complete initialization. Record command, working directory, date, exit status, and environment/limitations, without secrets.
 
 For existing harnesses, keep context loading selective. Read the concise
 `project-brief.md`, `gates.md`, `commands.md`, and `boundaries.md` first, then
@@ -151,6 +157,7 @@ Use `scripts/init_harness.py` for deterministic scaffolding when creating the st
 - `--language en`: English harness templates.
 - `--language auto` (default): follows process locale; prefer explicit `zh-CN` when the user prompt is Chinese.
 - `--update-checker`: refresh only `harness/scripts/check_run.py` in an existing Harness after gate-schema updates; all other project files are preserved.
+- `--adopt-existing`: explicitly use an inspected nonempty `harness/` directory that the scaffold cannot identify; it does not overwrite files by itself.
 
 Do not use `--force` for existing projects unless the user explicitly confirms overwriting harness files.
 
@@ -158,7 +165,7 @@ For `greenfield`, fill `harness/context/project-brief.md` from the user idea and
 
 For `brownfield`, scaffold the same minimal core first. Add extra context files later only when repository evidence shows they remove real ambiguity.
 
-For `existing-harness`, update only missing or clearly stale harness files. Preserve existing `AGENTS.md`, README, CI, tests, and code conventions unless the user confirms a rewrite.
+For `existing-harness`, update only missing or clearly stale harness files within the user's authorized task. Preserve existing `AGENTS.md`, README, CI, tests, and code conventions unless a rewrite is requested. `--update-checker` is an explicit replacement of the local checker; do not use it as a routine initialization step over a customized checker.
 
 Do not expand the harness just because templates exist.
 
@@ -181,7 +188,7 @@ If the project wants to keep most run records out of version control, recommend 
 
 For raw product ideas, vague project concepts, or early feature directions, complete explicit `$grilling` before creating a run. Grilling stays conversational and creates no Harness artifacts.
 
-Once the user confirms shared understanding, create the selected run tier and record the problem, scope, product decisions, technical decisions, acceptance criteria, and open questions directly in `spec.md`. If the user already supplied a clear and confirmed brief, skip grilling and proceed directly to the spec. Do not silently choose product shape, content scope, information architecture, technology stack, or core implementation approach.
+Once the user confirms shared understanding, create the selected run tier and record the problem, scope, decisions, acceptance criteria, and open questions in `spec.md` when required by the tier. A clear user request already establishes alignment for what it specifies; record its source rather than requesting duplicate confirmation. Ask only about unresolved decisions that materially block work.
 
 After creating or explicitly resuming a run, bind it to the current session:
 
@@ -191,7 +198,11 @@ python3 harness/scripts/check_run.py harness/runs/<run> --tier <xs|standard|full
 
 This writes `run-state.json` with a hashed session identifier. If no run is
 created or resumed, do not create state merely because another run is the most
-recent directory on disk.
+recent directory on disk. When supported by the checker, first activation also
+captures the Git HEAD baseline; retain it across phase changes and resumption so
+quality checks can include commits made during the run. A pre-existing run that
+has no baseline, a repository with no initial commit, or a non-Git project cannot
+reconstruct prior committed changes reliably; record that coverage limitation.
 
 ### 8. Specify
 
@@ -201,7 +212,7 @@ For non-trivial tasks, use `writing-specs`. Save the resulting task contract in 
 harness/runs/YYYY-MM-DD-short-task-name/spec.md
 ```
 
-The spec must record the alignment source and explicit confirmation, then define objective, scope, non-goals, assumptions, product and technical decisions, acceptance criteria, verification, required evidence, context updates, and open questions. Do not use the spec step to generate the implementation plan.
+The spec must record the alignment source (including a clear original request when applicable), then define objective, scope, non-goals, assumptions, product and technical decisions, acceptance criteria, verification, required evidence, context updates, and open questions. Do not use the spec step to generate the implementation plan. XS runs do not require a spec or plan; use those artifacts only when the chosen tier or task needs them.
 
 Before moving to planning, block on unresolved decisions that would materially affect implementation:
 
@@ -219,7 +230,7 @@ If the user does not want to decide yet, record the decision in `Open Questions`
 
 ### 9. Plan
 
-After the spec is clear, use `writing-plans`. Save the implementation plan in:
+For tiers that require a spec and plan, after the spec is clear use `writing-plans`. Save the implementation plan in:
 
 ```text
 harness/runs/YYYY-MM-DD-short-task-name/plan.md
@@ -234,8 +245,7 @@ Do not proceed to execution if `spec.md` or `plan.md` contains unresolved blocki
 Implement against the active run only:
 
 - Read `AGENTS.md`
-- Read the active run's `workflow.md`
-- Read the active run's `spec.md` and `plan.md`
+- Read the active run's `workflow.md`, `spec.md`, and `plan.md` when required by the tier or present and relevant; XS need not create them
 - Load only the needed files under `harness/context/`; use targeted search or section reads for large context files
 - Check `harness/controls/gates.md`
 - Check `harness/guardrails/` before edits
@@ -247,7 +257,7 @@ Implement against the active run only:
 
 ### 11. Verify
 
-Run commands from `harness/tools/commands.md` and record results in `execution-log.md`.
+Select relevant project commands from `harness/tools/commands.md`, verify their prerequisites and side effects, and record actual results in `execution-log.md`. Create an `evaluation.md` draft before invoking the completion gate; then finalize it with verification and risk evidence before the final gate and `verifying` transition.
 
 Before claiming completion, run `python3 harness/scripts/check_run.py harness/runs/<run> --stage before-completion --tier <xs|standard|full>` when an active run exists and the checker is available. If the checker cannot be run, record the reason in `execution-log.md`.
 
@@ -318,7 +328,7 @@ Legacy runs may still contain `design.md` or `idea.md`; new runs record confirme
 
 ### 13. Improve
 
-After each run, review whether the harness itself needs improvement. Treat this as controlled maintenance of canonical harness files:
+After each run, review whether the harness itself needs improvement. In `evaluation.md`, record a concrete issue, its evidence, a proposed change, and status (`pending`, `applied`, or `not adopted`); record the verification result when applied. State `none` when no improvement is identified. Treat this as controlled maintenance of canonical harness files:
 
 - Missing or stale context
 - Unclear commands
@@ -326,7 +336,7 @@ After each run, review whether the harness itself needs improvement. Treat this 
 - Ambiguous evaluation criteria
 - Repeated agent mistakes
 
-For normal feature or bugfix runs, propose harness updates first and apply them only when the user approves or the project workflow explicitly allows harness maintenance. When the user asks to initialize, refine, or improve the harness, update the relevant harness files directly from evidence.
+For normal feature or bugfix runs, propose harness updates first and apply them when the user's instructions or the project workflow authorize harness maintenance. When the user asks to initialize, refine, or improve the harness, update the relevant harness files directly from evidence. Do not build a separate feedback tracker unless the project needs one.
 
 Update harness files, not unrelated application code, during this improvement phase. Keep changes small and traceable to the latest run, repository facts, or user-confirmed decisions.
 

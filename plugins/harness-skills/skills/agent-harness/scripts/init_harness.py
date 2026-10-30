@@ -25,6 +25,39 @@ CORE_HARNESS_FILES = [
     "runs/.gitkeep",
 ]
 
+
+def check_harness_directory(project: Path, adopt_existing: bool) -> None:
+    """Avoid inserting a scaffold into an unrelated, nonempty harness directory."""
+    harness = project / "harness"
+    if harness.is_symlink():
+        raise SystemExit(f"Refusing to scaffold through a symlink: {harness}")
+    if not harness.exists():
+        return
+    if not harness.is_dir():
+        raise SystemExit(f"Harness path is not a directory: {harness}")
+    for relative in CORE_HARNESS_FILES:
+        target = harness / relative
+        if target.is_symlink() or not target.resolve().is_relative_to(harness.resolve()):
+            raise SystemExit(f"Refusing to write outside scaffold directory: {target}")
+    if not any(harness.iterdir()):
+        return
+    markers = (
+        "context/project-brief.md",
+        "controls/gates.md",
+        "tools/commands.md",
+        "scripts/check_run.py",
+    )
+    present = sum((harness / marker).is_file() for marker in markers)
+    agents = project / "AGENTS.md"
+    references_harness = agents.is_file() and "harness/" in agents.read_text(encoding="utf-8", errors="replace")
+    if present >= 2 or (present >= 1 and references_harness) or adopt_existing:
+        return
+    raise SystemExit(
+        f"Unrecognized nonempty harness directory: {harness}. "
+        "Inspect it first; use --adopt-existing only when it is intended for this Harness."
+    )
+
+
 def localized_source(path: Path, language: str) -> Path:
     if language == "en":
         return path
@@ -62,6 +95,8 @@ def copy_tree(src: Path, dst: Path, force: bool, language: str) -> list[Path]:
         source = localized_source(path, language)
         if target.exists() and not force:
             continue
+        if target.is_symlink() or not target.resolve().is_relative_to(dst.resolve()):
+            raise SystemExit(f"Refusing to write outside scaffold directory: {target}")
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target)
         written.append(target)
@@ -78,6 +113,8 @@ def copy_files(src: Path, dst: Path, files: list[str], force: bool, language: st
         target = dst / rel_name
         if target.exists() and not force:
             continue
+        if target.is_symlink() or not target.resolve().is_relative_to(dst.resolve()):
+            raise SystemExit(f"Refusing to write outside scaffold directory: {target}")
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target)
         written.append(target)
@@ -88,6 +125,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Initialize Agent Harness files in a project.")
     parser.add_argument("--project", default=".", help="Project root to scaffold into.")
     parser.add_argument("--force", action="store_true", help="Overwrite existing files.")
+    parser.add_argument(
+        "--adopt-existing",
+        action="store_true",
+        help="Use a previously inspected, nonempty harness directory even when it has no recognized markers.",
+    )
     parser.add_argument(
         "--update-checker",
         action="store_true",
@@ -115,6 +157,8 @@ def main() -> int:
 
     if not templates.exists():
         raise SystemExit(f"Template directory not found: {templates}")
+
+    check_harness_directory(project, args.adopt_existing)
 
     if args.update_checker:
         [checker] = copy_files(

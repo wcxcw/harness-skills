@@ -34,7 +34,7 @@
 - `harness/runs/<run>/plan.md` 存在。
 - `harness/runs/<run>/workflow.md` 存在，并记录使用的 skills 和 gate 状态。
 - `spec.md` 包含共识确认、目标、范围、非目标、验收标准、验证方式和待确认问题。
-- `spec.md` 记录用户已明确确认共同理解。
+- `spec.md` 记录共同理解及其来源。用户已经明确的请求可作为其中已明确决策的对齐依据，记录来源即可，无需重复确认；实现前应解决实际阻塞的未决事项。
 - `plan.md` 包含有顺序的任务和验证方式。
 - `spec.md` 和 `plan.md` 不包含 `Needs decision`、`需要决策` 或 `TBD` 等阻塞标记。
 

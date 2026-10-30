@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Codex hook entry point for Harness Skills."""
+"""Codex hook entry point for Harness."""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 
@@ -18,7 +19,8 @@ def emit(payload: dict) -> None:
 def read_payload() -> dict:
     try:
         raw = sys.stdin.read()
-        return json.loads(raw) if raw.strip() else {}
+        payload = json.loads(raw) if raw.strip() else {}
+        return payload if isinstance(payload, dict) else {}
     except json.JSONDecodeError:
         return {}
 
@@ -34,6 +36,9 @@ def project_root(payload: dict) -> Path:
 SESSION_PAYLOAD_KEYS = ("session_id", "sessionId", "thread_id", "threadId", "conversation_id", "conversationId")
 SESSION_ENV_KEYS = ("CODEX_THREAD_ID", "CLAUDE_SESSION_ID")
 RUN_TIERS = {"xs", "standard", "full"}
+# Stop has a 30-second host timeout. Keep time to report a useful failure.
+STOP_BUDGET_SECONDS = 26.0
+COMMAND_TIMEOUT_SECONDS = 12.0
 
 
 def current_session_id(payload: dict) -> str | None:
@@ -65,6 +70,8 @@ def verifying_runs(root: Path, expected_session_hash: str) -> list[tuple[Path, s
             state = json.loads(state_path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):
             continue
+        if not isinstance(state, dict):
+            continue
         tier = state.get("tier")
         if (
             state.get("schema_version") == 1
@@ -78,13 +85,19 @@ def verifying_runs(root: Path, expected_session_hash: str) -> list[tuple[Path, s
 
 
 def close_run(run_dir: Path, tier: str) -> str | None:
+    state_path = run_dir / "run-state.json"
+    try:
+        previous = json.loads(state_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        previous = {}
     state = {
         "schema_version": 1,
         "run": run_dir.name,
         "tier": tier,
         "status": "closed",
     }
-    state_path = run_dir / "run-state.json"
+    if isinstance(previous, dict) and isinstance(previous.get("git_base"), str):
+        state["git_base"] = previous["git_base"]
     temporary = run_dir / ".run-state.json.tmp"
     try:
         temporary.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -94,7 +107,9 @@ def close_run(run_dir: Path, tier: str) -> str | None:
     return None
 
 
-def run_command(command: list[str], cwd: Path) -> tuple[int, str]:
+def run_command(command: list[str], cwd: Path, timeout: float = COMMAND_TIMEOUT_SECONDS) -> tuple[int, str]:
+    if timeout <= 0:
+        return 1, "Harness Stop time budget exhausted before this check could run."
     try:
         completed = subprocess.run(
             command,
@@ -102,7 +117,7 @@ def run_command(command: list[str], cwd: Path) -> tuple[int, str]:
             check=False,
             text=True,
             capture_output=True,
-            timeout=20,
+            timeout=timeout,
         )
     except (OSError, subprocess.TimeoutExpired) as exc:
         return 1, str(exc)
@@ -117,7 +132,7 @@ def session_start() -> None:
             "hookSpecificOutput": {
                 "hookEventName": "SessionStart",
                 "additionalContext": (
-                    "Harness Skills hook active. For harness projects, use project-brief for "
+                    "Harness hook active. For harness projects, use project-brief for "
                     "first orientation or when context may be stale; reuse it within the same "
                     "session when already loaded. Avoid bulk-reading harness/context or completed "
                     "runs. Before creating a run for an unclear objective, invite the user to "
@@ -131,10 +146,7 @@ def session_start() -> None:
 
 
 def stop(payload: dict) -> None:
-    if payload.get("stop_hook_active"):
-        emit({"continue": True})
-        return
-
+    deadline = time.monotonic() + STOP_BUDGET_SECONDS
     root = project_root(payload)
     if not (root / "harness").is_dir():
         emit({"continue": True})
@@ -146,6 +158,7 @@ def stop(payload: dict) -> None:
         return
 
     reasons: list[str] = []
+    warnings: list[str] = []
     runs = verifying_runs(root, session_hash(session_id))
     if not runs:
         emit({"continue": True})
@@ -173,6 +186,7 @@ def stop(payload: dict) -> None:
                     tier,
                 ],
                 root,
+                timeout=min(COMMAND_TIMEOUT_SECONDS, deadline - time.monotonic()),
             )
             if code != 0:
                 reasons.append(
@@ -189,9 +203,11 @@ def stop(payload: dict) -> None:
                 str(run_dir),
                 "--strict",
             ]
-            code, output = run_command(command, root)
+            code, output = run_command(command, root, timeout=min(COMMAND_TIMEOUT_SECONDS, deadline - time.monotonic()))
             if code != 0:
                 reasons.append(output or "Harness quality gate failed.")
+            elif output and output != "Harness quality check passed.":
+                warnings.append(output)
 
     if not reasons:
         for run_dir, tier in runs:
@@ -200,6 +216,11 @@ def stop(payload: dict) -> None:
                 reasons.append(error)
 
     if reasons:
+        if payload.get("stop_hook_active"):
+            # A failed retry must not start an endless Stop continuation loop.
+            # Keep the run verifying and surface the unresolved failure.
+            emit({"continue": True, "systemMessage": "Harness gate still failing; run remains verifying.\n" + "\n\n".join(reasons)})
+            return
         emit(
             {
                 "decision": "block",
@@ -212,7 +233,10 @@ def stop(payload: dict) -> None:
         )
         return
 
-    emit({"continue": True})
+    if warnings:
+        emit({"continue": True, "systemMessage": "\n\n".join(warnings)})
+    else:
+        emit({"continue": True})
 
 
 def main() -> int:

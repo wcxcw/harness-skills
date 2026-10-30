@@ -1,11 +1,11 @@
 ---
 name: test-driven-development
-description: Use a test-first loop for implementation tasks where behavior can be verified with automated tests.
+description: Use a test-first loop when an automated regression test is valuable for the changed behavior.
 ---
 
 # Test-Driven Development
 
-Use this skill when implementing logic, bug fixes, APIs, parsers, transformations, or other behavior that can be tested.
+Use this skill when implementing behavior for which a focused automated regression test is valuable, or when the user requests TDD. Do not add tests solely for reversible, low-impact edits or tests that merely mirror the implementation.
 
 ## Gate Contract
 
@@ -17,9 +17,9 @@ Use this skill when implementing logic, bug fixes, APIs, parsers, transformation
 
 | Tier | Required output | Gate effect |
 | --- | --- | --- |
-| `xs` | TDD evidence when behavior changed and tests exist | Supports completion evidence |
-| `standard` | RED/GREEN command evidence in `execution-log.md` | Supports `check_run.py --stage before-completion` |
-| `full` | RED/GREEN/REFACTOR evidence plus broader verification | Supports review and final verification |
+| `xs` | TDD evidence when the loop is applicable | Supports completion evidence |
+| `standard` | RED/GREEN evidence when using TDD | Supports `check_run.py --stage before-completion` |
+| `full` | RED/GREEN/REFACTOR evidence plus broader verification when using TDD | Supports review and final verification |
 
 ## Loop
 
@@ -29,7 +29,7 @@ Use this skill when implementing logic, bug fixes, APIs, parsers, transformation
 4. Verify GREEN: re-run the narrow test and record the passing result.
 5. REFACTOR: clean up only after the test is green.
 6. Re-run the narrow test after refactor.
-7. Run broader relevant verification from `plan.md` or `harness/tools/commands.md`.
+7. Run broader relevant verification from an existing `plan.md` or `harness/tools/commands.md`.
 8. Record all command evidence in `execution-log.md`.
 
 Do not use TDD as a reason to expand scope. For UI-only, documentation, or exploratory work, record why TDD is not applicable.
@@ -51,7 +51,7 @@ If the RED test passes immediately, the test is not proving new behavior. Rewrit
 
 ## Stop Conditions
 
-- No failing test was observed for new behavior that can be automated.
+- No meaningful failing test was observed for the behavior being developed with TDD; reassess the test or document why another verification approach is needed.
 - The RED failure is caused by a typo, bad setup, or wrong assertion rather than missing behavior.
 - GREEN requires broad unrelated changes.
 - Refactor changes behavior or makes the narrow test fail.

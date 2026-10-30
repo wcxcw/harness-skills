@@ -23,15 +23,15 @@ Use this skill after `check_run.py --stage before-implementation` passes.
 
 ## Rules
 
-- Bind a newly created or explicitly resumed run to the current session with `check_run.py <run> --tier <tier> --set-phase active`; never select a run by directory mtime.
-- Read `AGENTS.md`, `harness/controls/`, `harness/guardrails/`, `spec.md`, and `plan.md`.
-- Execute one plan task at a time in plan order unless the plan explicitly permits parallel work.
-- Keep changes scoped to the task and spec.
+- Before changing project code, bind a newly created or explicitly resumed run to the current session with `check_run.py <run> --tier <tier> --set-phase active`; this records a Git baseline when available. Never select a run by directory mtime.
+- Read `AGENTS.md` and relevant local controls and guardrails. For `standard` and `full`, read `spec.md` and `plan.md`; for `xs`, use the user request and any existing task artifacts without creating a plan solely for this skill.
+- When `plan.md` exists, execute its tasks in order unless it permits parallel work; for `xs` without a plan, execute the bounded request directly.
+- Keep changes scoped to the user request and any applicable spec.
 - Run relevant approved commands from `harness/tools/commands.md`.
 - Record changed files, commands, results, failures, and skipped checks in `execution-log.md`.
 - Stop on blockers, failing required gates, missing files, or user decisions. Do not guess through a blocker.
-- After each task, mark the task status in `plan.md` or record the checkpoint in `execution-log.md`.
-- If implementation diverges from the plan, record the reason and update `plan.md` before continuing.
+- After each task, mark the task status in `plan.md` if present or record the checkpoint in `execution-log.md`.
+- If implementation diverges from an existing plan, record the reason and update `plan.md` before continuing.
 - If the user requests a correction to the same objective, continue the active run and append the new attempt, changed files, commands, and outcome to `execution-log.md` instead of creating a new run.
 - After a review or gate failure, set the phase back to `active` before continuing implementation so interim responses are not treated as completion attempts.
 
@@ -53,12 +53,12 @@ Append entries like:
   - [decision, blocker, or risk]
 ```
 
-Update `workflow.md` with `executing-plans` under `## Skills Used`.
+When `workflow.md` exists, update it with `executing-plans` under `## Skills Used`.
 
 ## Stop Conditions
 
 - `check_run.py --stage before-implementation` fails for the selected tier.
-- The current task is ambiguous, unverified, or no longer matches `spec.md`.
+- The current task is ambiguous, unverified, or no longer matches its user request or applicable `spec.md`.
 - A command fails and the cause is not understood.
 - Required user approval, credentials, data, or environment is missing.
 

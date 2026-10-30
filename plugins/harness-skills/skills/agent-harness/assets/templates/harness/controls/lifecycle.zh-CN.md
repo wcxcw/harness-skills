@@ -13,8 +13,9 @@ Harness 生命周期是 agentic work 的完整闭环。Workflow skills 可以辅
 | Preflight | `agent-harness` | Gate output | `check_run.py --stage before-implementation` 通过 |
 | Execute | `executing-plans`、`test-driven-development` 或 `systematic-debugging` | `execution-log.md` | 验证证据已记录 |
 | Review | `requesting-code-review` | `review.md` | Review 发现已处理或记录 |
-| Verify | `verification-before-completion` | `execution-log.md` | 命令或手动检查已记录 |
-| Finish | `finishing-run` | `evaluation.md` | `check_run.py --stage before-completion` 通过 |
+| Evaluation 草稿 | `finishing-run` | `evaluation.md` | 准备验收、验证、Review 和风险记录 |
+| Verify | `verification-before-completion` | `execution-log.md`、`evaluation.md` | 命令或手动检查已记录，completion gate 通过 |
+| Finish | `finishing-run` | `evaluation.md` | 证据定稿、再次运行 gate，并将 run 标记为 verifying |
 | Improve | `agent-harness` 或 `writing-skills` | Harness 更新建议 | 规范文件变更前先记录反馈 |
 
 ## Run Artifact 契约
