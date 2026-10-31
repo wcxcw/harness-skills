@@ -27,7 +27,7 @@
 - 没有 active run 且目标或重大决策不清楚时，邀请用户在创建 run 前显式调用 `$grilling`。Grilling 只进行对话、不创建文件；用户确认后，直接把共同理解记录到 `spec.md`。
 - Run 是否需要、分级和边界以 `harness/controls/gates.md` 为准。
 - 如果 gates 判定为 no-run 微小改动，直接修改，运行最小相关检查，并在回复中说明结果。
-- 如果需要 run，选择最小安全 tier，并保持一个用户目标对应一个 active run；同一目标后续修改追加到该 run。
+- 如果需要 run，选择最小安全 tier，并保持一个用户目标对应一个 run；同一目标的后续修改追加到该 run，已关闭时显式恢复。不要覆盖其他会话正在使用的 run。
 - 新建或显式恢复 run 后，使用 `check_run.py <run> --tier <tier> --set-phase active` 绑定当前会话；禁止按最近修改的 run 目录推断。
 - 按所选 tier 创建必要记录：`xs` 需要 `execution-log.md` 和 `evaluation.md`；`standard` 与 `full` 还需要 `workflow.md`、`spec.md` 和 `plan.md`。
 - 应用代码变更在最终验证前应执行代码质量 review；涉及前端或后端时使用对应质量 review。no-run 微小改动或 gates 允许并记录跳过原因的情况除外。

@@ -33,7 +33,7 @@ Use this skill for bug reports, failing tests, regressions, or unexplained runti
 8. Apply the smallest fix that addresses the root cause.
 9. Verify the original issue and adjacent behavior.
 10. Record commands, failures, hypothesis changes, and final evidence in `execution-log.md`; record residual risk in `evaluation.md`.
-11. If the user reports the fix is still wrong for the same objective, continue the active run and append the new symptom, hypothesis, fix attempt, and evidence instead of creating a new run.
+11. If the user reports the fix is still wrong for the same objective and the correction needs a run, continue or explicitly resume the existing run and append the new symptom, hypothesis, fix attempt, and fresh evidence instead of creating a new run.
 
 ## Stop Conditions
 

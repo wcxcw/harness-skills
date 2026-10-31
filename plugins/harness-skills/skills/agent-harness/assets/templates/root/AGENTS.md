@@ -27,7 +27,7 @@ Read or reuse these when orienting to the project or when the current task needs
 - When the objective or material decisions are unclear and no run exists, invite the user to explicitly invoke `$grilling` before creating a run. Grilling stays conversational and creates no files; after confirmation, record the shared understanding directly in `spec.md`.
 - Run eligibility, tiers, and boundaries are defined in `harness/controls/gates.md`; use that file as the authority.
 - If gates classify the request as a no-run micro change, edit directly, run the smallest relevant check, and summarize the result.
-- If a run is warranted, use the smallest safe tier and keep one active run per user objective; append same-objective follow-ups to that run.
+- If a run is warranted, use the smallest safe tier and keep one run per user objective; append same-objective follow-ups to that run, explicitly resuming it if it is closed. Do not overwrite a run active in another session.
 - Bind a created or explicitly resumed run to the current session with `check_run.py <run> --tier <tier> --set-phase active`; never infer it from the most recently modified run directory.
 - Create artifacts required by the selected tier: `xs` needs `execution-log.md` and `evaluation.md`; `standard` and `full` also require `workflow.md`, `spec.md`, and `plan.md`.
 - For application code changes, run code-quality review before final verification; use frontend/backend quality review when applicable, unless the task is a no-run micro change or the skip reason is recorded as allowed by the gates.

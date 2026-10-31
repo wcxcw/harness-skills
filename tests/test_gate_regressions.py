@@ -23,6 +23,47 @@ HOOK = PLUGIN / "scripts" / "harness_hook.py"
 
 
 class GateRegressionTest(unittest.TestCase):
+    def test_closed_run_can_resume_in_another_session_and_close_again(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            def git(*args: str) -> None:
+                subprocess.run(["git", *args], cwd=root, check=True, capture_output=True)
+            git("init", "-q")
+            git("config", "user.name", "Test")
+            git("config", "user.email", "test@example.invalid")
+            (root / "notes.txt").write_text("initial\n", encoding="utf-8")
+            git("add", ".")
+            git("commit", "-qm", "base")
+            run = root / "harness" / "runs" / "test"
+            run.mkdir(parents=True)
+            checker = root / "harness" / "scripts" / "check_run.py"
+            checker.parent.mkdir(parents=True)
+            checker.write_bytes(CHECKER.read_bytes())
+            (run / "execution-log.md").write_text("Command: check\nResult: passed\n", encoding="utf-8")
+            (run / "evaluation.md").write_text("Acceptance: passed\n", encoding="utf-8")
+            def phase(value: str, session: str) -> None:
+                subprocess.run([sys.executable, str(checker), str(run), "--tier", "xs", "--set-phase", value], env={**os.environ, "CODEX_THREAD_ID": session}, check=True, capture_output=True)
+            def state() -> dict:
+                return json.loads((run / "run-state.json").read_text())
+            def stop(session: str) -> dict:
+                result = subprocess.run([sys.executable, str(HOOK), "Stop"], input=json.dumps({"cwd": str(root), "session_id": session}), capture_output=True, text=True, check=True, env={**os.environ, "CODEX_PLUGIN_ROOT": str(PLUGIN)})
+                return json.loads(result.stdout)
+            phase("active", "first")
+            baseline = state()["git_base"]
+            phase("closed", "first")
+            (root / "notes.txt").write_text("updated\n", encoding="utf-8")
+            git("add", "notes.txt")
+            git("commit", "-qm", "updated")
+            phase("active", "second")
+            self.assertEqual(state()["git_base"], baseline)
+            self.assertEqual(state()["session_hash"], hashlib.sha256(b"second").hexdigest())
+            phase("verifying", "second")
+            self.assertTrue(stop("first")["continue"])
+            self.assertEqual(state()["status"], "verifying")
+            self.assertTrue(stop("second")["continue"])
+            self.assertEqual(state()["status"], "closed")
+            self.assertEqual(state()["git_base"], baseline)
+
     def test_deleted_and_renamed_code_still_requires_application_review(self) -> None:
         for case in ("unstaged", "staged", "committed", "rename", "harness-only"):
             with self.subTest(case=case), tempfile.TemporaryDirectory() as tmp:

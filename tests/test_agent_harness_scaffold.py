@@ -629,7 +629,7 @@ None.
             self.assertIn("创建 run 前", zh_agents)
             self.assertIn("Load context on demand", agent_harness)
 
-    def test_run_boundary_guidance_reuses_active_run_for_followups(self) -> None:
+    def test_run_boundary_guidance_reuses_run_for_followups(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             en_project = Path(tmp) / "en"
             zh_project = Path(tmp) / "zh"
@@ -668,14 +668,15 @@ None.
             executing = (WORKFLOW_SKILLS / "executing-plans" / "SKILL.md").read_text(encoding="utf-8")
 
             self.assertIn("Run eligibility, tiers, and boundaries are defined in `harness/controls/gates.md`", en_agents)
-            self.assertIn("keep one active run per user objective", en_agents)
-            self.assertIn("Do not create a new run for a small fix to the same objective", en_gates_normalized)
+            self.assertIn("keep one run per user objective", en_agents)
+            self.assertIn("explicitly resume it and bind it to the current session", en_gates_normalized)
+            self.assertIn("Closure alone is not a reason to create a new run", en_gates_normalized)
             self.assertIn("A run represents a user objective", lifecycle)
-            self.assertIn("continue the active run", executing)
+            self.assertIn("continue or explicitly resume its existing run", executing)
 
             self.assertIn("Run 是否需要、分级和边界以 `harness/controls/gates.md` 为准", zh_agents)
-            self.assertIn("一个用户目标对应一个 active run", zh_agents)
-            self.assertIn("不要因为同一目标下的小修复新建 run", zh_gates)
+            self.assertIn("一个用户目标对应一个 run", zh_agents)
+            self.assertIn("已关闭不应新建", "".join(zh_gates.split()))
 
     def test_scaffold_only_accepts_core_profile(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

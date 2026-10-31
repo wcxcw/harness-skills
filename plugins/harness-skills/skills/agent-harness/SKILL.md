@@ -22,7 +22,7 @@ This is an orchestration skill. Do not duplicate the full workflows of related s
 - Skip run creation for explicit, low-risk micro changes when no active run exists; make the edit, run the smallest relevant check, and summarize the result instead.
 - Gate continuation locally: pass project-local gates before implementation and completion, using the smallest safe tier (`xs`, `standard`, or `full`).
 - Load context on demand: do not bulk-read `harness/context/*` or completed runs; use targeted search or section reads.
-- Keep run boundaries tied to user objectives: follow-up corrections, test fixes, verification additions, and small adjustments for the same objective stay in the active run.
+- Keep run boundaries tied to user objectives: use the same run for follow-up corrections, test fixes, verification additions, and small adjustments; explicitly resume it if it is closed and the follow-up needs a run.
 - Track run lifecycle explicitly in `run-state.json`; never infer the active run from directory modification time or artifact presence.
 - Code quality is a completion gate: application code changes must preserve maintainable structure, local conventions, error handling, logging/observability where relevant, and useful comments for non-obvious rules.
 - Evidence before completion: do not claim completion without commands, checks, or a documented reason verification was skipped.
@@ -49,6 +49,8 @@ no-run micro change only when all of these are true:
 For micro changes, make the edit directly, run the smallest relevant check, and
 summarize the result in the response. If an active run already exists and the
 micro change belongs to that objective, append the evidence to the active run.
+When no run is active, a qualifying micro change may be done directly even if a
+related run is closed; a closed run alone does not make `xs` necessary.
 
 Examples that may be no-run micro changes:
 
@@ -203,6 +205,16 @@ captures the Git HEAD baseline; retain it across phase changes and resumption so
 quality checks can include commits made during the run. A pre-existing run that
 has no baseline, a repository with no initial commit, or a non-Git project cannot
 reconstruct prior committed changes reliably; record that coverage limitation.
+For a follow-up to the same objective that needs a run, explicitly select and
+resume its existing run even if it is closed. Do not infer the run from recency.
+Before resuming, check its state; do not rebind a run active in another session.
+The checker does not provide concurrent-session locking, so avoid simultaneous
+edits to the same run.
+Append the new work and evidence, preserve prior evaluation history, update the
+current evaluation, and perform fresh checks and any applicable review before
+closing it again. The original Git baseline is retained on resumption and may
+include unrelated later commits; inspect the actual scope and document any
+coverage limitation rather than treating old evidence as proof of new work.
 
 ### 8. Specify
 
@@ -251,7 +263,7 @@ Implement against the active run only:
 - Check `harness/guardrails/` before edits
 - Run `python3 harness/scripts/check_run.py harness/runs/<run> --stage before-implementation --tier <xs|standard|full>` when an active run exists and the checker is available
 - Keep code changes scoped to the current spec
-- For user-requested corrections to the same objective, update the active run's `plan.md`, `execution-log.md`, or `evaluation.md` instead of creating a new run
+- For user-requested corrections to the same objective that need a run, continue or explicitly resume the existing run and update its relevant plan, execution log, and evaluation instead of creating a new run
 - When resuming implementation after review or a failed gate, set the current run phase back to `active`
 - For direct micro changes with no active run, skip run artifacts and rely on the smallest relevant verification plus the final response summary
 
@@ -283,11 +295,11 @@ python3 harness/scripts/check_run.py harness/runs/<run> --tier <xs|standard|full
 When a run is warranted, use the smallest tier that safely controls the work.
 Do not treat `xs` as mandatory for every tiny edit; no-run direct execution is
 allowed for explicit, low-risk micro changes with no active run.
-A run represents one user objective, not one agent attempt. Keep follow-up
-corrections, test fixes, verification additions, and small adjustments in the
-active run until the work is accepted or the run is closed. Create a new run
-only when the objective changes, scope materially expands, or the user
-explicitly starts a new task.
+A run represents one user objective, not one agent attempt or response. For
+follow-up corrections, test fixes, verification additions, and small adjustments
+that need a run, continue or explicitly resume the same run even after closure.
+Create a new run when the objective changes, scope materially expands, or the
+user explicitly requests a separate task or record.
 
 XS:
 

@@ -33,11 +33,20 @@ design/product/technical decision are not micro changes.
 A run represents a user objective. It is not a record for every individual
 agent attempt, patch, or follow-up message. When the user asks for corrections,
 test fixes, extra verification, or small adjustments that still target the same
-objective, continue the active run and append the new evidence to its artifacts.
+objective, continue the relevant run. When no run is active, first check the
+no-run micro criteria above and edit directly if all are met. Otherwise, if the
+relevant run is closed, explicitly resume it with
+`check_run.py <run> --tier <tier> --set-phase active` to bind it to the current
+session. Append this round's review and verification evidence, update
+`evaluation.md` while preserving history, and repeat the applicable completion
+gates; old conclusions do not verify new changes. The original Git baseline
+remains in place and may include unrelated commits, so check the actual scope.
+Identify the run from task context, not directory recency; do not overwrite a
+run active in another session.
 
 Create a new run only when the objective changes, the requested scope
-materially expands, the previous run has been accepted and closed, or the user
-explicitly starts a new task.
+materially expands, or the user requests a separate record. Closure alone does
+not require a new run.
 
 ### XS
 
@@ -91,5 +100,5 @@ historical recency.
 Do not advance to the next stage when the required artifact or gate is missing.
 If a stage is intentionally skipped, record the reason in `workflow.md` and make
 sure the next gate still passes. Follow-up work for the same objective remains
-in the active run; update `plan.md`, `execution-log.md`, or `evaluation.md`
-instead of creating a sibling run.
+in the relevant run, resumed if necessary; update `plan.md`, `execution-log.md`,
+or `evaluation.md` instead of creating a sibling run.

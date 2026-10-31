@@ -28,11 +28,16 @@ Harness 生命周期是 agentic work 的完整闭环。Workflow skills 可以辅
 字体层级调整、跨页面修改、行为变化，或需要设计/产品/技术决策的任务不属于微小改动。
 
 一个 run 表示一个用户目标，不是 agent 每次尝试、每个 patch 或每条后续消息的
-记录。用户要求返修、补测试、补验证或做同一目标下的小调整时，继续使用当前
-active run，并把新的证据追加到已有 artifact。
+记录。用户要求返修、补测试、补验证或做同一目标下的小调整时，继续使用对应 run。
+没有 active run 时，先判断是否满足上述 no-run 微小改动条件；满足则直接修改。
+否则若 run 已关闭，先通过 `check_run.py <run> --tier <tier> --set-phase active`
+显式恢复并绑定当前会话。追加本轮 review 和验证证据、更新 `evaluation.md` 并
+保留历史，再重新执行适用的完成前门槛；旧结论不能作为新改动的验证证据。恢复时
+保留原 Git 基线，可能包含无关提交，需要核对实际变更范围。根据任务上下文确定
+对应 run，不按目录新旧推断，不覆盖其他会话正在使用的 run。
 
-只有目标改变、请求范围明显扩大、上一个 run 已验收关闭，或用户明确开始新任务时，
-才新建 run。
+只有目标改变、请求范围明显扩大，或用户要求独立记录时，才新建 run。
+run 已关闭本身不是新建理由。
 
 ### XS
 
@@ -83,5 +88,5 @@ harness/runs/YYYY-MM-DD-short-task-name/
 
 必要 artifact 或 gate 缺失时，不要进入下一阶段。如果某个阶段被有意跳过，在
 `workflow.md` 中记录原因，并确保下一个 gate 仍然通过。同一目标的后续工作
-继续留在当前 active run；更新 `plan.md`、`execution-log.md` 或
+继续留在对应 run，必要时先恢复；更新 `plan.md`、`execution-log.md` 或
 `evaluation.md`，不要创建并列 run。

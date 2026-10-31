@@ -32,7 +32,7 @@ Use this skill after `check_run.py --stage before-implementation` passes.
 - Stop on blockers, failing required gates, missing files, or user decisions. Do not guess through a blocker.
 - After each task, mark the task status in `plan.md` if present or record the checkpoint in `execution-log.md`.
 - If implementation diverges from an existing plan, record the reason and update `plan.md` before continuing.
-- If the user requests a correction to the same objective, continue the active run and append the new attempt, changed files, commands, and outcome to `execution-log.md` instead of creating a new run.
+- If a correction to the same objective needs a run, continue or explicitly resume its existing run, then append the new attempt, changed files, commands, and outcome to `execution-log.md` instead of creating a new run. Preserve prior evaluation history and record fresh verification and applicable review before closing again.
 - After a review or gate failure, set the phase back to `active` before continuing implementation so interim responses are not treated as completion attempts.
 
 ## Execution Log Format

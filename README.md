@@ -55,7 +55,7 @@ harness/
 | `standard` | 一般功能、bugfix 或多文件改动 | XS 记录，加 `workflow.md`、`spec.md`、`plan.md` |
 | `full` | 新产品方向或架构、数据、安全等高风险改动 | Standard 记录，加 `input.md`、`review.md` |
 
-支持会话绑定时，run 还包含 `run-state.json`。同一目标下的返修和补验证继续记录在同一个 active run 中。
+支持会话绑定时，run 还包含 `run-state.json`。同一目标的返修和补验证继续记录在原 run 中；已关闭的 run 可以明确恢复，并补充本轮验证。
 
 完整流程通常是：明确需求和决策 → spec → plan → 实现前检查 → 实现 → review → 验证与评估 → 反馈。`xs` 不要求 spec、plan 和 review；具体要求以项目的 `harness/controls/gates.md` 为准。
 

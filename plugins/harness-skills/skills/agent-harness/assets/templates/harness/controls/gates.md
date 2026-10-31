@@ -27,11 +27,19 @@ Each tier also records `run-state.json` when session binding is supported. This 
 
 ## Run Boundary
 
-One run should cover the full lifecycle of one user objective, including
-follow-up corrections and verification requested before acceptance. Do not
-create a new run for a small fix to the same objective. Create a new run when
-the objective changes, scope materially expands, the previous run is closed, or
-the user explicitly starts another task.
+One run should cover one user objective, including subsequent corrections,
+small adjustments, and additional verification. When no run is active, first
+check whether the change meets all no-run micro criteria above; if so, edit
+directly. Otherwise, if the relevant run is closed,
+explicitly resume it and bind it to the current session before continuing;
+append this round's review and verification evidence, update `evaluation.md`
+without erasing history, and rerun applicable completion gates. Do not reuse
+old conclusions as evidence for new changes. A resumed run retains its original
+Git baseline, which may include unrelated commits; check the actual change
+scope. Identify the run from task context, not directory recency; do not
+overwrite a run active in another session. Closure
+alone is not a reason to create a new run. Create a new run when the objective
+changes, scope materially expands, or the user requests a separate record.
 
 ## Before Implementation
 
